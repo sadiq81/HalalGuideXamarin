@@ -96,11 +96,21 @@
   </ItemGroup>
   <ItemGroup>
     <BundleResource Include="Resources\Default-568h%402x.png" />
-    <BundleResource Include="Resources\e-numre.png" />
-    <BundleResource Include="Resources\spisesteder.png" />
-    <BundleResource Include="Resources\butikker.png" />
-    <BundleResource Include="Resources\moske.png" />
     <BundleResource Include="Resources\indstillinger.png" />
+    <BundleResource Include="Resources\alcohol.png" />
+    <BundleResource Include="Resources\halal.png" />
+    <BundleResource Include="Resources\pig.png" />
+    <BundleResource Include="Resources\no_pig.png" />
+    <BundleResource Include="Resources\no_alcohol.png" />
+    <BundleResource Include="Resources\MOSQUE.png" />
+    <BundleResource Include="Resources\SHOP.png" />
+    <BundleResource Include="Resources\DINING.png" />
+    <BundleResource Include="Resources\no_halal.png" />
+    <BundleResource Include="Resources\ENUMBER.png" />
+    <BundleResource Include="Resources\DANISH.png" />
+    <BundleResource Include="Resources\ARABIC.png" />
+    <BundleResource Include="Resources\URDU.png" />
+    <BundleResource Include="Resources\ENGLISH.png" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Info.plist" />
@@ -109,10 +119,6 @@
   <ItemGroup>
     <Compile Include="Main.cs" />
     <Compile Include="AppDelegate.cs" />
-    <Compile Include="HalalGuide.iOSViewController.cs" />
-    <Compile Include="HalalGuide.iOSViewController.designer.cs">
-      <DependentUpon>HalalGuide.iOSViewController.cs</DependentUpon>
-    </Compile>
     <Compile Include="LandingPageController.cs" />
     <Compile Include="LandingPageController.designer.cs">
       <DependentUpon>LandingPageController.cs</DependentUpon>
@@ -121,5 +127,16 @@
   <ItemGroup>
     <InterfaceDefinition Include="MainStoryboard.storyboard" />
   </ItemGroup>
+  <Import Project="..\HalalGuide.Core.projitems" Label="Shared" Condition="Exists('..\HalalGuide.Core.projitems')" />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <ProjectReference Include="..\..\S3Storage\S3Storage.csproj">
+      <Project>{8CFB233F-84F6-45B0-89A5-9CE3EA4E05E2}</Project>
+      <Name>S3Storage</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\AWSSimpleDBPersistence\SimpleDBPersistence\SimpleDBPersistence.csproj">
+      <Project>{6545E392-67A6-46FC-9B8C-4011A725A1ED}</Project>
+      <Name>SimpleDBPersistence</Name>
+    </ProjectReference>
+  </ItemGroup>
 </Project>

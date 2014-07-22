@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "HalalGuide.Core", "HalalGuide.Core.shproj", "{3EDC9736-C8CA-4EF1-9E99-BF9C72E1A544}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleDBPersistence", "..\SimpleDBPersistence\SimpleDBPersistence\SimpleDBPersistence.csproj", "{6545E392-67A6-46FC-9B8C-4011A725A1ED}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "S3Storage", "..\S3Storage\S3Storage.csproj", "{8CFB233F-84F6-45B0-89A5-9CE3EA4E05E2}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HalalGuide.iOS", "HalalGuide.iOS\HalalGuide.iOS.csproj", "{F1C43724-632D-4943-8941-9CAA43A6ED00}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleDBPersistence", "..\AWSSimpleDBPersistence\SimpleDBPersistence\SimpleDBPersistence.csproj", "{6545E392-67A6-46FC-9B8C-4011A725A1ED}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -71,7 +71,7 @@ Global
 		{F1C43724-632D-4943-8941-9CAA43A6ED00}.Release|iPhoneSimulator.Build.0 = Release|iPhoneSimulator
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
-		StartupItem = ..\SimpleDBPersistence\SimpleDBPersistence\SimpleDBPersistence.csproj
+		StartupItem = HalalGuide.iOS\HalalGuide.iOS.csproj
 		Policies = $0
 		$0.DotNetNamingPolicy = $1
 		$1.DirectoryNamespaceAssociation = PrefixedFlat

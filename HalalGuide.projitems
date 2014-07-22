@@ -10,5 +10,19 @@
   </PropertyGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Services\" />
+    <Folder Include="$(MSBuildThisFileDirectory)Domain\" />
+    <Folder Include="$(MSBuildThisFileDirectory)DAO\" />
+    <Folder Include="$(MSBuildThisFileDirectory)ViewModels\" />
+    <Folder Include="$(MSBuildThisFileDirectory)Util\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)Services\SHA256Service.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Domain\Location.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Domain\LocationType.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DAO\LocationDAO.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\BaseViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\LatestViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Domain\Language.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Util\StringUtils.cs" />
   </ItemGroup>
 </Project>

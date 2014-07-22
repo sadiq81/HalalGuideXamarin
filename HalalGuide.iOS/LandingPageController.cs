@@ -4,6 +4,12 @@ using System;
 
 using MonoTouch.Foundation;
 using MonoTouch.UIKit;
+using MonoTouch.CoreGraphics;
+using HalalGuide.ViewModels;
+using HalalGuide.Domain;
+using System.ComponentModel;
+using System.Globalization;
+using HalalGuide.Util;
 
 namespace HalalGuide.iOS
 {
@@ -12,5 +18,175 @@ namespace HalalGuide.iOS
 		public LandingPageController (IntPtr handle) : base (handle)
 		{
 		}
+
+		public override void  ViewDidLoad ()
+		{
+			base.ViewDidLoad ();
+
+			LatestUpdated.Source = new LatestTableSource (LatestUpdated);
+		}
+
+		partial void Navigate (NSObject sender)
+		{
+			string title = ((UIButton)sender).TitleLabel.Text;
+			switch (title) {
+			case "shop":
+				{
+					break;
+				}
+			case "number":
+				{
+					break;
+				}
+			case "eat":
+				{
+					break;
+				}
+			case "mosque":
+				{
+					break;
+				}
+			case "settings":
+				{
+					break;
+				}
+			}
+
+		}
 	}
+
+	public class LatestTableSource : UITableViewSource
+	{
+		private static string cellIdentifier = "LatestTableCell";
+
+		public LatestViewModel ViewModel = new LatestViewModel ();
+
+		private UITableViewController ViewController = new UITableViewController ();
+		private UIRefreshControl RefreshControl = new UIRefreshControl ();
+
+		private static readonly int CATEGORY_IMAGE_TAG = 101;
+		private static readonly int PORK_IMAGE_TAG = 102;
+		private static readonly int ALCOHOL_IMAGE_TAG = 103;
+		private static readonly int HALAL_IMAGE_TAG = 104;
+
+		private static readonly int NAME_TEXT_TAG = 201;
+		private static readonly int ADDRESS1_TEXT_TAG = 202;
+		private static readonly int ADDRESS2_TEXT_TAG = 203;
+		private static readonly int PORK_TEXT_TAG = 204;
+		private static readonly int ALCOHOL_TEXT_TAG = 205;
+		private static readonly int HALAL_TEXT_TAG = 206;
+
+		public LatestTableSource (UITableView latestUpdated)
+		{
+			ViewController.TableView = latestUpdated;
+			ViewController.RefreshControl = RefreshControl;
+			RefreshControl.ValueChanged += async (sender, e) => {
+				RefreshControl.BeginRefreshing ();
+				await ViewModel.Update ();
+				latestUpdated.ReloadData ();
+				RefreshControl.EndRefreshing ();
+			};
+
+			Initialize ();
+		}
+
+		private async void   Initialize ()
+		{
+
+			await ViewModel.Update ();
+			ViewController.TableView.ReloadSections (new NSIndexSet (0), UITableViewRowAnimation.Top);
+
+		}
+
+		public override int RowsInSection (UITableView tableview, int section)
+		{
+			return ViewModel.Rows ();
+		}
+
+		public override UITableViewCell GetCell (UITableView tableView, NSIndexPath indexPath)
+		{
+			UITableViewCell cell = tableView.DequeueReusableCell (cellIdentifier);
+
+			Location l = ViewModel.GetLocationAtRow (indexPath.Item);
+
+			UIImageView category = (UIImageView)cell.ViewWithTag (CATEGORY_IMAGE_TAG);
+			category.Image = UIImage.FromBundle (l.LocationType.ToString ());
+
+			UILabel name = (UILabel)cell.ViewWithTag (NAME_TEXT_TAG);
+			name.Text = l.Name;
+
+			UILabel address1 = (UILabel)cell.ViewWithTag (ADDRESS1_TEXT_TAG);
+			UILabel address2 = (UILabel)cell.ViewWithTag (ADDRESS2_TEXT_TAG);
+
+			UIImageView porkImage = (UIImageView)cell.ViewWithTag (PORK_IMAGE_TAG);
+			UIImageView alcoholImage = (UIImageView)cell.ViewWithTag (ALCOHOL_IMAGE_TAG);
+			UIImageView halalImage = (UIImageView)cell.ViewWithTag (HALAL_IMAGE_TAG);
+
+			UILabel porkLabel = (UILabel)cell.ViewWithTag (PORK_TEXT_TAG);
+			UILabel alcoholLabel = (UILabel)cell.ViewWithTag (ALCOHOL_TEXT_TAG);
+			UILabel halalLabel = (UILabel)cell.ViewWithTag (HALAL_TEXT_TAG);
+
+			switch (l.LocationType) {
+			case LocationType.DINING:
+				{
+					porkImage.Image = UIImage.FromBundle (l.Pork ? "pig" : "no_pig");
+					porkLabel.Text = l.Pork ? "ja" : "nej";
+					porkLabel.TextColor = l.Pork ? UIColor.Red : UIColor.Green;
+
+					alcoholImage.Image = UIImage.FromBundle (l.Alcohol ? "alcohol" : "no_alcohol");
+					alcoholLabel.Text = l.Alcohol ? "ja" : "nej";
+					alcoholLabel.TextColor = l.Pork ? UIColor.Red : UIColor.Green;
+
+					halalImage.Image = UIImage.FromBundle (l.Halal ? "halal" : "no_halal");
+					halalLabel.Text = "halal";
+					halalLabel.TextColor = l.Halal ? UIColor.Green : UIColor.Red;
+
+					break;
+				}
+			case LocationType.SHOP:
+				{
+					address1.Text = l.AddressRoad;
+					address2.Text = l.AddressPostalCode + ", " + l.AddressCity;
+
+					porkImage.Image = null;
+					porkLabel.Text = "";
+
+					alcoholImage.Image = null;
+					alcoholLabel.Text = "";
+
+					halalImage.Image = null;
+					halalLabel.Text = "";
+
+					break;
+				}
+			case LocationType.MOSQUE:
+				{
+					address1.Text = l.AddressRoad;
+					address2.Text = l.AddressPostalCode + ", " + l.AddressCity;
+
+					porkImage.Image = UIImage.FromBundle (l.Language.ToString ());
+					porkLabel.Text = l.Language.ToString ().ToLower ().FirstToUpper ();
+
+					alcoholImage.Image = null;
+					alcoholLabel.Text = "";
+
+					halalImage.Image = null;
+					halalLabel.Text = "";
+
+					halalImage.Image = null;
+					halalLabel.Text = "";
+
+					break;
+				}
+			}
+
+			return cell;
+		}
+
+		public override void RowSelected (UITableView tableView, NSIndexPath indexPath)
+		{
+			tableView.DeselectRow (indexPath, true); // normal iOS behaviour is to remove the blue highlight
+		}
+	}
+
 }

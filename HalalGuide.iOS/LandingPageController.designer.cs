@@ -12,9 +12,26 @@ namespace HalalGuide.iOS
 	[Register ("LandingPageController")]
 	partial class LandingPageController
 	{
-		
+		[Outlet]
+		MonoTouch.UIKit.UITableView LatestUpdated { get; set; }
+
+		[Outlet]
+		MonoTouch.UIKit.UISearchBar SearchBar { get; set; }
+
+		[Action ("Navigate:")]
+		partial void Navigate (MonoTouch.Foundation.NSObject sender);
+
 		void ReleaseDesignerOutlets ()
 		{
+			if (SearchBar != null) {
+				SearchBar.Dispose ();
+				SearchBar = null;
+			}
+
+			if (LatestUpdated != null) {
+				LatestUpdated.Dispose ();
+				LatestUpdated = null;
+			}
 		}
 	}
 }
