@@ -14,15 +14,21 @@
     <Folder Include="$(MSBuildThisFileDirectory)DAO\" />
     <Folder Include="$(MSBuildThisFileDirectory)ViewModels\" />
     <Folder Include="$(MSBuildThisFileDirectory)Util\" />
+    <Folder Include="$(MSBuildThisFileDirectory)Domain\Enum\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)Services\SHA256Service.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Domain\Location.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Domain\LocationType.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DAO\LocationDAO.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\BaseViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\LatestViewModel.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Domain\Language.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Util\StringUtils.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\DiningViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\ITableViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\LocationService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Util\DistanceUtil.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Domain\Enum\DiningCategory.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Domain\Enum\Language.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Domain\Enum\LocationType.cs" />
   </ItemGroup>
 </Project>

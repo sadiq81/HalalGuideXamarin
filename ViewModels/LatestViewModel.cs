@@ -1,26 +1,20 @@
-﻿using System;
-using HalalGuide.DAO;
-using System.Net;
+﻿using HalalGuide.DAO;
 using System.Collections.Generic;
 using HalalGuide.Domain;
-using System.Collections;
-using System.Runtime.Remoting.Messaging;
 using SimpleDBPersistence.SimpleDB.Model.Parameters;
 using System.Threading.Tasks;
-using System.Globalization;
-using System.Security.Cryptography;
+using HalalGuide.Domain.Enum;
 
 namespace HalalGuide.ViewModels
 {
-	public class LatestViewModel : BaseViewModel
+	public class LatestViewModel : BaseViewModel, ITableViewModel
 	{
 		private readonly static LocationDAO DAO = SimpleDBPersistence.Service.ServiceContainer.Resolve<LocationDAO> ();
 
 		private List<Location> List = new List<Location> ();
 
-		public LatestViewModel ()
+		public LatestViewModel () : base ()
 		{
-
 		}
 
 		public int Rows ()
@@ -35,38 +29,61 @@ namespace HalalGuide.ViewModels
 
 		public async Task Update ()
 		{
+			Location l0 = new Location () {
+				Id = "0",
+				Name = "Marco's Pizzabar",
+				AddressRoad = "Hulgårdsvej 7",
+				AddressCity = "København N",
+				AddressPostalCode = "2400",
+				Latitude = "55.6951012",
+				Longtitude = "12.5106906",
+				Telephone = "00000000",
+				HomePage = "www.currytakeaway.dk",
+				LocationType = LocationType.DINING,
+				Categories = new List<DiningCategory> (){ DiningCategory.PIZZA },
+				Halal = false,
+				Alcohol = true,
+				Pork = true
+				
+			};
 
-			/*
+			await DAO.SaveOrReplace (l0);
+
 			Location l1 = new Location () {
 				Id = "1",
 				Name = "Curry Take Away",
 				AddressRoad = "Borups Alle 29",
 				AddressCity = "København N",
 				AddressPostalCode = "2200",
+				Latitude = "55.6903656",
+				Longtitude = "12.5428984",
 				Telephone = "00000000",
 				HomePage = "www.currytakeaway.dk",
 				LocationType = LocationType.DINING,
+				Categories = new List<DiningCategory> (){ DiningCategory.PAKISTANI, DiningCategory.INDIAN },
 				Halal = true,
 				Alcohol = false,
-				Pork = false,
-				Categories = new List<string> (){ "Pakistansk", "Indisk", "Krydret" }
+				Pork = false
 			};
 
 			await DAO.SaveOrReplace (l1);
 
 			Location l2 = new Location () {
 				Id = "2",
-				Name = "Cafe Fatamorgana",
-				AddressRoad = "Borups Plads 26",
-				AddressCity = "København N",
-				AddressPostalCode = "2200",
+				Name = "Sultan's Café",
+				AddressRoad = "Borups Alle 112",
+				AddressCity = "Frederiksberg",
+				AddressPostalCode = "2000",
+				Latitude = "55.6920414",
+				Longtitude = "12.5352193",
 				Telephone = "00000000",
 				HomePage = "",
 				LocationType = LocationType.DINING,
-				Halal = true,
+				Categories = new List<DiningCategory> (){ DiningCategory.CAFE },
+				Halal = false,
 				Alcohol = true,
-				Pork = true,
-				Categories = new List<string> (){ "Cafe", "Brunch", "Tyrkisk" }
+				Pork = true
+
 			};
 
 			await DAO.SaveOrReplace (l2);
@@ -77,6 +94,8 @@ namespace HalalGuide.ViewModels
 				AddressRoad = "Vingelodden 1",
 				AddressCity = "København N",
 				AddressPostalCode = "2200",
+				Latitude = "55.7084999",
+				Longtitude = "12.549223",
 				Telephone = "00000000",
 				HomePage = "http://www.disr.info/",
 				LocationType = LocationType.MOSQUE,
@@ -91,6 +110,8 @@ namespace HalalGuide.ViewModels
 				AddressRoad = "Dortheavej 45 - 47",
 				AddressCity = "København NV",
 				AddressPostalCode = "2400",
+				Latitude = "55.7083465",
+				Longtitude = "12.5254281",
 				Telephone = "00000000",
 				HomePage = "http://www.wakf.com/",
 				LocationType = LocationType.MOSQUE,
@@ -105,6 +126,8 @@ namespace HalalGuide.ViewModels
 				AddressRoad = "Frederiksborgvej 15",
 				AddressCity = "København NV",
 				AddressPostalCode = "2400",
+				Latitude = "55.702917",
+				Longtitude = "12.532926",
 				Telephone = "00000000",
 				LocationType = LocationType.SHOP,
 			};
@@ -117,13 +140,15 @@ namespace HalalGuide.ViewModels
 				AddressRoad = "Frederikssundsvej 11",
 				AddressCity = "København NV",
 				AddressPostalCode = "2400",
+				Latitude = "55.701255",
+				Longtitude = "12.535705",
 				Telephone = "00000000",
 				LocationType = LocationType.SHOP,
 			};
 
 			await DAO.SaveOrReplace (l6);
 
-            */
+            
 			IsBusy = true;
 
 			SelectQuery<Location> query = new SelectQuery<Location> ();

@@ -4,12 +4,10 @@ using System;
 
 using MonoTouch.Foundation;
 using MonoTouch.UIKit;
-using MonoTouch.CoreGraphics;
 using HalalGuide.ViewModels;
 using HalalGuide.Domain;
-using System.ComponentModel;
-using System.Globalization;
 using HalalGuide.Util;
+using HalalGuide.Domain.Enum;
 
 namespace HalalGuide.iOS
 {
@@ -116,7 +114,9 @@ namespace HalalGuide.iOS
 			name.Text = l.Name;
 
 			UILabel address1 = (UILabel)cell.ViewWithTag (ADDRESS1_TEXT_TAG);
+			address1.Text = l.AddressRoad;
 			UILabel address2 = (UILabel)cell.ViewWithTag (ADDRESS2_TEXT_TAG);
+			address2.Text = l.AddressPostalCode + " " + l.AddressCity;
 
 			UIImageView porkImage = (UIImageView)cell.ViewWithTag (PORK_IMAGE_TAG);
 			UIImageView alcoholImage = (UIImageView)cell.ViewWithTag (ALCOHOL_IMAGE_TAG);
@@ -145,9 +145,6 @@ namespace HalalGuide.iOS
 				}
 			case LocationType.SHOP:
 				{
-					address1.Text = l.AddressRoad;
-					address2.Text = l.AddressPostalCode + ", " + l.AddressCity;
-
 					porkImage.Image = null;
 					porkLabel.Text = "";
 
@@ -161,9 +158,6 @@ namespace HalalGuide.iOS
 				}
 			case LocationType.MOSQUE:
 				{
-					address1.Text = l.AddressRoad;
-					address2.Text = l.AddressPostalCode + ", " + l.AddressCity;
-
 					porkImage.Image = UIImage.FromBundle (l.Language.ToString ());
 					porkLabel.Text = l.Language.ToString ().ToLower ().FirstToUpper ();
 

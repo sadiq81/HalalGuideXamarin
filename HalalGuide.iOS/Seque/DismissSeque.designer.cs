@@ -9,21 +9,12 @@ using System.CodeDom.Compiler;
 
 namespace HalalGuide.iOS
 {
-	[Register ("LandingPageController")]
-	partial class LandingPageController
+	[Register ("DismissSeque")]
+	partial class DismissSeque
 	{
-		[Outlet]
-		MonoTouch.UIKit.UITableView LatestUpdated { get; set; }
-
-		[Action ("Navigate:")]
-		partial void Navigate (MonoTouch.Foundation.NSObject sender);
 		
 		void ReleaseDesignerOutlets ()
 		{
-			if (LatestUpdated != null) {
-				LatestUpdated.Dispose ();
-				LatestUpdated = null;
-			}
 		}
 	}
 }

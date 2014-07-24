@@ -93,6 +93,9 @@
     <Reference Include="System.Xml" />
     <Reference Include="System.Core" />
     <Reference Include="monotouch" />
+    <Reference Include="Xamarin.Mobile">
+      <HintPath>..\Components\xamarin.mobile-0.7.1\lib\ios\Xamarin.Mobile.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <BundleResource Include="Resources\Default-568h%402x.png" />
@@ -123,6 +126,18 @@
     <Compile Include="LandingPageController.designer.cs">
       <DependentUpon>LandingPageController.cs</DependentUpon>
     </Compile>
+    <Compile Include="DiningPageController.cs" />
+    <Compile Include="DiningPageController.designer.cs">
+      <DependentUpon>DiningPageController.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Seque\DismissSeque.cs" />
+    <Compile Include="Seque\DismissSeque.designer.cs">
+      <DependentUpon>DismissSeque.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FilterDiningPageController.cs" />
+    <Compile Include="FilterDiningPageController.designer.cs">
+      <DependentUpon>FilterDiningPageController.cs</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="MainStoryboard.storyboard" />
@@ -138,5 +153,15 @@
       <Project>{6545E392-67A6-46FC-9B8C-4011A725A1ED}</Project>
       <Name>SimpleDBPersistence</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Services\" />
+    <Folder Include="Seque\" />
+  </ItemGroup>
+  <ItemGroup>
+    <XamarinComponentReference Include="xamarin.mobile">
+      <Version>0.7.1</Version>
+      <Visible>False</Visible>
+    </XamarinComponentReference>
   </ItemGroup>
 </Project>

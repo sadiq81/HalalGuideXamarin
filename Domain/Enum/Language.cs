@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace HalalGuide.Domain
+namespace HalalGuide.Domain.Enum
 {
 	public enum Language
 	{

@@ -2,7 +2,7 @@
 using System.Security.Cryptography;
 using System.Text;
 
-namespace HalalGuide.Core
+namespace HalalGuide.Services
 {
 	public class SHA256Service : S3Storage.Service.ISHA256Service, SimpleDBPersistence.Service.ISHA256Service
 	{

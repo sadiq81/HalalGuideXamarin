@@ -1,8 +1,8 @@
-﻿using System;
-using SimpleDBPersistence.Domain;
+﻿using SimpleDBPersistence.Domain;
 using System.Collections.Generic;
 using SimpleDBPersistence.SimpleDB.Model;
 using System.Text;
+using HalalGuide.Domain.Enum;
 
 namespace HalalGuide.Domain
 {
@@ -21,6 +21,12 @@ namespace HalalGuide.Domain
 		[SimpleDBFieldAttribute ("AddressCity")]
 		public string AddressCity { get; set; }
 
+		[SimpleDBFieldAttribute ("Latitude")]
+		public string Latitude { get; set; }
+
+		[SimpleDBFieldAttribute ("Longtitude")]
+		public string Longtitude { get; set; }
+
 		[SimpleDBFieldAttribute ("Telephone")]
 		public string Telephone { get; set; }
 
@@ -31,8 +37,8 @@ namespace HalalGuide.Domain
 		public LocationType LocationType  { get; set; }
 
 		//Only for Dining
-		[SimpleDBFieldAttribute ("Categories")]
-		public List<string> Categories  { get; set; }
+		[SimpleDBListAttribute ("DiningCategory")]
+		public List<DiningCategory> Categories  { get; set; }
 
 		//Only for Dining
 		[SimpleDBFieldAttribute ("Halal")]
@@ -50,29 +56,12 @@ namespace HalalGuide.Domain
 		[SimpleDBFieldAttribute ("Language")]
 		public Language Language { get; set; }
 
+		public double Distance { get; set; }
+
 		public Location ()
 		{
 		}
 
-		public string GetCategoriesAsString ()
-		{
-			if (Categories != null) {
-				StringBuilder sb = new StringBuilder ();
-				foreach (string category in Categories) {
-					sb.Append (category + ",");
-				}
-				sb.Remove (sb.Length - 1, 1);
-				return sb.ToString ();
-			} else {
-				return "";
-			}
-
-		}
-
-		public string GetFormatedAddress ()
-		{
-			return AddressRoad + ", " + AddressPostalCode + " " + AddressCity;
-		}
 	}
 }
 
