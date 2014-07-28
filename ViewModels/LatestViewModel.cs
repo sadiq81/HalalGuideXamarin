@@ -39,8 +39,8 @@ namespace HalalGuide.ViewModels
 				Longtitude = "12.5106906",
 				Telephone = "00000000",
 				HomePage = "www.currytakeaway.dk",
-				LocationType = LocationType.DINING,
-				Categories = new List<DiningCategory> (){ DiningCategory.PIZZA },
+				LocationType = LocationType.Dining,
+				Categories = new List<DiningCategory> (){ DiningCategory.Pizza },
 				Halal = false,
 				Alcohol = true,
 				Pork = true
@@ -59,8 +59,8 @@ namespace HalalGuide.ViewModels
 				Longtitude = "12.5428984",
 				Telephone = "00000000",
 				HomePage = "www.currytakeaway.dk",
-				LocationType = LocationType.DINING,
-				Categories = new List<DiningCategory> (){ DiningCategory.PAKISTANI, DiningCategory.INDIAN },
+				LocationType = LocationType.Dining,
+				Categories = new List<DiningCategory> (){ DiningCategory.Pakistani, DiningCategory.Indian },
 				Halal = true,
 				Alcohol = false,
 				Pork = false
@@ -78,8 +78,8 @@ namespace HalalGuide.ViewModels
 				Longtitude = "12.5352193",
 				Telephone = "00000000",
 				HomePage = "",
-				LocationType = LocationType.DINING,
-				Categories = new List<DiningCategory> (){ DiningCategory.CAFE },
+				LocationType = LocationType.Dining,
+				Categories = new List<DiningCategory> (){ DiningCategory.Cafe },
 				Halal = false,
 				Alcohol = true,
 				Pork = true
@@ -98,8 +98,8 @@ namespace HalalGuide.ViewModels
 				Longtitude = "12.549223",
 				Telephone = "00000000",
 				HomePage = "http://www.disr.info/",
-				LocationType = LocationType.MOSQUE,
-				Language = Language.DANISH
+				LocationType = LocationType.Mosque,
+				Language = Language.Danish
 			};
 
 			await DAO.SaveOrReplace (l3);
@@ -114,8 +114,8 @@ namespace HalalGuide.ViewModels
 				Longtitude = "12.5254281",
 				Telephone = "00000000",
 				HomePage = "http://www.wakf.com/",
-				LocationType = LocationType.MOSQUE,
-				Language = Language.ARABIC
+				LocationType = LocationType.Mosque,
+				Language = Language.Arabic
 			};
 
 			await DAO.SaveOrReplace (l4);
@@ -129,7 +129,7 @@ namespace HalalGuide.ViewModels
 				Latitude = "55.702917",
 				Longtitude = "12.532926",
 				Telephone = "00000000",
-				LocationType = LocationType.SHOP,
+				LocationType = LocationType.Shop,
 			};
 
 			await DAO.SaveOrReplace (l5);
@@ -143,7 +143,7 @@ namespace HalalGuide.ViewModels
 				Latitude = "55.701255",
 				Longtitude = "12.535705",
 				Telephone = "00000000",
-				LocationType = LocationType.SHOP,
+				LocationType = LocationType.Shop,
 			};
 
 			await DAO.SaveOrReplace (l6);

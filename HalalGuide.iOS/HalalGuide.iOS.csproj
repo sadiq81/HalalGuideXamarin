@@ -96,28 +96,40 @@
     <Reference Include="Xamarin.Mobile">
       <HintPath>..\Components\xamarin.mobile-0.7.1\lib\ios\Xamarin.Mobile.dll</HintPath>
     </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\packages\Newtonsoft.Json.6.0.3\lib\portable-net40+sl4+wp7+win8\Newtonsoft.Json.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <BundleResource Include="Resources\Default-568h%402x.png" />
-    <BundleResource Include="Resources\indstillinger.png" />
-    <BundleResource Include="Resources\alcohol.png" />
-    <BundleResource Include="Resources\halal.png" />
-    <BundleResource Include="Resources\pig.png" />
-    <BundleResource Include="Resources\no_pig.png" />
-    <BundleResource Include="Resources\no_alcohol.png" />
-    <BundleResource Include="Resources\MOSQUE.png" />
-    <BundleResource Include="Resources\SHOP.png" />
-    <BundleResource Include="Resources\DINING.png" />
-    <BundleResource Include="Resources\no_halal.png" />
-    <BundleResource Include="Resources\ENUMBER.png" />
-    <BundleResource Include="Resources\DANISH.png" />
-    <BundleResource Include="Resources\ARABIC.png" />
-    <BundleResource Include="Resources\URDU.png" />
-    <BundleResource Include="Resources\ENGLISH.png" />
+    <BundleResource Include="Resources\toolbarAdd.png" />
+    <BundleResource Include="Resources\toolbarAdd%402x.png" />
+    <BundleResource Include="Resources\accessorySettings.png" />
+    <BundleResource Include="Resources\accessorySettings%402x.png" />
+    <BundleResource Include="Resources\accessorySettingsSelected.png" />
+    <BundleResource Include="Resources\accessorySettingsSelected%402x.png" />
+    <BundleResource Include="Resources\flagArabic.png" />
+    <BundleResource Include="Resources\flagDanish.png" />
+    <BundleResource Include="Resources\flagEnglish.png" />
+    <BundleResource Include="Resources\flagUrdu.png" />
+    <BundleResource Include="Resources\diningAttributePigFalse.png" />
+    <BundleResource Include="Resources\diningAttributeAlcoholFalse.png" />
+    <BundleResource Include="Resources\diningAttributeHalalFalse.png" />
+    <BundleResource Include="Resources\diningAttributeHalalTrue.png" />
+    <BundleResource Include="Resources\diningAttributePigTrue.png" />
+    <BundleResource Include="Resources\diningAttributeAlcoholTrue.png" />
+    <BundleResource Include="Resources\landingPageShop.png" />
+    <BundleResource Include="Resources\landingPageDining.png" />
+    <BundleResource Include="Resources\landingPageENumber.png" />
+    <BundleResource Include="Resources\landingPageMosque.png" />
+    <BundleResource Include="Resources\landingPageIndstillinger.png" />
+    <BundleResource Include="Resources\toolbarFilter.png" />
+    <BundleResource Include="Resources\toolbarFilter%402x.png" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Info.plist" />
     <None Include="Entitlements.plist" />
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Main.cs" />
@@ -138,6 +150,18 @@
     <Compile Include="FilterDiningPageController.designer.cs">
       <DependentUpon>FilterDiningPageController.cs</DependentUpon>
     </Compile>
+    <Compile Include="Tables\Cells\MosqueCell.cs" />
+    <Compile Include="Tables\Cells\MosqueCell.designer.cs">
+      <DependentUpon>MosqueCell.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Tables\Cells\ShopCell.cs" />
+    <Compile Include="Tables\Cells\ShopCell.designer.cs">
+      <DependentUpon>ShopCell.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Tables\Cells\DiningCell.cs" />
+    <Compile Include="Tables\Cells\DiningCell.designer.cs">
+      <DependentUpon>DiningCell.cs</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="MainStoryboard.storyboard" />
@@ -157,6 +181,8 @@
   <ItemGroup>
     <Folder Include="Services\" />
     <Folder Include="Seque\" />
+    <Folder Include="Tables\" />
+    <Folder Include="Tables\Cells\" />
   </ItemGroup>
   <ItemGroup>
     <XamarinComponentReference Include="xamarin.mobile">

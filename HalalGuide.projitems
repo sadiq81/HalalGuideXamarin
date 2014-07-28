@@ -30,5 +30,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Domain\Enum\DiningCategory.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Domain\Enum\Language.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Domain\Enum\LocationType.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Util\Constants.cs" />
   </ItemGroup>
 </Project>

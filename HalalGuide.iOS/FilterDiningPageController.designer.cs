@@ -16,21 +16,40 @@ namespace HalalGuide.iOS
 		MonoTouch.UIKit.UITableView CategoryTableView { get; set; }
 
 		[Outlet]
+		MonoTouch.UIKit.UIButton ChooseButton { get; set; }
+
+		[Outlet]
+		MonoTouch.UIKit.UISlider Slider { get; set; }
+
+		[Outlet]
 		MonoTouch.UIKit.UILabel SliderValueLabel { get; set; }
+
+		[Action ("ChooseCategory:")]
+		partial void ChooseCategory (MonoTouch.UIKit.UIButton sender);
 
 		[Action ("SliderValueChanged:")]
 		partial void SliderValueChanged (MonoTouch.UIKit.UISlider sender);
 		
 		void ReleaseDesignerOutlets ()
 		{
+			if (CategoryTableView != null) {
+				CategoryTableView.Dispose ();
+				CategoryTableView = null;
+			}
+
+			if (ChooseButton != null) {
+				ChooseButton.Dispose ();
+				ChooseButton = null;
+			}
+
 			if (SliderValueLabel != null) {
 				SliderValueLabel.Dispose ();
 				SliderValueLabel = null;
 			}
 
-			if (CategoryTableView != null) {
-				CategoryTableView.Dispose ();
-				CategoryTableView = null;
+			if (Slider != null) {
+				Slider.Dispose ();
+				Slider = null;
 			}
 		}
 	}

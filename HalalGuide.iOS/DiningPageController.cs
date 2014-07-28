@@ -7,14 +7,15 @@ using MonoTouch.UIKit;
 using System.Drawing;
 using HalalGuide.ViewModels;
 using HalalGuide.Domain;
+using HalalGuide.Util;
+using HalalGuide.Domain.Enum;
 using SimpleDBPersistence.Service;
-using Xamarin.Geolocation;
 
 namespace HalalGuide.iOS
 {
 	public partial class DiningPageController : UIViewController
 	{
-		DiningTableSource TableSource;
+		public DiningTableSource TableSource;
 
 		public DiningPageController (IntPtr handle) : base (handle)
 		{
@@ -26,21 +27,24 @@ namespace HalalGuide.iOS
 			base.ViewDidLoad ();
 
 			TableView.Source = TableSource = new DiningTableSource (TableView);
+			TableView.TableFooterView = new UIView ();
 
+		}
 
-
+		public override void ViewWillAppear (bool animated)
+		{
+			base.ViewWillAppear (animated);
+			TableSource.ViewModel.Update ();
 		}
 
 		public class DiningTableSource : UITableViewSource
 		{
 			private static string cellIdentifier = "DiningTableCell";
 
-			public DiningViewModel ViewModel = new DiningViewModel ();
+			public DiningViewModel ViewModel = ServiceContainer.Resolve<DiningViewModel> ();
 
 			private UITableViewController TableViewController = new UITableViewController ();
 			private UIRefreshControl RefreshControl = new UIRefreshControl ();
-
-			Geolocator Locator = ServiceContainer.Resolve<Geolocator> ();
 
 			UISearchBar SearchBar;
 
@@ -63,7 +67,6 @@ namespace HalalGuide.iOS
 				RefreshControl.ValueChanged += async (sender, e) => {
 					RefreshControl.BeginRefreshing ();
 					await ViewModel.Update ();
-					dining.ReloadData ();
 					RefreshControl.EndRefreshing ();
 
 					UIView.Animate (
@@ -72,32 +75,22 @@ namespace HalalGuide.iOS
 							TableViewController.TableView.ContentInset = new UIEdgeInsets (0, 0, 0, 0);
 						}
 					);
-
 				};
-
-
 
 				SearchBar = new UISearchBar (new RectangleF (0, -44, dining.Frame.Width, 44)) {
 					BackgroundColor = UIColor.Clear
 				};
-
 				TableViewController.TableView.AddSubview (SearchBar);
 
-				ViewModel.LocationChangedEvent += (object sender, EventArgs e) => {
-					ReloadData ();
+				ViewModel.IsBusyChanged += (object sender, EventArgs e) => {
+					if (ViewModel.IsBusy == false) {
+						ReloadData ();
+					}
+						
 				};
-
-				Initialize ();
-
 			}
 
-			private async void   Initialize ()
-			{
-				await ViewModel.Update ();
-				ReloadData ();
-			}
-
-			private void ReloadData ()
+			public void ReloadData ()
 			{
 				TableViewController.TableView.ReloadSections (new NSIndexSet (0), UITableViewRowAnimation.Top);
 			}
@@ -125,21 +118,18 @@ namespace HalalGuide.iOS
 				address2.Text = l.AddressPostalCode + " " + l.AddressCity;
 
 				UIImageView porkImage = (UIImageView)cell.ViewWithTag (PORK_IMAGE_TAG);
-				porkImage.Image = UIImage.FromBundle (l.Pork ? "pig" : "no_pig");
+				porkImage.Image = UIImage.FromBundle (Constants.DiningAttributePig + l.Pork);
 				UILabel porkLabel = (UILabel)cell.ViewWithTag (PORK_TEXT_TAG);
-				porkLabel.Text = l.Pork ? "ja" : "nej";
 				porkLabel.TextColor = l.Pork ? UIColor.Red : UIColor.Green;
 
 				UIImageView alcoholImage = (UIImageView)cell.ViewWithTag (ALCOHOL_IMAGE_TAG);
-				alcoholImage.Image = UIImage.FromBundle (l.Alcohol ? "alcohol" : "no_alcohol");
 				UILabel alcoholLabel = (UILabel)cell.ViewWithTag (ALCOHOL_TEXT_TAG);
-				alcoholLabel.Text = l.Alcohol ? "ja" : "nej";
+				alcoholImage.Image = UIImage.FromBundle (Constants.DiningAttributeAlcohol + l.Alcohol);
 				alcoholLabel.TextColor = l.Pork ? UIColor.Red : UIColor.Green;
 
 				UIImageView halalImage = (UIImageView)cell.ViewWithTag (HALAL_IMAGE_TAG);
-				halalImage.Image = UIImage.FromBundle (l.Halal ? "halal" : "no_halal");
+				halalImage.Image = UIImage.FromBundle (Constants.DiningAttributeHalal + l.Halal);
 				UILabel halalLabel = (UILabel)cell.ViewWithTag (HALAL_TEXT_TAG);
-				halalLabel.Text = "halal";
 				halalLabel.TextColor = l.Halal ? UIColor.Green : UIColor.Red;
 
 				return cell;

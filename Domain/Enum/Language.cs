@@ -4,10 +4,10 @@ namespace HalalGuide.Domain.Enum
 {
 	public enum Language
 	{
-		DANISH,
-		ARABIC,
-		URDU,
-		ENGLISH
+		Danish,
+		Arabic,
+		Urdu,
+		English
 
 	}
 }

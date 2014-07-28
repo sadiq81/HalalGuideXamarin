@@ -4,24 +4,32 @@ using System;
 
 using MonoTouch.Foundation;
 using MonoTouch.UIKit;
-using HalalGuide.Domain.Enum;
-using System.Drawing;
-using System.Globalization;
 using System.Collections.Generic;
+using HalalGuide.Domain.Enum;
+using HalalGuide.Util;
+using MonoTouch.CoreImage;
+using System.Drawing;
+using SimpleDBPersistence.SimpleDB.Model.Parameters;
+using HalalGuide.ViewModels;
+using SimpleDBPersistence.Service;
 
 namespace HalalGuide.iOS
 {
 	public partial class FilterDiningPageController : UIViewController
 	{
+		private bool isExpanded { get; set; }
+
+		private DiningViewModel ViewModel = ServiceContainer.Resolve<DiningViewModel> ();
+
 		public FilterDiningPageController (IntPtr handle) : base (handle)
 		{
-
 
 		}
 
 		partial void SliderValueChanged (MonoTouch.UIKit.UISlider sender)
 		{
 			sender.Value = (float)Math.Round (sender.Value, MidpointRounding.AwayFromZero);
+			ViewModel.DistanceFilter = (int)sender.Value;
 			SliderValueLabel.Text = sender.Value + " km";
 		}
 
@@ -39,16 +47,37 @@ namespace HalalGuide.iOS
 
 			CategoryTableView.TableFooterView = new UIView ();
 
+			Slider.Value = (float)ViewModel.DistanceFilter;
+			SliderValueLabel.Text = ViewModel.DistanceFilter.ToString ();
+
 		}
 
+		partial void ChooseCategory (UIButton sender)
+		{
+			sender.SetTitle (isExpanded ? "Vælg" : "Luk", UIControlState.Normal);
 
+			((CategoriesTableSource)CategoryTableView.Source).ExpandClosePressed ();
+
+			UIView.Animate (
+				duration : 0.2,
+				animation: () => {
+					CategoryTableView.Frame = new RectangleF (CategoryTableView.Frame.X, CategoryTableView.Frame.Y, 320, isExpanded ? 0 : 198);
+				}
+			);
+			isExpanded = !isExpanded;
+		}
 	}
 
 	public class CategoriesTableSource : UITableViewSource
 	{
 		private static string cellIdentifier = "CategoryTableCell";
+
+		List<DiningCategory> CategoriesShown = new List<DiningCategory> ();
+		List<DiningCategory> CategoriesHidden = new List<DiningCategory> ();
+
 		private bool isExpanded;
-		List<DiningCategory> Categories = new List<DiningCategory> ();
+
+		private DiningViewModel ViewModel = ServiceContainer.Resolve<DiningViewModel> ();
 
 		private UITableViewController TableViewController = new UITableViewController ();
 
@@ -57,63 +86,73 @@ namespace HalalGuide.iOS
 			TableViewController.TableView = categories;
 		}
 
+		public void ExpandClosePressed ()
+		{
+			if (isExpanded) {
+
+				int count = CategoriesShown.Count;
+
+				for (int i = 0; i < count; i++) {
+					TableViewController.TableView.BeginUpdates ();
+					// insert the 'ADD NEW' row at the end of table display
+					TableViewController.TableView.DeleteRows (new NSIndexPath[] { NSIndexPath.FromRowSection (TableViewController.TableView.NumberOfRowsInSection (0) - 1, 0) }, UITableViewRowAnimation.Fade);
+					// create a new item and add it to our underlying data (it is not intended to be permanent)
+
+					DiningCategory cat = CategoriesShown [TableViewController.TableView.NumberOfRowsInSection (0) - 1];
+					CategoriesHidden.Add (cat);
+					CategoriesShown.Remove (cat);
+					TableViewController.TableView.EndUpdates (); // applies the changes
+				}
+
+			} else {
+
+				foreach (DiningCategory category in DiningCategory.Categories) {
+					TableViewController.TableView.BeginUpdates ();
+					// insert the 'ADD NEW' row at the end of table display
+					TableViewController.TableView.InsertRows (new NSIndexPath[] { NSIndexPath.FromRowSection (TableViewController.TableView.NumberOfRowsInSection (0), 0) }, UITableViewRowAnimation.Fade);
+					// create a new item and add it to our underlying data (it is not intended to be permanent)
+					CategoriesHidden.Remove (category);
+					CategoriesShown.Add (category);
+					TableViewController.TableView.EndUpdates (); // applies the changes
+				}
+			}
+			isExpanded = !isExpanded;
+		}
+
 		public override int RowsInSection (UITableView tableview, int section)
 		{
-			return Categories.Count + 1;
+			return CategoriesShown.Count;
 		}
 
 		public override UITableViewCell GetCell (UITableView tableView, NSIndexPath indexPath)
 		{
+
 			UITableViewCell cell = tableView.DequeueReusableCell (cellIdentifier);
 
-			// if there are no cells to reuse, create a new one
-			if (cell == null || indexPath.Row == 0) {
+			if (cell == null) {
 				cell = new UITableViewCell (UITableViewCellStyle.Default, cellIdentifier);
+				cell.SelectionStyle = UITableViewCellSelectionStyle.None;
 			}
 
-			if (indexPath.Row == 0) {
-				cell.TextLabel.Text = "Kategori";
-			} else {
-				cell.TextLabel.Text = Enum.GetValues (typeof(DiningCategory)).GetValue (indexPath.Row - 1).ToString ();
-			}
+			cell.TextLabel.Text = "\t" + CategoriesShown [indexPath.Row].Title;
 
+			bool selected = ViewModel.CategoryFilter.Contains (CategoriesShown [indexPath.Row]);
+			cell.Accessory = selected ? UITableViewCellAccessory.Checkmark : UITableViewCellAccessory.None;
 			return cell;
 		}
 
 		public override void RowSelected (UITableView tableView, NSIndexPath indexPath)
 		{
+			var cell = tableView.CellAt (indexPath);
+			DiningCategory cat = CategoriesShown [indexPath.Row];
 
-			if (indexPath.Row == 0) {
-				tableView.DeselectRow (indexPath, true); // normal iOS behaviour is to remove the blue highlight
-
-				if (isExpanded) {
-
-					int count = Categories.Count - 1;
-
-					for (int i = 0; i <= count; i++) {
-						tableView.BeginUpdates ();
-						// insert the 'ADD NEW' row at the end of table display
-						tableView.DeleteRows (new NSIndexPath[] { NSIndexPath.FromRowSection (tableView.NumberOfRowsInSection (0) - 1, 0) }, UITableViewRowAnimation.Fade);
-						// create a new item and add it to our underlying data (it is not intended to be permanent)
-						Categories.RemoveAt (count - i);
-						tableView.EndUpdates (); // applies the changes
-					}
-
-				} else {
-
-					foreach (DiningCategory category in Enum.GetValues (typeof(DiningCategory))) {
-						tableView.BeginUpdates ();
-						// insert the 'ADD NEW' row at the end of table display
-						tableView.InsertRows (new NSIndexPath[] { NSIndexPath.FromRowSection (tableView.NumberOfRowsInSection (0), 0) }, UITableViewRowAnimation.Fade);
-						// create a new item and add it to our underlying data (it is not intended to be permanent)
-						Categories.Add (category);
-						tableView.EndUpdates (); // applies the changes
-					}
-				}
-
-				isExpanded = !isExpanded;
-
-			} 
+			if (ViewModel.CategoryFilter.Contains (cat)) {
+				ViewModel.CategoryFilter.Remove (CategoriesShown [indexPath.Row]);
+				cell.Accessory = UITableViewCellAccessory.None;
+			} else {
+				ViewModel.CategoryFilter.Add (CategoriesShown [indexPath.Row]);
+				cell.Accessory = UITableViewCellAccessory.Checkmark;
+			}
 		}
 	}
 }

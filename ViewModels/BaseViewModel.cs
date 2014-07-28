@@ -12,6 +12,8 @@ namespace HalalGuide.ViewModels
 
 		public Geolocator Locator = ServiceContainer.Resolve<Geolocator> ();
 
+		protected static Position Position { get; set; }
+
 		public BaseViewModel ()
 		{
 			if (Locator.IsGeolocationAvailable && !Locator.IsListening) {
@@ -19,6 +21,7 @@ namespace HalalGuide.ViewModels
 			}
 
 			Locator.PositionChanged += (object sender, PositionEventArgs e) => {
+				Position = e.Position;
 				LocationChanged (this, e);
 			};
 		}
@@ -27,7 +30,6 @@ namespace HalalGuide.ViewModels
 		{
 			LocationChangedEvent (sender, e);
 		}
-
 
 
 		private bool isBusy = false;

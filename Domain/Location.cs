@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using SimpleDBPersistence.SimpleDB.Model;
 using System.Text;
 using HalalGuide.Domain.Enum;
+using System.Linq;
 
 namespace HalalGuide.Domain
 {

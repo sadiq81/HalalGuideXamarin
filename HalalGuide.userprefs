@@ -1,29 +1,21 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.IPhone.IPhoneSimulatorTarget.IPhoneRetina.7.1" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Domain/Enum/Language.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="ViewModels/DiningViewModel.cs">
     <Files>
-      <File FileName="ViewModels/DiningViewModel.cs" Line="51" Column="1" />
-      <File FileName="ViewModels/BaseViewModel.cs" Line="1" Column="1" />
-      <File FileName="Util/DistanceUtil.cs" Line="1" Column="1" />
-      <File FileName="../../../Developer/MonoTouch/Source/mono/mcs/class/corlib/System/Double.cs" Line="1" Column="1" />
-      <File FileName="HalalGuide.iOS/Main.cs" Line="1" Column="1" />
-      <File FileName="DAO/LocationDAO.cs" Line="1" Column="1" />
-      <File FileName="ViewModels/LatestViewModel.cs" Line="1" Column="1" />
-      <File FileName="HalalGuide.iOS/DiningPageController.cs" Line="47" Column="1" />
-      <File FileName="Domain/Location.cs" Line="1" Column="1" />
-      <File FileName="HalalGuide.iOS/LandingPageController.cs" Line="161" Column="15" />
-      <File FileName="HalalGuide.iOS/Seque/DismissSeque.designer.cs" Line="1" Column="1" />
-      <File FileName="HalalGuide.iOS/Seque/DismissSeque.cs" Line="19" Column="83" />
-      <File FileName="HalalGuide.iOS/FilterDiningPageController.cs" Line="18" Column="19" />
-      <File FileName="HalalGuide.iOS/FilterDiningPageController.designer.cs" Line="1" Column="1" />
-      <File FileName="HalalGuide.iOS/DiningPageController.designer.cs" Line="1" Column="1" />
-      <File FileName="Domain/Enum/DiningCategory.cs" Line="2" Column="1" />
-      <File FileName="Domain/Enum/Language.cs" Line="3" Column="26" />
+      <File FileName="../AWSSimpleDBPersistence/SimpleDBPersistence/SimpleDB/Model/Parameters/SelectQuery.cs" Line="45" Column="29" />
+      <File FileName="ViewModels/DiningViewModel.cs" Line="63" Column="1" />
+      <File FileName="Domain/Location.cs" Line="60" Column="3" />
+      <File FileName="HalalGuide.iOS/LandingPageController.cs" Line="7" Column="1" />
+      <File FileName="HalalGuide.iOS/FilterDiningPageController.cs" Line="33" Column="49" />
+      <File FileName="HalalGuide.iOS/DiningPageController.cs" Line="79" Column="1" />
+      <File FileName="../../../Developer/MonoTouch/Source/mono/mcs/class/corlib/System.Runtime.CompilerServices/AsyncVoidMethodBuilder.cs" Line="79" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore>
-      <Breakpoint file="/Developer/MonoTouch/Source/mono/mcs/class/corlib/System/Enum.cs" line="413" column="1" />
+      <Breakpoint file="/Users/Privat/AWSSimpleDBPersistence/SimpleDBPersistence/DAO/GenericDAO.cs" line="342" column="66" />
+      <Breakpoint file="/Users/Privat/AWSSimpleDBPersistence/SimpleDBPersistence/SimpleDB/Model/Parameters/SelectQuery.cs" line="55" column="1" />
+      <Breakpoint file="/Users/Privat/HalalGuide/ViewModels/DiningViewModel.cs" line="63" column="1" />
     </BreakpointStore>
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />
