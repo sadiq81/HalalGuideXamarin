@@ -7,6 +7,7 @@ using MonoTouch.UIKit;
 using HalalGuide.Domain;
 using HalalGuide.Domain.Enum;
 using HalalGuide.ViewModels;
+using SimpleDBPersistence.Service;
 
 namespace HalalGuide.iOS
 {
@@ -27,9 +28,7 @@ namespace HalalGuide.iOS
 
 	public class LatestTableSource : UITableViewSource
 	{
-
-
-		public LatestViewModel ViewModel = new LatestViewModel ();
+		public LatestViewModel ViewModel = ServiceContainer.Resolve<LatestViewModel> ();
 
 		private UITableViewController ViewController = new UITableViewController ();
 		private UIRefreshControl RefreshControl = new UIRefreshControl ();

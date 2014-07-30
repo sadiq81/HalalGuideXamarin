@@ -99,6 +99,9 @@
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\packages\Newtonsoft.Json.6.0.3\lib\portable-net40+sl4+wp7+win8\Newtonsoft.Json.dll</HintPath>
     </Reference>
+    <Reference Include="RestSharp.MonoTouch">
+      <HintPath>..\Components\restsharp-104.4.0\lib\ios\RestSharp.MonoTouch.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <BundleResource Include="Resources\Default-568h%402x.png" />
@@ -162,6 +165,11 @@
     <Compile Include="Tables\Cells\DiningCell.designer.cs">
       <DependentUpon>DiningCell.cs</DependentUpon>
     </Compile>
+    <Compile Include="AddNewDiningController.cs" />
+    <Compile Include="AddNewDiningController.designer.cs">
+      <DependentUpon>AddNewDiningController.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controller\KeyboardSupportedUIViewController.cs" />
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="MainStoryboard.storyboard" />
@@ -183,10 +191,15 @@
     <Folder Include="Seque\" />
     <Folder Include="Tables\" />
     <Folder Include="Tables\Cells\" />
+    <Folder Include="Controller\" />
   </ItemGroup>
   <ItemGroup>
     <XamarinComponentReference Include="xamarin.mobile">
       <Version>0.7.1</Version>
+      <Visible>False</Visible>
+    </XamarinComponentReference>
+    <XamarinComponentReference Include="restsharp">
+      <Version>104.4.0</Version>
       <Visible>False</Visible>
     </XamarinComponentReference>
   </ItemGroup>

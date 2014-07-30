@@ -38,8 +38,6 @@ namespace HalalGuide.iOS
 			SliderValueLabel.Text = sender.Value + " km";
 		}
 
-		UIColor color = UIColor.Red;
-
 		partial void PorkValueChanged (UISwitch sender)
 		{
 			ViewModel.PorkFilter = sender.On;

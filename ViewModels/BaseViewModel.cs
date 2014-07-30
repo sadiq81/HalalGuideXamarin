@@ -1,6 +1,7 @@
 ﻿using System;
 using Xamarin.Geolocation;
 using SimpleDBPersistence.Service;
+using HalalGuide.Services;
 
 namespace HalalGuide.ViewModels
 {
@@ -10,7 +11,9 @@ namespace HalalGuide.ViewModels
 
 		public event EventHandler LocationChangedEvent = delegate { };
 
-		public Geolocator Locator = ServiceContainer.Resolve<Geolocator> ();
+		protected static Geolocator Locator = ServiceContainer.Resolve<Geolocator> ();
+
+		protected AddressService AddressService = ServiceContainer.Resolve<AddressService> ();
 
 		protected static Position Position { get; set; }
 

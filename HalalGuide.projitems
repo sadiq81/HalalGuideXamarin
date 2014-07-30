@@ -15,6 +15,7 @@
     <Folder Include="$(MSBuildThisFileDirectory)ViewModels\" />
     <Folder Include="$(MSBuildThisFileDirectory)Util\" />
     <Folder Include="$(MSBuildThisFileDirectory)Domain\Enum\" />
+    <Folder Include="$(MSBuildThisFileDirectory)Services\RestDomain\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)Services\SHA256Service.cs" />
@@ -31,5 +32,11 @@
     <Compile Include="$(MSBuildThisFileDirectory)Domain\Enum\Language.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Domain\Enum\LocationType.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Util\Constants.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\AddressService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\RestDomain\Postnummer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\AddDiningViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\RestDomain\Adgangsadresse.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\RestDomain\Vejnavn.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\RestDomain\WGS84Koordinat.cs" />
   </ItemGroup>
 </Project>
