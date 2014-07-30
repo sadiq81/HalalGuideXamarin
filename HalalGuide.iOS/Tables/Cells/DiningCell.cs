@@ -54,7 +54,7 @@ namespace HalalGuide.iOS
 			secondImage.Image = UIImage.FromBundle (Constants.DiningAttributeAlcohol + l.Alcohol);
 
 			UIImageView thirdImage = (UIImageView)ViewWithTag (HalalImageTag);
-			thirdImage.Image = UIImage.FromBundle (Constants.DiningAttributeHalal + l.Halal);
+			thirdImage.Image = UIImage.FromBundle (Constants.DiningAttributeHalal + l.NonHalal);
 
 			UILabel firstLabel = (UILabel)ViewWithTag (PigLabelTag);
 			firstLabel.TextColor = l.Pork ? UIColor.Red : UIColor.Green;
@@ -63,7 +63,7 @@ namespace HalalGuide.iOS
 			secondLabel.TextColor = l.Alcohol ? UIColor.Red : UIColor.Green;
 
 			UILabel thirdLabel = (UILabel)ViewWithTag (HalalLabelTag);
-			thirdLabel.TextColor = l.Halal ? UIColor.Green : UIColor.Red;
+			thirdLabel.TextColor = l.NonHalal ? UIColor.Red : UIColor.Green;
 
 		}
 	}

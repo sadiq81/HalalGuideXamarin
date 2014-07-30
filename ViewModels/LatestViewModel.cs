@@ -41,7 +41,7 @@ namespace HalalGuide.ViewModels
 				HomePage = "www.currytakeaway.dk",
 				LocationType = LocationType.Dining,
 				Categories = new List<DiningCategory> (){ DiningCategory.Pizza },
-				Halal = false,
+				NonHalal = true,
 				Alcohol = true,
 				Pork = true
 				
@@ -61,7 +61,7 @@ namespace HalalGuide.ViewModels
 				HomePage = "www.currytakeaway.dk",
 				LocationType = LocationType.Dining,
 				Categories = new List<DiningCategory> (){ DiningCategory.Pakistani, DiningCategory.Indian },
-				Halal = true,
+				NonHalal = false,
 				Alcohol = false,
 				Pork = false
 			};
@@ -80,7 +80,7 @@ namespace HalalGuide.ViewModels
 				HomePage = "",
 				LocationType = LocationType.Dining,
 				Categories = new List<DiningCategory> (){ DiningCategory.Cafe },
-				Halal = false,
+				NonHalal = true,
 				Alcohol = true,
 				Pork = true
 

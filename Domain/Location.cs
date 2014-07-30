@@ -42,8 +42,8 @@ namespace HalalGuide.Domain
 		public List<DiningCategory> Categories  { get; set; }
 
 		//Only for Dining
-		[SimpleDBFieldAttribute ("Halal")]
-		public bool Halal { get; set; }
+		[SimpleDBFieldAttribute ("NonHalal")]
+		public bool NonHalal { get; set; }
 
 		//Only for Dining
 		[SimpleDBFieldAttribute ("Alcohol")]
@@ -63,6 +63,11 @@ namespace HalalGuide.Domain
 		{
 		}
 
+		public override string ToString ()
+		{
+			return string.Format ("[Location: Name={0}, Latitude={1}, Longtitude={2}, LocationType={3}, Language={4}, Distance={5}]", Name, Latitude, Longtitude, LocationType, Language, Distance);
+		}
+		
 	}
 }
 

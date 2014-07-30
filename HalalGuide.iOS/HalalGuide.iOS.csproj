@@ -114,8 +114,6 @@
     <BundleResource Include="Resources\flagUrdu.png" />
     <BundleResource Include="Resources\diningAttributePigFalse.png" />
     <BundleResource Include="Resources\diningAttributeAlcoholFalse.png" />
-    <BundleResource Include="Resources\diningAttributeHalalFalse.png" />
-    <BundleResource Include="Resources\diningAttributeHalalTrue.png" />
     <BundleResource Include="Resources\diningAttributePigTrue.png" />
     <BundleResource Include="Resources\diningAttributeAlcoholTrue.png" />
     <BundleResource Include="Resources\landingPageShop.png" />
@@ -125,6 +123,8 @@
     <BundleResource Include="Resources\landingPageIndstillinger.png" />
     <BundleResource Include="Resources\toolbarFilter.png" />
     <BundleResource Include="Resources\toolbarFilter%402x.png" />
+    <BundleResource Include="Resources\diningAttributeNonHalalFalse.png" />
+    <BundleResource Include="Resources\diningAttributeNonHalalTrue.png" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Info.plist" />

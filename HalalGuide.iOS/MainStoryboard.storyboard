@@ -265,7 +265,8 @@
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstAttribute="trailing" secondItem="kyh-lx-pOc" secondAttribute="trailing" id="A7X-Qb-uhd"/>
+                            <constraint firstItem="7xe-SP-Blb" firstAttribute="bottom" secondItem="kyh-lx-pOc" secondAttribute="bottom" priority="999" id="CUW-cW-Gd7"/>
+                            <constraint firstItem="kyh-lx-pOc" firstAttribute="top" secondItem="5jN-NC-daa" secondAttribute="bottom" constant="240" id="pGe-mY-QSw"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" title="Halal Guide" id="bUD-Kh-hMd">
@@ -296,7 +297,7 @@
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
                                 <items>
                                     <navigationItem title="Filtrer" id="2G2-ZP-Qh1">
-                                        <barButtonItem key="leftBarButtonItem" systemItem="done" id="nxN-Iy-Hhh">
+                                        <barButtonItem key="leftBarButtonItem" title="Færdig" id="nxN-Iy-Hhh">
                                             <connections>
                                                 <segue destination="csa-vg-Cr6" kind="custom" identifier="DismissDiningFilter" customClass="DismissSeque" id="MUn-OO-k5U"/>
                                             </connections>
@@ -329,20 +330,20 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" allowsMultipleSelection="YES" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" translatesAutoresizingMaskIntoConstraints="NO" id="GNn-MC-Q4V">
-                                <rect key="frame" x="0.0" y="193" width="320" height="0.0"/>
+                                <rect key="frame" x="0.0" y="334" width="320" height="88"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <sections/>
                             </tableView>
                             <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Kategorier:" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="UoK-ZB-gvK">
-                                <rect key="frame" x="20" y="159" width="85" height="21"/>
+                                <rect key="frame" x="20" y="300" width="85" height="21"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="LkL-Rh-7yD">
-                                <rect key="frame" x="254" y="155" width="35" height="30"/>
+                                <rect key="frame" x="254" y="296" width="35" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <state key="normal" title="Vælg">
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
@@ -351,12 +352,78 @@
                                     <action selector="ChooseCategory:" destination="NRR-Hm-tTK" eventType="touchUpInside" id="zZB-Ej-OBI"/>
                                 </connections>
                             </button>
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Antal" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Wyi-hc-uVh">
+                                <rect key="frame" x="113" y="300" width="40" height="21"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="coR-gl-2vc">
+                                <rect key="frame" x="251" y="159" width="51" height="31"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="tintColor" red="0.47171511970000002" green="0.82407014270000001" blue="0.25611400369999998" alpha="1" colorSpace="calibratedRGB"/>
+                                <color key="onTintColor" red="1" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                <connections>
+                                    <action selector="PorkValueChanged:" destination="NRR-Hm-tTK" eventType="valueChanged" id="nwH-Bp-gnn"/>
+                                </connections>
+                            </switch>
+                            <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Ksj-tF-y8H">
+                                <rect key="frame" x="251" y="198" width="51" height="31"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="tintColor" red="0.47171511970000002" green="0.82407014270000001" blue="0.25611400369999998" alpha="1" colorSpace="calibratedRGB"/>
+                                <color key="onTintColor" red="1" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                <connections>
+                                    <action selector="AlcoholValueChanged:" destination="NRR-Hm-tTK" eventType="valueChanged" id="wli-Fs-CHs"/>
+                                </connections>
+                            </switch>
+                            <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Ncc-Bb-rT4">
+                                <rect key="frame" x="251" y="237" width="51" height="31"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="tintColor" red="0.47171511970000002" green="0.82407014270000001" blue="0.25611400369999998" alpha="1" colorSpace="calibratedRGB"/>
+                                <color key="onTintColor" red="1" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                <connections>
+                                    <action selector="HalalValueChanged:" destination="NRR-Hm-tTK" eventType="valueChanged" id="aV7-z8-fp3"/>
+                                </connections>
+                            </switch>
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Vis med gris" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="51k-w7-OfG">
+                                <rect key="frame" x="20" y="164" width="95" height="21"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Vis med alkohol" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Roo-dQ-yLM">
+                                <rect key="frame" x="20" y="203" width="122" height="21"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Vis med ikke-halal kød" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="x6U-xq-veK">
+                                <rect key="frame" x="20" y="242" width="173" height="21"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="l9k-9D-oid">
+                                <rect key="frame" x="203" y="296" width="43" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="Nulstil">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="ResetCategory:" destination="NRR-Hm-tTK" eventType="touchUpInside" id="MZs-DE-OGZ"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                     </view>
                     <connections>
+                        <outlet property="AlcoholSwitch" destination="Ksj-tF-y8H" id="q39-HZ-05o"/>
                         <outlet property="CategoryTableView" destination="GNn-MC-Q4V" id="mu8-Aw-ZNf"/>
                         <outlet property="ChooseButton" destination="LkL-Rh-7yD" id="DWe-WF-Jm6"/>
+                        <outlet property="HalalSwitch" destination="Ncc-Bb-rT4" id="g4h-uw-VqG"/>
+                        <outlet property="NumberOfCategoriesLabel" destination="Wyi-hc-uVh" id="N7t-EW-uQ7"/>
+                        <outlet property="PorkSwitch" destination="coR-gl-2vc" id="8EG-Rm-09v"/>
                         <outlet property="Slider" destination="teS-CK-hQo" id="c4O-Bv-7ay"/>
                         <outlet property="SliderValueLabel" destination="2jP-Rf-YsY" id="k0I-78-LCw"/>
                     </connections>
@@ -574,6 +641,6 @@
         <simulatedScreenMetrics key="destination" type="retina4"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
-        <segue reference="MUn-OO-k5U"/>
+        <segue reference="uQl-EL-src"/>
     </inferredMetricsTieBreakers>
 </document>

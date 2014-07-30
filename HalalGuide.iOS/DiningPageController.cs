@@ -107,7 +107,7 @@ namespace HalalGuide.iOS
 				Location l = ViewModel.GetLocationAtRow (indexPath.Item);
 
 				UILabel km = (UILabel)cell.ViewWithTag (KM_TEXT_TAG);
-				km.Text = l.Distance.ToString ("N");
+				km.Text = l.Distance.Equals (0) ? "N/A" : l.Distance.ToString ("N");
 
 				UILabel name = (UILabel)cell.ViewWithTag (NAME_TEXT_TAG);
 				name.Text = l.Name;
@@ -128,9 +128,9 @@ namespace HalalGuide.iOS
 				alcoholLabel.TextColor = l.Pork ? UIColor.Red : UIColor.Green;
 
 				UIImageView halalImage = (UIImageView)cell.ViewWithTag (HALAL_IMAGE_TAG);
-				halalImage.Image = UIImage.FromBundle (Constants.DiningAttributeHalal + l.Halal);
+				halalImage.Image = UIImage.FromBundle (Constants.DiningAttributeHalal + l.NonHalal);
 				UILabel halalLabel = (UILabel)cell.ViewWithTag (HALAL_TEXT_TAG);
-				halalLabel.TextColor = l.Halal ? UIColor.Green : UIColor.Red;
+				halalLabel.TextColor = l.NonHalal ? UIColor.Red : UIColor.Green;
 
 				return cell;
 			}

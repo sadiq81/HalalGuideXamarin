@@ -23,10 +23,19 @@ namespace HalalGuide.ViewModels
 
 		public double DistanceFilter { get; set; }
 
+		public bool PorkFilter { get; set; }
+
+		public bool AlcoholFilter { get; set; }
+
+		public bool HalalFilter { get; set; }
+
 		public DiningViewModel () : base ()
 		{
 			DistanceFilter = 5;
 			CategoryFilter = new List<DiningCategory> ();
+			PorkFilter = true;
+			AlcoholFilter = true;
+			HalalFilter = true;
 		}
 
 		public int Rows ()
@@ -59,11 +68,19 @@ namespace HalalGuide.ViewModels
 
 				ok &= loc.Distance.CompareTo (0) == 0 || loc.Distance < DistanceFilter;
 
+
+				ok &= PorkFilter || PorkFilter == loc.Pork; 
+
+				ok &= AlcoholFilter || AlcoholFilter == loc.Alcohol; 
+
+				ok &= HalalFilter || HalalFilter == loc.NonHalal;
+
+
 				if (ok) {
 					temp.Add (loc);
 				}
 			}
-			temp.OrderBy (l => l.Distance);
+			temp = temp.OrderBy (l => l.Distance).ToList ();
 			Filtered = new List<Location> (temp);
 		}
 
