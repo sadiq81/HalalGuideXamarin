@@ -27,6 +27,9 @@ namespace HalalGuide.Util
 		{
 			return input * (Math.PI / 180);
 		}
+
+
+
 	}
 }
 

@@ -39,14 +39,6 @@ namespace HalalGuide.iOS
 
 		async partial void Save (NSObject sender)
 		{
-			var address = await ViewModel.GetAddressOfCoordinate ();
-
-			if (address != null) {
-				UIAlertView error = new UIAlertView ("Addresse", address.ToString (), null, "Ok");
-				error.Show ();
-			}
-
-
 			/*
 			if (String.IsNullOrEmpty (Name.Text)) {
 				ShowInputError ("Fejl", "Navn skal udfyldes");
@@ -58,13 +50,23 @@ namespace HalalGuide.iOS
 				return;
 			}
 
+			if (String.IsNullOrEmpty (RoadNumber.Text)) {
+				ShowInputError ("Fejl", "Vejnummer skal udfyldes");
+				return;
+			}
+
 			if (String.IsNullOrEmpty (PostalCode.Text)) {
 				ShowInputError ("Fejl", "Postnummer skal udfyldes");
 				return;
 			}
 
-			DismissViewController (true, null);
-			*/
+            DismissViewController (true, null);
+            */
+
+			ViewModel.AddressNearPosition ();
+
+
+
 		}
 
 		private void ShowInputError (string title, string text)

@@ -55,6 +55,9 @@ namespace HalalGuide.iOS
 		MonoTouch.UIKit.UITextField Road { get; set; }
 
 		[Outlet]
+		MonoTouch.UIKit.UITextField RoadNumber { get; set; }
+
+		[Outlet]
 		MonoTouch.UIKit.UITextField Telephone { get; set; }
 
 		[Action ("AlcoholValueChanged:")]
@@ -148,6 +151,11 @@ namespace HalalGuide.iOS
 			if (Road != null) {
 				Road.Dispose ();
 				Road = null;
+			}
+
+			if (RoadNumber != null) {
+				RoadNumber.Dispose ();
+				RoadNumber = null;
 			}
 
 			if (Telephone != null) {
