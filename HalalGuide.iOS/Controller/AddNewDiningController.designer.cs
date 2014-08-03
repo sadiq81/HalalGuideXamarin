@@ -52,10 +52,10 @@ namespace HalalGuide.iOS
 		MonoTouch.UIKit.UITextField PostalCode { get; set; }
 
 		[Outlet]
-		MonoTouch.UIKit.UITextField Road { get; set; }
+		HalalGuide.iOS.AutoCompleteUITextField Road { get; set; }
 
 		[Outlet]
-		MonoTouch.UIKit.UITextField RoadNumber { get; set; }
+		HalalGuide.iOS.AutoCompleteUITextField RoadNumber { get; set; }
 
 		[Outlet]
 		MonoTouch.UIKit.UITextField Telephone { get; set; }
@@ -80,7 +80,7 @@ namespace HalalGuide.iOS
 
 		[Action ("Save:")]
 		partial void Save (MonoTouch.Foundation.NSObject sender);
-		
+
 		void ReleaseDesignerOutlets ()
 		{
 			if (ActivityIndicator != null) {

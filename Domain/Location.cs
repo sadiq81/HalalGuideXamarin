@@ -57,6 +57,9 @@ namespace HalalGuide.Domain
 		[SimpleDBFieldAttribute ("Language")]
 		public Language Language { get; set; }
 
+		[SimpleDBFieldAttribute ("LocationStatus")]
+		public LocationStatus LocationStatus { get; set; }
+
 		public double Distance { get; set; }
 
 		public Location ()

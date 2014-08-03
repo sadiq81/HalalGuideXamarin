@@ -678,7 +678,7 @@
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits" autocapitalizationType="words"/>
                             </textField>
-                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Vejnavn" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="fgP-J1-HJz">
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Vejnavn" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="fgP-J1-HJz" customClass="AutoCompleteUITextField">
                                 <rect key="frame" x="112" y="117" width="132" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
@@ -789,7 +789,7 @@
                                 <rect key="frame" x="150" y="230" width="20" height="20"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             </activityIndicatorView>
-                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Nr" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="6Ez-s4-d4q">
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Nr" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="6Ez-s4-d4q" customClass="AutoCompleteUITextField">
                                 <rect key="frame" x="252" y="117" width="49" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
@@ -819,7 +819,7 @@
                         <outlet property="Pork" destination="7H5-EE-xXY" id="KrJ-lZ-XOp"/>
                         <outlet property="PorkImage" destination="oXF-vV-BxR" id="BTi-9D-xSb"/>
                         <outlet property="PostalCode" destination="eCk-qx-xb4" id="cjU-fU-gJw"/>
-                        <outlet property="Road" destination="fgP-J1-HJz" id="zH9-aQ-jZn"/>
+                        <outlet property="Road" destination="fgP-J1-HJz" id="ZEq-Qz-g4n"/>
                         <outlet property="RoadNumber" destination="6Ez-s4-d4q" id="Iz7-PA-b8O"/>
                         <outlet property="Telephone" destination="OeI-Dy-39p" id="UND-z1-TlB"/>
                     </connections>

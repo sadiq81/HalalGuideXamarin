@@ -3,16 +3,48 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using HalalGuide.Services.RestDomain;
 using System.Collections.Generic;
-using System.Net.Mail;
-using System.Threading;
-using Xamarin.Contacts;
+using Xamarin.Media;
+using SimpleDBPersistence.Service;
+using HalalGuide.Domain;
 
 namespace HalalGuide.ViewModels
 {
 	public class AddDiningViewModel : BaseViewModel
 	{
+		private readonly MediaPicker MediaPicker = ServiceContainer.Resolve<MediaPicker> ();
+
+		private Dictionary<string, Address> StreetNumbersMap { get; set; }
+
 		public AddDiningViewModel () : base ()
 		{
+			StreetNumbersMap = new Dictionary<string, Address> ();
+		}
+
+		public List<string> StreetNames ()
+		{
+			return new List<string> (StreetNumbersMap.Keys);
+		}
+
+		public List<string> StreetNumbers (string roadName)
+		{
+			Address address;
+			StreetNumbersMap.TryGetValue (roadName, out address);
+			if (address != null) {
+				return address.StreetNumbers;
+			} else {
+				return new List<string> ();
+			}
+		}
+
+		public string PostalCode (string roadName)
+		{
+			Address address;
+			StreetNumbersMap.TryGetValue (roadName, out address);
+			if (address != null) {
+				return address.PostalCode;
+			} else {
+				return null;
+			}
 		}
 
 		public async Task<string> GetCityNameFromPostalCode (string postalcode)
@@ -35,26 +67,64 @@ namespace HalalGuide.ViewModels
 			return await AddressService.DoesAddressExits (roadName, roadNumber, postalCode);
 		}
 
-		public async Task<Dictionary<string, List<string>>> AddressNearPosition ()
+		public async Task LoadAddressNearPosition ()
 		{
-			Dictionary<string, List<string>> streetNumber = new Dictionary<string, List<string>> ();
+			IsBusy = false;
+			Dictionary<string, Address> temp = new Dictionary<string, Address> ();
 
 			List<Adgangsadresse> adresses = await AddressService.AddressNearPosition (Position, 150);
 
 			foreach (Adgangsadresse address in adresses) {
 
-				string street = address.VejNavn.Navn;
-				List<string> numbers;
+				Address current = null;
+				string streetName = address.VejNavn.Navn;
+				temp.TryGetValue (streetName, out current);
 
-				streetNumber.TryGetValue (street, out numbers);
-				if (numbers != null) {
-					numbers.Add (address.Husnr);
+				if (current != null) {
+					current.StreetNumbers.Add (address.Husnr);
 				} else {
-					string number = address.Husnr;
-					streetNumber.Add (street, new List<string> (){ number });
+					current = new Address (streetName, address.Postnummer.Nr, address.Husnr);
+					temp.Add (streetName, current);
 				}
 			}
-			return adresses;
+
+			StreetNumbersMap = temp;
+			IsBusy = true;
+		}
+
+		public bool IsCameraAvailable ()
+		{
+			return MediaPicker.IsCameraAvailable;
+
+		}
+
+		public async Task<MediaFile> TakePicture (string path, string fileName)
+		{
+			MediaFile file = null;
+			await MediaPicker.TakePhotoAsync (new StoreCameraMediaOptions {
+				Name = fileName,
+				Directory = path
+			}).ContinueWith (t => {
+				if (t.IsCanceled || t.IsFaulted) {
+					return;
+				} else {
+					file = t.Result;
+				}
+			});
+			return file;
+		}
+
+		public async Task<MediaFile> GetPictureFromDevice ()
+		{
+			MediaFile file = null;
+			await MediaPicker.PickPhotoAsync ().ContinueWith (t => {
+				if (t.IsCanceled || t.IsFaulted) {
+					return;
+				} else {
+					file = t.Result;
+				}
+			});
+			return file;
 		}
 	}
 }

@@ -16,6 +16,8 @@ namespace HalalGuide.Util
 		public static readonly string landingPage = "landingPage";
 
 		public static readonly string DismissDiningFilterSeque = "DismissDiningFilter";
+
+		public static readonly string Facebook = "Facebook";
 	}
 }
 

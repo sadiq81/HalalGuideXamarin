@@ -48,9 +48,13 @@
     <ConsolePause>false</ConsolePause>
     <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
     <MtouchDebug>true</MtouchDebug>
-    <CodesignKey>iPhone Developer</CodesignKey>
+    <CodesignKey>iPhone Developer: Tommy Lynge Hinrichsen (C7LH75JYEC)</CodesignKey>
     <IpaPackageName>
     </IpaPackageName>
+    <CodesignProvision>6DCD7314-DD88-429B-BC9D-8A2852F85E8B</CodesignProvision>
+    <MtouchI18n>
+    </MtouchI18n>
+    <MtouchArch>ARMv7</MtouchArch>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhone' ">
     <DebugType>full</DebugType>
@@ -102,6 +106,15 @@
     <Reference Include="RestSharp.MonoTouch">
       <HintPath>..\Components\restsharp-104.4.0\lib\ios\RestSharp.MonoTouch.dll</HintPath>
     </Reference>
+    <Reference Include="GoogleMaps">
+      <HintPath>..\Components\googlemapsios-1.8.1\lib\ios\GoogleMaps.dll</HintPath>
+    </Reference>
+    <Reference Include="Facebook">
+      <HintPath>..\Components\facebook-sdk-6.2.1\lib\ios\Facebook.dll</HintPath>
+    </Reference>
+    <Reference Include="Xamarin.Auth.iOS">
+      <HintPath>..\Components\xamarin.auth-1.2.2\lib\ios\Xamarin.Auth.iOS.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <BundleResource Include="Resources\Default-568h%402x.png" />
@@ -128,6 +141,8 @@
     <BundleResource Include="Resources\toolbarFilter%402x.png" />
     <BundleResource Include="Resources\diningAttributeNonHalalFalse.png" />
     <BundleResource Include="Resources\diningAttributeNonHalalTrue.png" />
+    <BundleResource Include="Resources\autocompleteButton%402x.png" />
+    <BundleResource Include="Resources\autocompleteButton.png" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Info.plist" />
@@ -137,21 +152,9 @@
   <ItemGroup>
     <Compile Include="Main.cs" />
     <Compile Include="AppDelegate.cs" />
-    <Compile Include="LandingPageController.cs" />
-    <Compile Include="LandingPageController.designer.cs">
-      <DependentUpon>LandingPageController.cs</DependentUpon>
-    </Compile>
-    <Compile Include="DiningPageController.cs" />
-    <Compile Include="DiningPageController.designer.cs">
-      <DependentUpon>DiningPageController.cs</DependentUpon>
-    </Compile>
     <Compile Include="Seque\DismissSeque.cs" />
     <Compile Include="Seque\DismissSeque.designer.cs">
       <DependentUpon>DismissSeque.cs</DependentUpon>
-    </Compile>
-    <Compile Include="FilterDiningPageController.cs" />
-    <Compile Include="FilterDiningPageController.designer.cs">
-      <DependentUpon>FilterDiningPageController.cs</DependentUpon>
     </Compile>
     <Compile Include="Tables\Cells\MosqueCell.cs" />
     <Compile Include="Tables\Cells\MosqueCell.designer.cs">
@@ -165,11 +168,27 @@
     <Compile Include="Tables\Cells\DiningCell.designer.cs">
       <DependentUpon>DiningCell.cs</DependentUpon>
     </Compile>
-    <Compile Include="AddNewDiningController.cs" />
-    <Compile Include="AddNewDiningController.designer.cs">
+    <Compile Include="Controller\KeyboardSupportedUIViewController.cs" />
+    <Compile Include="Textfield\AutoCompleteUITextField.cs" />
+    <Compile Include="Textfield\AutoCompleteUITextField.designer.cs">
+      <DependentUpon>AutoCompleteUITextField.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controller\AddNewDiningController.cs" />
+    <Compile Include="Controller\AddNewDiningController.designer.cs">
       <DependentUpon>AddNewDiningController.cs</DependentUpon>
     </Compile>
-    <Compile Include="Controller\KeyboardSupportedUIViewController.cs" />
+    <Compile Include="Controller\DiningPageController.cs" />
+    <Compile Include="Controller\DiningPageController.designer.cs">
+      <DependentUpon>DiningPageController.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controller\FilterDiningPageController.cs" />
+    <Compile Include="Controller\FilterDiningPageController.designer.cs">
+      <DependentUpon>FilterDiningPageController.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controller\LandingPageController.cs" />
+    <Compile Include="Controller\LandingPageController.designer.cs">
+      <DependentUpon>LandingPageController.cs</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="MainStoryboard.storyboard" />
@@ -192,6 +211,7 @@
     <Folder Include="Tables\" />
     <Folder Include="Tables\Cells\" />
     <Folder Include="Controller\" />
+    <Folder Include="Textfield\" />
   </ItemGroup>
   <ItemGroup>
     <XamarinComponentReference Include="xamarin.mobile">
@@ -200,6 +220,18 @@
     </XamarinComponentReference>
     <XamarinComponentReference Include="restsharp">
       <Version>104.4.0</Version>
+      <Visible>False</Visible>
+    </XamarinComponentReference>
+    <XamarinComponentReference Include="googlemapsios">
+      <Version>1.8.1</Version>
+      <Visible>False</Visible>
+    </XamarinComponentReference>
+    <XamarinComponentReference Include="facebook-sdk">
+      <Version>6.2.1</Version>
+      <Visible>False</Visible>
+    </XamarinComponentReference>
+    <XamarinComponentReference Include="xamarin.auth">
+      <Version>1.2.2</Version>
       <Visible>False</Visible>
     </XamarinComponentReference>
   </ItemGroup>

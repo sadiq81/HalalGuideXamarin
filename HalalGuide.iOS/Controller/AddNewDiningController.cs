@@ -4,13 +4,8 @@ using System;
 
 using MonoTouch.Foundation;
 using MonoTouch.UIKit;
-using MonoTouch.AudioToolbox;
 using HalalGuide.Util;
 using Xamarin.Media;
-using System.Threading.Tasks;
-using System.Deployment.Internal;
-using Newtonsoft.Json.Serialization;
-using HalalGuide.Services;
 using HalalGuide.iOS;
 using SimpleDBPersistence.Service;
 using HalalGuide.ViewModels;
@@ -26,10 +21,17 @@ namespace HalalGuide.iOS
 
 		}
 
-		public override void ViewDidLoad ()
+		public async override void ViewDidLoad ()
 		{
 			base.ViewDidLoad ();
+			await ViewModel.LoadAddressNearPosition ();
+			Road.AutoCompleteValues = ViewModel.StreetNames ();
 
+			Road.EditingDidEnd += async (sender, e) => {
+				RoadNumber.AutoCompleteValues = ViewModel.StreetNumbers (Road.Text);
+				PostalCode.Text = ViewModel.PostalCode (Road.Text) ?? PostalCode.Text;
+				City.Text = await ViewModel.GetCityNameFromPostalCode (PostalCode.Text) ?? City.Text;
+			};
 		}
 
 		partial void Regreet (NSObject sender)
@@ -39,7 +41,7 @@ namespace HalalGuide.iOS
 
 		async partial void Save (NSObject sender)
 		{
-			/*
+
 			if (String.IsNullOrEmpty (Name.Text)) {
 				ShowInputError ("Fejl", "Navn skal udfyldes");
 				return;
@@ -60,12 +62,10 @@ namespace HalalGuide.iOS
 				return;
 			}
 
-            DismissViewController (true, null);
-            */
-
-			ViewModel.AddressNearPosition ();
 
 
+			DismissViewController (true, null);
+            
 
 		}
 
@@ -85,8 +85,6 @@ namespace HalalGuide.iOS
 		{
 			string cityName = await ViewModel.GetCityNameFromPostalCode (sender.Text);
 			City.Text = cityName ?? City.Text;
-
-
 		}
 
 		partial void AlcoholValueChanged (UISwitch sender)
@@ -104,21 +102,46 @@ namespace HalalGuide.iOS
 			PorkImage.Image = UIImage.FromBundle (Constants.DiningAttributePig + sender.On);
 		}
 
-		async partial  void  PickImage (UIButton sender)
+		partial  void  PickImage (UIButton sender)
 		{
+			if (ViewModel.IsCameraAvailable ()) {
 
-			var picker = new MediaPicker ();
-			picker.PickPhotoAsync ().ContinueWith (t => {
-				if (t.IsCanceled || t.IsFaulted) {
-					return;
-				}
-				UIImage image = UIImage.LoadFromData (NSData.FromFile (t.Result.Path));
+				UIActionSheet actionSheet = new UIActionSheet ("Tilføj billede", null, "Fortryd", null, "Tag med kamera", "Vælg fra kamerarulle");
+				actionSheet.Clicked += async delegate(object a, UIButtonEventArgs b) {
+					switch (b.ButtonIndex) {
+					case 0:
+						{
+							MediaFile file = await ViewModel.TakePicture ("../Library/Caches", "test.jpg");
+							if (file != null)
+								InvokeOnMainThread (() => {
+									DiningImage.Image = UIImage.LoadFromData (NSData.FromFile (file.Path));
+									PickImageButton.SetTitle (null, UIControlState.Normal);
+								});
+							break;
+						}
+					case 1:
+						{
+							MediaFile file = await ViewModel.GetPictureFromDevice ();
+							if (file != null)
+								InvokeOnMainThread (() => {
+									DiningImage.Image = UIImage.LoadFromData (NSData.FromFile (file.Path));
+									PickImageButton.SetTitle (null, UIControlState.Normal);
+								});
+							break;
+						}
+					case 2:
+						{
+							break;
+						}
 
-				InvokeOnMainThread (() => {
-					DiningImage.Image = image;
-					PickImageButton.SetTitle (null, UIControlState.Normal);
-				});
-			});
+					}
+				};
+				actionSheet.ShowInView (View);
+
+			} else {
+				UIAlertView noCameraFound = new UIAlertView ("Fejl", "Intet kamera tilgængeligt", null, "Luk");
+				noCameraFound.Show ();
+			}
 		}
 	}
 }

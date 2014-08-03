@@ -38,5 +38,9 @@
     <Compile Include="$(MSBuildThisFileDirectory)Services\RestDomain\Adgangsadresse.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\RestDomain\Vejnavn.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\RestDomain\WGS84Koordinat.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Domain\LocationPicture.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Domain\Enum\LocationStatus.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\KeyChainService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Domain\Address.cs" />
   </ItemGroup>
 </Project>

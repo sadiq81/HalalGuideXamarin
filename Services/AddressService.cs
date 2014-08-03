@@ -20,12 +20,10 @@ namespace HalalGuide.Services
 			var request = new RestRequest ("postnumre/{id}", Method.GET);
 			CancellationToken token = new CancellationTokenSource (1500).Token;
 
-			DateTime start = DateTime.Now;
 
 			request.AddUrlSegment ("id", postalcode);
 			try {
 				IRestResponse<Postnummer> response = await client.ExecuteTaskAsync<Postnummer> (request, token);
-				Console.WriteLine ("Task took " + DateTime.Now.Subtract (start).TotalSeconds + " seconds");
 				if (response.StatusCode == HttpStatusCode.OK && response != null && response.Data != null) {
 					return response.Data.Navn;
 				} else {
@@ -33,7 +31,6 @@ namespace HalalGuide.Services
 				}
 
 			} catch (TaskCanceledException ex) {
-				Console.WriteLine ("Task took " + DateTime.Now.Subtract (start).TotalSeconds + " seconds, but was cancelled");
 				return null;
 			} 
 		}
@@ -49,14 +46,11 @@ namespace HalalGuide.Services
 			var request = new RestRequest ("adresser/{bredde},{længde}", Method.GET);
 			CancellationToken token = new CancellationTokenSource (1500).Token;
 
-			DateTime start = DateTime.Now;
-
 			request.AddUrlSegment ("bredde", position.Latitude.ToString ("N", CultureInfo.InvariantCulture));
 			request.AddUrlSegment ("længde", position.Longitude.ToString ("N", CultureInfo.InvariantCulture));
 
 			try {
 				IRestResponse<Adgangsadresse> response = await client.ExecuteTaskAsync<Adgangsadresse> (request, token);
-				Console.WriteLine ("Task took " + DateTime.Now.Subtract (start).TotalSeconds + " seconds");
 				if (response.StatusCode == HttpStatusCode.OK && response != null && response.Data != null) {
 					return response.Data;
 				} else {
@@ -64,7 +58,6 @@ namespace HalalGuide.Services
 				}
 
 			} catch (TaskCanceledException ex) {
-				Console.WriteLine ("Task took " + DateTime.Now.Subtract (start).TotalSeconds + " seconds, but was cancelled");
 				return null;
 			} 
 		}
@@ -77,7 +70,6 @@ namespace HalalGuide.Services
 			var request = new RestRequest ("roadName/{roadNumber},{postalCode}", Method.GET);
 			CancellationToken token = new CancellationTokenSource (1500).Token;
 
-			DateTime start = DateTime.Now;
 
 			request.AddUrlSegment ("roadName", roadName);
 			request.AddUrlSegment ("roadNumber", roadNumber);
@@ -86,7 +78,6 @@ namespace HalalGuide.Services
 
 			try {
 				IRestResponse<Adgangsadresse> response = await client.ExecuteTaskAsync<Adgangsadresse> (request, token);
-				Console.WriteLine ("Task took " + DateTime.Now.Subtract (start).TotalSeconds + " seconds");
 				if (response.StatusCode == HttpStatusCode.OK && response != null && response.Data != null) {
 					return response.Data;
 				} else {
@@ -94,7 +85,6 @@ namespace HalalGuide.Services
 				}
 
 			} catch (TaskCanceledException ex) {
-				Console.WriteLine ("Task took " + DateTime.Now.Subtract (start).TotalSeconds + " seconds, but was cancelled");
 				return null;
 			} 
 		}
@@ -106,7 +96,6 @@ namespace HalalGuide.Services
 
 			var request = new RestRequest ("adresser/{LatitudeSouthEast},{LongtitudeSouthEast};{LatitudeNorthWest},{LongtitudeNorthWest}", Method.GET);
 			CancellationToken token = new CancellationTokenSource (15000).Token;
-
 			DateTime start = DateTime.Now;
 
 			string Latitude1NorthWest = (position.Latitude + (180 / Math.PI) * (distanceInMeters / 6378137)).ToString ("", CultureInfo.InvariantCulture);
@@ -124,7 +113,6 @@ namespace HalalGuide.Services
 
 			try {
 				IRestResponse<List<Adgangsadresse>> response = await client.ExecuteTaskAsync<List<Adgangsadresse>> (request, token);
-				Console.WriteLine ("Task took " + DateTime.Now.Subtract (start).TotalSeconds + " seconds");
 				if (response.StatusCode == HttpStatusCode.OK && response != null && response.Data != null) {
 					return response.Data;
 				} else {
@@ -132,7 +120,6 @@ namespace HalalGuide.Services
 				}
 
 			} catch (TaskCanceledException ex) {
-				Console.WriteLine ("Task took " + DateTime.Now.Subtract (start).TotalSeconds + " seconds, but was cancelled");
 				return null;
 			} 
 		}
