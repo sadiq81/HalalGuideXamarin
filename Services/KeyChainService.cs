@@ -9,25 +9,32 @@ namespace HalalGuide.Services
 {
 	public class KeyChainService
 	{
-
-		private readonly AccountStore Store = ServiceContainer.Resolve<AccountStore> ();
+		private static readonly AccountStore Store = ServiceContainer.Resolve<AccountStore> ();
+		private  Account Facebook;
 
 		public KeyChainService ()
 		{
-
-		}
-
-		/*
-		public static Account GetFaceBookAccount ()
-		{
 			List<Account> accounts = Store.FindAccountsForService (Constants.Facebook).ToList ();
 			if (accounts.Count > 0) {
-				return accounts [0];
-			} else {
-				return null;
+				//Facebook = accounts [0];
+				Store.Delete (accounts [0], Constants.Facebook);
 			}
 		}
-		*/
+
+		public Account GetFaceBookAccount ()
+		{
+			return Facebook;
+		}
+
+		public void StoreAccount (Account account)
+		{
+			Store.Save (Facebook = account, Constants.Facebook);
+		}
+
+		public  bool IsFaceBookAccountAuthenticated ()
+		{
+			return Facebook != null;
+		}
 	}
 }
 

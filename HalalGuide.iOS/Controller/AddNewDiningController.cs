@@ -62,10 +62,7 @@ namespace HalalGuide.iOS
 				return;
 			}
 
-
-
 			DismissViewController (true, null);
-            
 
 		}
 

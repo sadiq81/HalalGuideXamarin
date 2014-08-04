@@ -43,7 +43,8 @@ namespace HalalGuide.ViewModels
 				Categories = new List<DiningCategory> (){ DiningCategory.Pizza },
 				NonHalal = true,
 				Alcohol = true,
-				Pork = true
+				Pork = true,
+				LocationStatus = LocationStatus.Approved
 				
 			};
 
@@ -63,7 +64,8 @@ namespace HalalGuide.ViewModels
 				Categories = new List<DiningCategory> (){ DiningCategory.Pakistani, DiningCategory.Indian },
 				NonHalal = false,
 				Alcohol = false,
-				Pork = false
+				Pork = false,
+				LocationStatus = LocationStatus.Approved
 			};
 
 			await DAO.SaveOrReplace (l1);
@@ -82,7 +84,8 @@ namespace HalalGuide.ViewModels
 				Categories = new List<DiningCategory> (){ DiningCategory.Cafe },
 				NonHalal = true,
 				Alcohol = true,
-				Pork = true
+				Pork = true,
+				LocationStatus = LocationStatus.Approved
 
 			};
 
@@ -99,7 +102,8 @@ namespace HalalGuide.ViewModels
 				Telephone = "00000000",
 				HomePage = "http://www.disr.info/",
 				LocationType = LocationType.Mosque,
-				Language = Language.Danish
+				Language = Language.Danish,
+				LocationStatus = LocationStatus.Approved
 			};
 
 			await DAO.SaveOrReplace (l3);
@@ -115,7 +119,8 @@ namespace HalalGuide.ViewModels
 				Telephone = "00000000",
 				HomePage = "http://www.wakf.com/",
 				LocationType = LocationType.Mosque,
-				Language = Language.Arabic
+				Language = Language.Arabic,
+				LocationStatus = LocationStatus.Approved
 			};
 
 			await DAO.SaveOrReplace (l4);
@@ -130,6 +135,7 @@ namespace HalalGuide.ViewModels
 				Longtitude = "12.532926",
 				Telephone = "00000000",
 				LocationType = LocationType.Shop,
+				LocationStatus = LocationStatus.Approved
 			};
 
 			await DAO.SaveOrReplace (l5);
@@ -144,6 +150,7 @@ namespace HalalGuide.ViewModels
 				Longtitude = "12.535705",
 				Telephone = "00000000",
 				LocationType = LocationType.Shop,
+				LocationStatus = LocationStatus.Approved
 			};
 
 			await DAO.SaveOrReplace (l6);

@@ -10,161 +10,195 @@ using HalalGuide.Domain;
 using HalalGuide.Util;
 using HalalGuide.Domain.Enum;
 using SimpleDBPersistence.Service;
+using Xamarin.Auth;
 
 namespace HalalGuide.iOS
 {
 	public partial class DiningPageController : UIViewController
 	{
-		public DiningTableSource TableSource;
+		private static string cellIdentifier = "DiningTableCell";
+
+		public DiningViewModel ViewModel = ServiceContainer.Resolve<DiningViewModel> ();
+
+		private UITableViewController TableViewController = new UITableViewController ();
+		private UIRefreshControl RefreshControl = new UIRefreshControl ();
+
+		UISearchBar SearchBar;
+
+		private static readonly int PORK_IMAGE_TAG = 102;
+		private static readonly int ALCOHOL_IMAGE_TAG = 103;
+		private static readonly int HALAL_IMAGE_TAG = 104;
+
+		private static readonly int KM_TEXT_TAG = 200;
+		private static readonly int NAME_TEXT_TAG = 201;
+		private static readonly int ADDRESS1_TEXT_TAG = 202;
+		private static readonly int ADDRESS2_TEXT_TAG = 203;
+		private static readonly int PORK_TEXT_TAG = 204;
+		private static readonly int ALCOHOL_TEXT_TAG = 205;
+		private static readonly int HALAL_TEXT_TAG = 206;
+
+		private UIViewController Login;
 
 		public DiningPageController (IntPtr handle) : base (handle)
 		{
 
 		}
 
+
 		public override void  ViewDidLoad ()
 		{
 			base.ViewDidLoad ();
 
-			TableView.Source = TableSource = new DiningTableSource (TableView);
+			TableView.WeakDataSource = this;
+			TableView.WeakDelegate = this;
+
 			TableView.TableFooterView = new UIView ();
 
+			TableViewController.TableView = TableView;
+			TableViewController.RefreshControl = RefreshControl;
+			RefreshControl.ValueChanged += async (sender, e) => {
+				RefreshControl.BeginRefreshing ();
+				await ViewModel.Update ();
+				RefreshControl.EndRefreshing ();
+
+				UIView.Animate (
+					duration : 0.2,
+					animation: () => {
+						TableViewController.TableView.ContentInset = new UIEdgeInsets (0, 0, 0, 0);
+					}
+				);
+			};
+
+			SearchBar = new UISearchBar (new RectangleF (0, -44, TableView.Frame.Width, 44)) {
+				BackgroundColor = UIColor.Clear
+			};
+			TableViewController.TableView.AddSubview (SearchBar);
+
+			ViewModel.IsBusyChanged += (object sender, EventArgs e) => {
+				if (ViewModel.IsBusy == false) {
+					ReloadData ();
+				}
+			};
+
+			//TODO move to base class
+			ViewModel.LoginCompleted += (object sender, AuthenticatorCompletedEventArgs e) => {
+				if (Login != null) {
+					Login.DismissViewController (true, delegate {
+
+						if (e.IsAuthenticated) {
+							PerformSegue (Segue.AddDiningSegue, this);
+
+						} else {
+							UIAlertView view = new UIAlertView ("Fejl", "Login fejlede, du skal bekræfte din identitet inden du kan tilføje emner til HalalGuide", null, "Luk");
+							view.Show ();
+						}
+					});
+					Login = null;
+				}
+			};
 		}
 
 		public override void ViewWillAppear (bool animated)
 		{
 			base.ViewWillAppear (animated);
-			TableSource.ViewModel.Update ();
+			ViewModel.Update ();
 		}
 
-		public class DiningTableSource : UITableViewSource
+		public override bool ShouldPerformSegue (string segueIdentifier, NSObject sender)
 		{
-			private static string cellIdentifier = "DiningTableCell";
+			if (segueIdentifier.Equals (Segue.AddDiningSegue)) {
 
-			public DiningViewModel ViewModel = ServiceContainer.Resolve<DiningViewModel> ();
-
-			private UITableViewController TableViewController = new UITableViewController ();
-			private UIRefreshControl RefreshControl = new UIRefreshControl ();
-
-			UISearchBar SearchBar;
-
-			private static readonly int PORK_IMAGE_TAG = 102;
-			private static readonly int ALCOHOL_IMAGE_TAG = 103;
-			private static readonly int HALAL_IMAGE_TAG = 104;
-
-			private static readonly int KM_TEXT_TAG = 200;
-			private static readonly int NAME_TEXT_TAG = 201;
-			private static readonly int ADDRESS1_TEXT_TAG = 202;
-			private static readonly int ADDRESS2_TEXT_TAG = 203;
-			private static readonly int PORK_TEXT_TAG = 204;
-			private static readonly int ALCOHOL_TEXT_TAG = 205;
-			private static readonly int HALAL_TEXT_TAG = 206;
-
-			public DiningTableSource (UITableView dining)
-			{
-				TableViewController.TableView = dining;
-				TableViewController.RefreshControl = RefreshControl;
-				RefreshControl.ValueChanged += async (sender, e) => {
-					RefreshControl.BeginRefreshing ();
-					await ViewModel.Update ();
-					RefreshControl.EndRefreshing ();
-
-					UIView.Animate (
-						duration : 0.2,
-						animation: () => {
-							TableViewController.TableView.ContentInset = new UIEdgeInsets (0, 0, 0, 0);
-						}
-					);
-				};
-
-				SearchBar = new UISearchBar (new RectangleF (0, -44, dining.Frame.Width, 44)) {
-					BackgroundColor = UIColor.Clear
-				};
-				TableViewController.TableView.AddSubview (SearchBar);
-
-				ViewModel.IsBusyChanged += (object sender, EventArgs e) => {
-					if (ViewModel.IsBusy == false) {
-						ReloadData ();
-					}
-						
-				};
-			}
-
-			public void ReloadData ()
-			{
-				TableViewController.TableView.ReloadSections (new NSIndexSet (0), UITableViewRowAnimation.Top);
-			}
-
-			public override int RowsInSection (UITableView tableview, int section)
-			{
-				return ViewModel.Rows ();
-			}
-
-			public override UITableViewCell GetCell (UITableView tableView, NSIndexPath indexPath)
-			{
-				UITableViewCell cell = tableView.DequeueReusableCell (cellIdentifier);
-
-				Location l = ViewModel.GetLocationAtRow (indexPath.Item);
-
-				UILabel km = (UILabel)cell.ViewWithTag (KM_TEXT_TAG);
-				km.Text = l.Distance.Equals (0) ? "N/A" : l.Distance.ToString ("N");
-
-				UILabel name = (UILabel)cell.ViewWithTag (NAME_TEXT_TAG);
-				name.Text = l.Name;
-
-				UILabel address1 = (UILabel)cell.ViewWithTag (ADDRESS1_TEXT_TAG);
-				address1.Text = l.AddressRoad;
-				UILabel address2 = (UILabel)cell.ViewWithTag (ADDRESS2_TEXT_TAG);
-				address2.Text = l.AddressPostalCode + " " + l.AddressCity;
-
-				UIImageView porkImage = (UIImageView)cell.ViewWithTag (PORK_IMAGE_TAG);
-				porkImage.Image = UIImage.FromBundle (Constants.DiningAttributePig + l.Pork);
-				UILabel porkLabel = (UILabel)cell.ViewWithTag (PORK_TEXT_TAG);
-				porkLabel.TextColor = l.Pork ? UIColor.Red : UIColor.Green;
-
-				UIImageView alcoholImage = (UIImageView)cell.ViewWithTag (ALCOHOL_IMAGE_TAG);
-				UILabel alcoholLabel = (UILabel)cell.ViewWithTag (ALCOHOL_TEXT_TAG);
-				alcoholImage.Image = UIImage.FromBundle (Constants.DiningAttributeAlcohol + l.Alcohol);
-				alcoholLabel.TextColor = l.Pork ? UIColor.Red : UIColor.Green;
-
-				UIImageView halalImage = (UIImageView)cell.ViewWithTag (HALAL_IMAGE_TAG);
-				halalImage.Image = UIImage.FromBundle (Constants.DiningAttributeHalal + l.NonHalal);
-				UILabel halalLabel = (UILabel)cell.ViewWithTag (HALAL_TEXT_TAG);
-				halalLabel.TextColor = l.NonHalal ? UIColor.Red : UIColor.Green;
-
-				return cell;
-			}
-
-			public override void RowSelected (UITableView tableView, NSIndexPath indexPath)
-			{
-				tableView.DeselectRow (indexPath, true); // normal iOS behaviour is to remove the blue highlight
-			}
-
-			public override void DraggingEnded (UIScrollView scrollView, bool willDecelerate)
-			{
-				if (willDecelerate) {
-					SearchBar.ResignFirstResponder ();
-				}
-				if (scrollView.ContentOffset.Y < 0) {
-					UIView.Animate (
-						duration : 0.2,
-						animation: () => {
-							TableViewController.TableView.ContentInset = new UIEdgeInsets (44, 0, 0, 0);
-						}
-					);
+				//TODO move to base class
+				if (ViewModel.IsAuthenticated ()) {
+					return true;
 				} else {
-					UIView.Animate (
-						duration : 0.2,
-						animation: () => {
-							TableViewController.TableView.ContentInset = new UIEdgeInsets (0, 0, 0, 0);
-						}
-					);
+					var auth = ViewModel.Authenticate ();
+					PresentViewController (Login = auth.GetUI (), true, null);
+					return false;
 				}
+
+			} else {
+				return base.ShouldPerformSegue (segueIdentifier, sender);
 			}
-
 		}
-	}
 
+		[Export ("tableView:numberOfRowsInSection:")]
+		public  int RowsInSection (UITableView tableview, int section)
+		{
+			return ViewModel.Rows ();
+		}
+
+		[Export ("tableView:cellForRowAtIndexPath:")]
+		public  UITableViewCell GetCell (UITableView tableView, NSIndexPath indexPath)
+		{
+			UITableViewCell cell = tableView.DequeueReusableCell (cellIdentifier);
+
+			Location l = ViewModel.GetLocationAtRow (indexPath.Item);
+
+			UILabel km = (UILabel)cell.ViewWithTag (KM_TEXT_TAG);
+			km.Text = l.Distance.Equals (0) ? "N/A" : l.Distance.ToString ("N");
+
+			UILabel name = (UILabel)cell.ViewWithTag (NAME_TEXT_TAG);
+			name.Text = l.Name;
+
+			UILabel address1 = (UILabel)cell.ViewWithTag (ADDRESS1_TEXT_TAG);
+			address1.Text = l.AddressRoad;
+			UILabel address2 = (UILabel)cell.ViewWithTag (ADDRESS2_TEXT_TAG);
+			address2.Text = l.AddressPostalCode + " " + l.AddressCity;
+
+			UIImageView porkImage = (UIImageView)cell.ViewWithTag (PORK_IMAGE_TAG);
+			porkImage.Image = UIImage.FromBundle (Constants.DiningAttributePig + l.Pork);
+			UILabel porkLabel = (UILabel)cell.ViewWithTag (PORK_TEXT_TAG);
+			porkLabel.TextColor = l.Pork ? UIColor.Red : UIColor.Green;
+
+			UIImageView alcoholImage = (UIImageView)cell.ViewWithTag (ALCOHOL_IMAGE_TAG);
+			UILabel alcoholLabel = (UILabel)cell.ViewWithTag (ALCOHOL_TEXT_TAG);
+			alcoholImage.Image = UIImage.FromBundle (Constants.DiningAttributeAlcohol + l.Alcohol);
+			alcoholLabel.TextColor = l.Pork ? UIColor.Red : UIColor.Green;
+
+			UIImageView halalImage = (UIImageView)cell.ViewWithTag (HALAL_IMAGE_TAG);
+			halalImage.Image = UIImage.FromBundle (Constants.DiningAttributeHalal + l.NonHalal);
+			UILabel halalLabel = (UILabel)cell.ViewWithTag (HALAL_TEXT_TAG);
+			halalLabel.TextColor = l.NonHalal ? UIColor.Red : UIColor.Green;
+
+			return cell;
+		}
+
+		[Export ("tableView:didSelectRowAtIndexPath:")]
+		public  void RowSelected (UITableView tableView, NSIndexPath indexPath)
+		{
+			tableView.DeselectRow (indexPath, true); // normal iOS behaviour is to remove the blue highlight
+		}
+
+		[Export ("scrollViewDidEndDragging:willDecelerate:")]
+		public  void DraggingEnded (UIScrollView scrollView, bool willDecelerate)
+		{
+			if (willDecelerate) {
+				SearchBar.ResignFirstResponder ();
+			}
+			if (scrollView.ContentOffset.Y < 0) {
+				UIView.Animate (
+					duration : 0.2,
+					animation: () => {
+						TableViewController.TableView.ContentInset = new UIEdgeInsets (44, 0, 0, 0);
+					}
+				);
+			} else {
+				UIView.Animate (
+					duration : 0.2,
+					animation: () => {
+						TableViewController.TableView.ContentInset = new UIEdgeInsets (0, 0, 0, 0);
+					}
+				);
+			}
+		}
+
+		public void ReloadData ()
+		{
+			TableViewController.TableView.ReloadSections (new NSIndexSet (0), UITableViewRowAnimation.Top);
+		}
+
+	}
 
 }
 

@@ -306,7 +306,7 @@
                                         </barButtonItem>
                                         <barButtonItem key="rightBarButtonItem" image="toolbarAdd.png" id="dTp-zE-ckE">
                                             <connections>
-                                                <segue destination="fCx-QP-FK8" kind="modal" id="f45-Ia-Axb"/>
+                                                <segue destination="fCx-QP-FK8" kind="modal" identifier="AddDiningSegue" id="f45-Ia-Axb"/>
                                             </connections>
                                         </barButtonItem>
                                     </navigationItem>
@@ -597,7 +597,7 @@
                                     <barButtonItem style="plain" systemItem="flexibleSpace" id="bCK-uM-irt"/>
                                     <barButtonItem image="toolbarAdd.png" id="vfc-8s-iMb">
                                         <connections>
-                                            <segue destination="fCx-QP-FK8" kind="modal" id="n1y-IQ-piP"/>
+                                            <segue destination="fCx-QP-FK8" kind="modal" identifier="AddDiningSegue" id="n1y-IQ-piP"/>
                                         </connections>
                                     </barButtonItem>
                                 </items>
@@ -848,6 +848,6 @@
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
         <segue reference="MUn-OO-k5U"/>
-        <segue reference="n1y-IQ-piP"/>
+        <segue reference="f45-Ia-Axb"/>
     </inferredMetricsTieBreakers>
 </document>
