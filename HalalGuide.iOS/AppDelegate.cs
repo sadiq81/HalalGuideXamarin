@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-
-using MonoTouch.Foundation;
+﻿using MonoTouch.Foundation;
 using MonoTouch.UIKit;
+using XUbertestersSDK;
+using System;
 
 namespace HalalGuide.iOS
 {
@@ -18,6 +16,26 @@ namespace HalalGuide.iOS
 		public override UIWindow Window {
 			get;
 			set;
+		}
+
+		public override void FinishedLaunching (UIApplication application)
+		{
+			XUbertesters.Initialize ();
+
+			AppDomain.CurrentDomain.UnhandledException += (object sender, UnhandledExceptionEventArgs e) => {
+				XUbertesters.SendCrash (e);
+			};
+		}
+
+		public override bool FinishedLaunching (UIApplication application, NSDictionary launchOptions)
+		{
+			XUbertesters.Initialize ();
+
+			AppDomain.CurrentDomain.UnhandledException += (object sender, UnhandledExceptionEventArgs e) => {
+				XUbertesters.SendCrash (e);
+			};
+
+			return true;
 		}
 		
 		// This method is invoked when the application is about to move from active to inactive state.

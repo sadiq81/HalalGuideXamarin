@@ -7,7 +7,8 @@ namespace HalalGuide.Domain.Enum
 		Danish,
 		Arabic,
 		Urdu,
-		English
+		English,
+		None = 0
 
 	}
 }

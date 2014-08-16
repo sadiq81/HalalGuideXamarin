@@ -5,8 +5,12 @@ using System.Threading;
 using System.Threading.Tasks;
 using RestSharp;
 using Xamarin.Geolocation;
-using HalalGuide.Services.RestDomain;
 using System.Collections.Generic;
+using HalalGuide.Domain.Dawa;
+using System.Runtime.InteropServices;
+using System.Net.Http;
+using System.Linq;
+using XUbertestersSDK;
 
 namespace HalalGuide.Services
 {
@@ -15,114 +19,96 @@ namespace HalalGuide.Services
 
 		public async Task<string> GetNameOfPostDistrict (string postalcode)
 		{
-			var client = new RestClient ("http://geo.oiorest.dk/");
+			string url = String.Format ("http://dawa.aws.dk/postnumre?nr={0}", postalcode);
 
-			var request = new RestRequest ("postnumre/{id}", Method.GET);
-			CancellationToken token = new CancellationTokenSource (1500).Token;
+			XUbertesters.LogInfo (string.Format ("AddressService-GetNameOfPostDistrict: request url: {0}", url));
 
+			using (HttpClient client = new HttpClient ()) {
 
-			request.AddUrlSegment ("id", postalcode);
-			try {
-				IRestResponse<Postnummer> response = await client.ExecuteTaskAsync<Postnummer> (request, token);
-				if (response.StatusCode == HttpStatusCode.OK && response != null && response.Data != null) {
-					return response.Data.Navn;
-				} else {
+				CancellationToken token = new CancellationTokenSource (1500).Token;
+				try {
+					HttpResponseMessage message = await client.GetAsync (url, token);
+					if (message.IsSuccessStatusCode) {
+						var json = await message.Content.ReadAsStringAsync ();
+						var postnumre = Newtonsoft.Json.JsonConvert.DeserializeObject<List<Postnummer>> (json);
+						if (postnumre != null && postnumre.Count > 0) {
+
+							XUbertesters.LogInfo (string.Format ("AddressService-GetNameOfPostDistrict: request url: {0} found: {1}", url, postnumre [0].Navn));
+							return postnumre [0].Navn;
+						} 
+					} else {
+						XUbertesters.LogWarn (string.Format ("AddressService-GetNameOfPostDistrict: request url: {0} found no results: {1}", url, message.ReasonPhrase));
+					}
+				} catch (TaskCanceledException ex) {
+					XUbertesters.LogError (string.Format ("request url: {0} timed out", url));
 					return null;
 				}
-
-			} catch (TaskCanceledException ex) {
-				return null;
-			} 
-		}
-
-		public async Task<Adgangsadresse> GetAddressOfCoordinate (Position position)
-		{
-			if (position == null) {
-				return null;
 			}
-
-			var client = new RestClient ("http://geo.oiorest.dk/");
-
-			var request = new RestRequest ("adresser/{bredde},{længde}", Method.GET);
-			CancellationToken token = new CancellationTokenSource (1500).Token;
-
-			request.AddUrlSegment ("bredde", position.Latitude.ToString ("N", CultureInfo.InvariantCulture));
-			request.AddUrlSegment ("længde", position.Longitude.ToString ("N", CultureInfo.InvariantCulture));
-
-			try {
-				IRestResponse<Adgangsadresse> response = await client.ExecuteTaskAsync<Adgangsadresse> (request, token);
-				if (response.StatusCode == HttpStatusCode.OK && response != null && response.Data != null) {
-					return response.Data;
-				} else {
-					return null;
-				}
-
-			} catch (TaskCanceledException ex) {
-				return null;
-			} 
+			return null;
 		}
 
 		public async Task<Adgangsadresse> DoesAddressExits (string roadName, string roadNumber, string postalCode)
 		{
+			string url = String.Format ("http://dawa.aws.dk/adgangsadresser?vejnavn={0}&husnummer={1}&postnr={2}", roadName, roadNumber, postalCode);
 
-			var client = new RestClient ("http://geo.oiorest.dk/");
+			XUbertesters.LogInfo (string.Format ("AddressService-DoesAddressExits: request url: {0}", url));
 
-			var request = new RestRequest ("roadName/{roadNumber},{postalCode}", Method.GET);
-			CancellationToken token = new CancellationTokenSource (1500).Token;
+			using (HttpClient client = new HttpClient ()) {
 
+				CancellationToken token = new CancellationTokenSource (1500).Token;
+				try {
+					HttpResponseMessage message = await client.GetAsync (url, token);
+					if (message.IsSuccessStatusCode) {
+						var json = await message.Content.ReadAsStringAsync ();
+						var adresser = Newtonsoft.Json.JsonConvert.DeserializeObject<List<Adgangsadresse>> (json);
+						Adgangsadresse found = adresser.FirstOrDefault (x => x.Postnummer.Nr == postalCode && x.Vejstykke.Navn == roadName && x.Husnr == roadNumber);
 
-			request.AddUrlSegment ("roadName", roadName);
-			request.AddUrlSegment ("roadNumber", roadNumber);
-			request.AddUrlSegment ("postalCode", postalCode);
+						XUbertesters.LogInfo (string.Format ("AddressService-DoesAddressExits: request url: {0} found: {1}", url, found));
 
-
-			try {
-				IRestResponse<Adgangsadresse> response = await client.ExecuteTaskAsync<Adgangsadresse> (request, token);
-				if (response.StatusCode == HttpStatusCode.OK && response != null && response.Data != null) {
-					return response.Data;
-				} else {
+						return found;
+					} else {
+						XUbertesters.LogWarn (string.Format ("AddressService-DoesAddressExits: request url: {0} found no results: {1}", url, message.ReasonPhrase));
+					}
+				} catch (TaskCanceledException ex) {
+					XUbertesters.LogError (string.Format ("request url: {0} timed out", url));
 					return null;
 				}
-
-			} catch (TaskCanceledException ex) {
-				return null;
-			} 
+			}
+			return null;
 		}
 
+		//TODO Make sure position is known before calling this function
 		public async Task<List<Adgangsadresse>> AddressNearPosition (Position position, double distanceInMeters)
 		{
+		
+			if (position == null) {
+				return null;
+			}
 
-			var client = new RestClient ("http://geo.oiorest.dk/");
+			string url = String.Format ("http://dawa.aws.dk/adgangsadresser?cirkel={0},{1},{2}&srid=4326", position.Longitude.ToString (CultureInfo.InvariantCulture), position.Latitude.ToString (CultureInfo.InvariantCulture), distanceInMeters);
 
-			var request = new RestRequest ("adresser/{LatitudeSouthEast},{LongtitudeSouthEast};{LatitudeNorthWest},{LongtitudeNorthWest}", Method.GET);
-			CancellationToken token = new CancellationTokenSource (15000).Token;
-			DateTime start = DateTime.Now;
+			XUbertesters.LogInfo (string.Format ("AddressService-AddressNearPosition: request url: {0}", url));
 
-			string Latitude1NorthWest = (position.Latitude + (180 / Math.PI) * (distanceInMeters / 6378137)).ToString ("", CultureInfo.InvariantCulture);
-			string	Longtitude1NorthWest = (position.Longitude + (180 / Math.PI) * (distanceInMeters / 6378137) / Math.Cos (position.Latitude)).ToString ("", CultureInfo.InvariantCulture);
+			using (HttpClient client = new HttpClient ()) {
 
-			string Latitude2SouthEast = (position.Latitude - (180 / Math.PI) * (distanceInMeters / 6378137)).ToString ("", CultureInfo.InvariantCulture);
-			string	Longtitude2SouthEast = (position.Longitude - (180 / Math.PI) * (distanceInMeters / 6378137) / Math.Cos (position.Latitude)).ToString ("", CultureInfo.InvariantCulture);
-
-			request.AddUrlSegment ("LatitudeSouthEast", Latitude2SouthEast);
-			request.AddUrlSegment ("LongtitudeSouthEast", Longtitude2SouthEast);
-			request.AddUrlSegment ("LatitudeNorthWest", Latitude1NorthWest);
-			request.AddUrlSegment ("LongtitudeNorthWest", Longtitude1NorthWest);
-
-			//string url = "http://geo.oiorest.dk/adresser/" + Latitude2SouthEast + "," + Longtitude2SouthEast + ";" + Latitude1NorthWest + "," + Longtitude1NorthWest;
-
-			try {
-				IRestResponse<List<Adgangsadresse>> response = await client.ExecuteTaskAsync<List<Adgangsadresse>> (request, token);
-				if (response.StatusCode == HttpStatusCode.OK && response != null && response.Data != null) {
-					return response.Data;
-				} else {
+				CancellationToken token = new CancellationTokenSource (3000).Token;
+				try {
+		
+					HttpResponseMessage message = await client.GetAsync (url, token);
+					if (message.IsSuccessStatusCode) {
+						var json = await message.Content.ReadAsStringAsync ();
+						var adresses = Newtonsoft.Json.JsonConvert.DeserializeObject<List<Adgangsadresse>> (json);
+						XUbertesters.LogInfo (string.Format ("AddressService-AddressNearPosition: request url: {0} resulted in: {1} adresses", url, adresses.Count));
+						return adresses;
+					} else {
+						XUbertesters.LogWarn (string.Format ("AddressService-AddressNearPosition: request url: {0} found no results: {1}", url, message.ReasonPhrase));
+					}
+				} catch (TaskCanceledException ex) {
+					XUbertesters.LogError (string.Format ("request url: {0} timed out", url));
 					return null;
 				}
-
-			} catch (TaskCanceledException ex) {
-				return null;
-			} 
+			}
+			return null;
 		}
 	}
 }
-

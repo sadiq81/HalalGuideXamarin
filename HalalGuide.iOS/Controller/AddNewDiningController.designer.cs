@@ -22,6 +22,9 @@ namespace HalalGuide.iOS
 		MonoTouch.UIKit.UIImageView AlcoholImage { get; set; }
 
 		[Outlet]
+		MonoTouch.UIKit.UITableView CategoryTableView { get; set; }
+
+		[Outlet]
 		MonoTouch.UIKit.UITextField City { get; set; }
 
 		[Outlet]
@@ -38,6 +41,9 @@ namespace HalalGuide.iOS
 
 		[Outlet]
 		MonoTouch.UIKit.UITextField Name { get; set; }
+
+		[Outlet]
+		MonoTouch.UIKit.UILabel NumberOfCategoriesLabel { get; set; }
 
 		[Outlet]
 		MonoTouch.UIKit.UIButton PickImageButton { get; set; }
@@ -58,10 +64,16 @@ namespace HalalGuide.iOS
 		HalalGuide.iOS.AutoCompleteUITextField RoadNumber { get; set; }
 
 		[Outlet]
+		MonoTouch.UIKit.UIView SwitchView { get; set; }
+
+		[Outlet]
 		MonoTouch.UIKit.UITextField Telephone { get; set; }
 
 		[Action ("AlcoholValueChanged:")]
 		partial void AlcoholValueChanged (MonoTouch.UIKit.UISwitch sender);
+
+		[Action ("ChooseCategory:")]
+		partial void ChooseCategory (MonoTouch.UIKit.UIButton sender);
 
 		[Action ("EnteredPostalCode:")]
 		partial void EnteredPostalCode (MonoTouch.UIKit.UITextField sender);
@@ -78,9 +90,12 @@ namespace HalalGuide.iOS
 		[Action ("Regreet:")]
 		partial void Regreet (MonoTouch.Foundation.NSObject sender);
 
+		[Action ("ResetCategory:")]
+		partial void ResetCategory (MonoTouch.UIKit.UIButton sender);
+
 		[Action ("Save:")]
 		partial void Save (MonoTouch.Foundation.NSObject sender);
-
+		
 		void ReleaseDesignerOutlets ()
 		{
 			if (ActivityIndicator != null) {
@@ -161,6 +176,21 @@ namespace HalalGuide.iOS
 			if (Telephone != null) {
 				Telephone.Dispose ();
 				Telephone = null;
+			}
+
+			if (NumberOfCategoriesLabel != null) {
+				NumberOfCategoriesLabel.Dispose ();
+				NumberOfCategoriesLabel = null;
+			}
+
+			if (CategoryTableView != null) {
+				CategoryTableView.Dispose ();
+				CategoryTableView = null;
+			}
+
+			if (SwitchView != null) {
+				SwitchView.Dispose ();
+				SwitchView = null;
 			}
 		}
 	}

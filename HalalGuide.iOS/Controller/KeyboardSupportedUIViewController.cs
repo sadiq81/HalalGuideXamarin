@@ -38,7 +38,9 @@ namespace HalalGuide.iOS
 				if (view is UITextField) {
 					((UITextField)view).WeakDelegate = this;
 				}
-
+				if (view is UITextView) {
+					((UITextView)view).WeakDelegate = this;
+				}
 			}
 		}
 
@@ -100,7 +102,7 @@ namespace HalalGuide.iOS
 		{
 			base.TouchesEnded (touches, evt);
 			foreach (UIView view in this.View.Subviews) {
-				if (view is UITextField) {
+				if (view is UITextField || view is UITextView) {
 					view.ResignFirstResponder ();
 				}
 			}

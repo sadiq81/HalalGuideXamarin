@@ -18,6 +18,12 @@ namespace HalalGuide.Domain
 			this.PostalCode = postalCode;
 			this.StreetNumbers = new List<string> (){ streetNumber };
 		}
+
+		public override string ToString ()
+		{
+			return string.Format ("[Address: StreetName={0}, PostalCode={1}]", StreetName, PostalCode);
+		}
+		
 		
 
 	}

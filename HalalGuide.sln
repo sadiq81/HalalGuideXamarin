@@ -19,6 +19,7 @@ Global
 		Release|iPhone = Release|iPhone
 		Ad-Hoc|iPhone = Ad-Hoc|iPhone
 		AppStore|iPhone = AppStore|iPhone
+		Ubertester|iPhone = Ubertester|iPhone
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{6545E392-67A6-46FC-9B8C-4011A725A1ED}.Ad-Hoc|iPhone.ActiveCfg = Debug|Any CPU
@@ -37,6 +38,8 @@ Global
 		{6545E392-67A6-46FC-9B8C-4011A725A1ED}.Release|iPhone.Build.0 = Release|Any CPU
 		{6545E392-67A6-46FC-9B8C-4011A725A1ED}.Release|iPhoneSimulator.ActiveCfg = Release|Any CPU
 		{6545E392-67A6-46FC-9B8C-4011A725A1ED}.Release|iPhoneSimulator.Build.0 = Release|Any CPU
+		{6545E392-67A6-46FC-9B8C-4011A725A1ED}.Ubertester|iPhone.ActiveCfg = Release|Any CPU
+		{6545E392-67A6-46FC-9B8C-4011A725A1ED}.Ubertester|iPhone.Build.0 = Release|Any CPU
 		{8CFB233F-84F6-45B0-89A5-9CE3EA4E05E2}.Ad-Hoc|iPhone.ActiveCfg = Debug|Any CPU
 		{8CFB233F-84F6-45B0-89A5-9CE3EA4E05E2}.Ad-Hoc|iPhone.Build.0 = Debug|Any CPU
 		{8CFB233F-84F6-45B0-89A5-9CE3EA4E05E2}.AppStore|iPhone.ActiveCfg = Debug|Any CPU
@@ -53,6 +56,8 @@ Global
 		{8CFB233F-84F6-45B0-89A5-9CE3EA4E05E2}.Release|iPhone.Build.0 = Release|Any CPU
 		{8CFB233F-84F6-45B0-89A5-9CE3EA4E05E2}.Release|iPhoneSimulator.ActiveCfg = Release|Any CPU
 		{8CFB233F-84F6-45B0-89A5-9CE3EA4E05E2}.Release|iPhoneSimulator.Build.0 = Release|Any CPU
+		{8CFB233F-84F6-45B0-89A5-9CE3EA4E05E2}.Ubertester|iPhone.ActiveCfg = Release|Any CPU
+		{8CFB233F-84F6-45B0-89A5-9CE3EA4E05E2}.Ubertester|iPhone.Build.0 = Release|Any CPU
 		{F1C43724-632D-4943-8941-9CAA43A6ED00}.Ad-Hoc|iPhone.ActiveCfg = Ad-Hoc|iPhone
 		{F1C43724-632D-4943-8941-9CAA43A6ED00}.Ad-Hoc|iPhone.Build.0 = Ad-Hoc|iPhone
 		{F1C43724-632D-4943-8941-9CAA43A6ED00}.AppStore|iPhone.ActiveCfg = AppStore|iPhone
@@ -69,6 +74,8 @@ Global
 		{F1C43724-632D-4943-8941-9CAA43A6ED00}.Release|iPhone.Build.0 = Release|iPhone
 		{F1C43724-632D-4943-8941-9CAA43A6ED00}.Release|iPhoneSimulator.ActiveCfg = Release|iPhoneSimulator
 		{F1C43724-632D-4943-8941-9CAA43A6ED00}.Release|iPhoneSimulator.Build.0 = Release|iPhoneSimulator
+		{F1C43724-632D-4943-8941-9CAA43A6ED00}.Ubertester|iPhone.ActiveCfg = Ad-Hoc|iPhone
+		{F1C43724-632D-4943-8941-9CAA43A6ED00}.Ubertester|iPhone.Build.0 = Ad-Hoc|iPhone
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
 		StartupItem = HalalGuide.iOS\HalalGuide.iOS.csproj
@@ -76,5 +83,6 @@ Global
 		$0.DotNetNamingPolicy = $1
 		$1.DirectoryNamespaceAssociation = PrefixedHierarchical
 		$1.ResourceNamePolicy = FileFormatDefault
+		version = 1.0.0
 	EndGlobalSection
 EndGlobal

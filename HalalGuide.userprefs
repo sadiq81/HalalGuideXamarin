@@ -1,34 +1,30 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|iPhone" PreferredExecutionTarget="MonoDevelop.IPhone.IPhoneDeviceTarget.Tommy Sadiqs iPhone" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="../../../Developer/MonoTouch/Source/mono/mcs/class/corlib/System.Runtime.CompilerServices/AsyncVoidMethodBuilder.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="HalalGuide.iOS/Controller/AddNewDiningController.cs">
     <Files>
-      <File FileName="HalalGuide.iOS/Main.cs" Line="9" Column="16" />
-      <File FileName="Services/KeyChainService.cs" Line="30" Column="5" />
-      <File FileName="HalalGuide.iOS/Controller/AddNewDiningController.cs" Line="28" Column="46" />
-      <File FileName="ViewModels/AddDiningViewModel.cs" Line="81" Column="1" />
-      <File FileName="../../../Developer/MonoTouch/Source/mono/mcs/class/corlib/System.Runtime.CompilerServices/AsyncVoidMethodBuilder.cs" Line="79" Column="1" />
-      <File FileName="Services/AddressService.cs" Line="49" Column="1" />
+      <File FileName="HalalGuide.iOS/Controller/LandingPageController.cs" Line="4" Column="4" />
+      <File FileName="HalalGuide.iOS/Controller/DiningPageController.cs" Line="9" Column="9" />
+      <File FileName="HalalGuide.iOS/Controller/FilterDiningPageController.cs" Line="1" Column="1" />
+      <File FileName="HalalGuide.iOS/Controller/AddNewDiningController.cs" Line="5" Column="5" />
+      <File FileName="HalalGuide.iOS/Controller/ReviewController.cs" Line="28" Column="28" />
+      <File FileName="HalalGuide.iOS/Controller/ReviewController.designer.cs" Line="1" Column="1" />
     </Files>
-    <Pads>
-      <Pad Id="ProjectPad">
-        <State expanded="True">
-          <Node name="HalalGuide.iOS" expanded="True" selected="True">
-            <Node name="Controller" expanded="True" />
-          </Node>
-        </State>
-      </Pad>
-    </Pads>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore>
-      <Breakpoint file="/Users/Privat/AWSSimpleDBPersistence/SimpleDBPersistence/DAO/GenericDAO.cs" line="342" column="66" />
       <Breakpoint file="/Users/Privat/AWSSimpleDBPersistence/SimpleDBPersistence/SimpleDB/Model/Parameters/SelectQuery.cs" line="55" column="1" />
       <Breakpoint file="/Users/Privat/HalalGuide/Components/googlemapsios-1.8.1/samples/GoogleMapsAdvSample/GoogleMapsAdvSample/Samples/Map Demos/BasicMapViewController.cs" line="19" column="34" />
-      <Breakpoint file="/Users/Privat/HalalGuide/HalalGuide.iOS/Controller/AddNewDiningController.cs" line="28" column="1" />
-      <Breakpoint file="/Users/Privat/HalalGuide/ViewModels/AddDiningViewModel.cs" line="29" column="1" />
-      <Breakpoint file="/Users/Privat/HalalGuide/ViewModels/AddDiningViewModel.cs" line="91" column="1" />
-      <Breakpoint file="/Users/Privat/HalalGuide/ViewModels/AddDiningViewModel.cs" line="88" column="1" />
+      <Breakpoint file="/Users/Privat/AWSSimpleDBPersistence/SimpleDBPersistence/SimpleDB/Marshalling/Response/BaseUnMarshaller.cs" line="41" column="1" />
+      <Breakpoint file="/Users/Privat/S3Storage/Service/ServiceContainer.cs" line="26" column="1" />
+      <Breakpoint file="/Users/Privat/HalalGuide/ViewModels/AddDiningViewModel.cs" line="173" column="1" />
+      <Breakpoint file="/Users/Privat/HalalGuide/ViewModels/AddDiningViewModel.cs" line="166" column="1" />
+      <Breakpoint file="/Users/Privat/HalalGuide/HalalGuide.iOS/AppDelegate.cs" line="91" column="1" />
+      <Breakpoint file="/Users/Privat/HalalGuide/HalalGuide.iOS/Controller/LandingPageController.cs" line="111" column="1" />
     </BreakpointStore>
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <MonoDevelop.Ide.ItemProperties.HalalGuide.iOS>
+    <IPhoneTestFlightSettings_27CDebug ApiToken="4dc604a74af8d2cce2e0a5973a82b8a0_MTUwNzkxMTIwMTMtMTItMTEgMTM6NDQ6NDYuMTQ3NTcw" TeamToken="b0e3aec642863a0401541c94581faf4f_MzQzOTY3MjAxNC0wMi0yNCAxMjowMDo0MS43ODI0Nzc" ReleaseNotes="Init" NotifyTeamMembers="False" ReplaceBinaries="False" DistributionLists="" UploadDSYMs="False" />
+    <MonoDevelop.MacDev.AppleDevelopmentTeam DeveloperId="R49NYV2375" TeamId="2Z296RX4K9" />
+  </MonoDevelop.Ide.ItemProperties.HalalGuide.iOS>
 </Properties>

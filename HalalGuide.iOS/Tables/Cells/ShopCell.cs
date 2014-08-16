@@ -24,7 +24,7 @@ namespace HalalGuide.iOS
 		public void ConfigureLocation (Location l)
 		{
 			UIImageView category = (UIImageView)ViewWithTag (CategoryImageTag);
-			category.Image = UIImage.FromBundle (Constants.landingPage + l.LocationType);
+			category.Image = UIImage.FromBundle (Constants.LandingPage + l.LocationType);
 
 			UILabel name = (UILabel)ViewWithTag (NameLabelTag);
 			name.Text = l.Name;

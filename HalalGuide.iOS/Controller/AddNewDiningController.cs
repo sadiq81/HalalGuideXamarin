@@ -4,17 +4,29 @@ using System;
 
 using MonoTouch.Foundation;
 using MonoTouch.UIKit;
-using HalalGuide.Util;
 using Xamarin.Media;
 using HalalGuide.iOS;
 using SimpleDBPersistence.Service;
+using System.Collections.Generic;
+using System.Drawing;
+using XUbertestersSDK;
+using System.Threading.Tasks;
 using HalalGuide.ViewModels;
+using HalalGuide.Domain.Enum;
+using HalalGuide.Util;
 
 namespace HalalGuide.iOS
 {
 	public partial class AddNewDiningController : KeyboardSupportedUIViewController
 	{
 		private readonly AddDiningViewModel ViewModel = ServiceContainer.Resolve<AddDiningViewModel> ();
+
+		private bool isExpanded { get; set; }
+
+		private static string cellIdentifier = "CategoryTableCell";
+		List<DiningCategory> CategoriesShown = new List<DiningCategory> ();
+		List<DiningCategory> CategoriesHidden = new List<DiningCategory> ();
+		List<DiningCategory> CategoriesChoosen = new List<DiningCategory> ();
 
 		public AddNewDiningController (IntPtr handle) : base (handle)
 		{
@@ -23,10 +35,31 @@ namespace HalalGuide.iOS
 
 		public async override void ViewDidLoad ()
 		{
-			base.ViewDidLoad ();
-			await ViewModel.LoadAddressNearPosition ();
-			Road.AutoCompleteValues = ViewModel.StreetNames ();
+			XUbertesters.LogInfo ("AddNewDiningController: ViewDidLoad-Start");
 
+			SetupTableView ();
+
+			SetupEventListeners ();
+
+			await SetupUIElements ();
+
+			XUbertesters.LogInfo ("AddNewDiningController: ViewDidLoad-End");
+
+		}
+
+
+		#region Setup
+
+		private void SetupTableView ()
+		{
+			CategoryTableView.WeakDataSource = this;
+			CategoryTableView.WeakDelegate = this;
+
+			CategoryTableView.TableFooterView = new UIView ();
+		}
+
+		private void SetupEventListeners ()
+		{
 			Road.EditingDidEnd += async (sender, e) => {
 				RoadNumber.AutoCompleteValues = ViewModel.StreetNumbers (Road.Text);
 				PostalCode.Text = ViewModel.PostalCode (Road.Text) ?? PostalCode.Text;
@@ -34,43 +67,107 @@ namespace HalalGuide.iOS
 			};
 		}
 
+		private async Task SetupUIElements ()
+		{
+			base.ViewDidLoad ();
+			await ViewModel.LoadAddressNearPosition ();
+			Road.AutoCompleteValues = ViewModel.StreetNames ();
+
+			NumberOfCategoriesLabel.Text = CategoriesChoosen.Count.ToString ();
+		}
+
+		#endregion
+
+		public override void ViewDidAppear (bool animated)
+		{
+			base.ViewDidAppear (animated);
+
+		}
+
+		#region Actions
+
 		partial void Regreet (NSObject sender)
 		{
+			XUbertesters.LogInfo ("AddNewDiningController: Regreet-Start");
 			DismissViewController (true, null);
+			XUbertesters.LogInfo ("AddNewDiningController: Regreet-End");
+
 		}
 
 		async partial void Save (NSObject sender)
 		{
+			XUbertesters.LogInfo ("AddNewDiningController: Save-Start");
 
 			if (String.IsNullOrEmpty (Name.Text)) {
-				ShowInputError ("Fejl", "Navn skal udfyldes");
+				new UIAlertView ("Fejl", "Navn skal udfyldes", null, "Ok").Show ();
 				return;
 			}
 
 			if (String.IsNullOrEmpty (Road.Text)) {
-				ShowInputError ("Fejl", "Vej skal udfyldes");
+				new UIAlertView ("Fejl", "Vej skal udfyldes", null, "Ok").Show ();
 				return;
 			}
 
 			if (String.IsNullOrEmpty (RoadNumber.Text)) {
-				ShowInputError ("Fejl", "Vejnummer skal udfyldes");
+				new UIAlertView ("Fejl", "Vejnummer skal udfyldes", null, "Ok").Show ();
 				return;
 			}
 
 			if (String.IsNullOrEmpty (PostalCode.Text)) {
-				ShowInputError ("Fejl", "Postnummer skal udfyldes");
+				new UIAlertView ("Fejl", "Postnummer skal udfyldes", null, "Ok").Show ();
 				return;
 			}
 
-			DismissViewController (true, null);
+			if (String.IsNullOrEmpty (City.Text)) {
+				new UIAlertView ("Fejl", "By skal udfyldes", null, "Ok").Show ();
+				return;
+			}
+
+			InvokeOnMainThread (ActivityIndicator.StartAnimating);
+
+			CreateDiningResult result = await ViewModel.CreateNewLocation (
+				                            Name.Text, 
+				                            Road.Text, 
+				                            RoadNumber.Text, 
+				                            PostalCode.Text, 
+				                            City.Text, 
+				                            Telephone.Text, 
+				                            HomePage.Text, 
+				                            Pork.On, 
+				                            Alcohol.On, 
+				                            Halal.On,
+				                            CategoriesChoosen);
+
+			ActivityIndicator.StopAnimating ();
+
+			if (result == CreateDiningResult.OK) {
+				new UIAlertView ("Succes", "Dit forslag er sent til godkendelse", null, "Ok", new string[]{ "Tilføj anmeldelse" }){ WeakDelegate = this }.Show ();
+			} else {
+				new UIAlertView ("Fejl", result.ToString (), null, "Ok", null).Show ();
+			}
+
+			XUbertesters.LogInfo ("AddNewDiningController: Save-End");
 
 		}
 
-		private void ShowInputError (string title, string text)
+		[Export ("alertView:clickedButtonAtIndex:")]
+		public virtual void Clicked (UIAlertView alertview, int buttonIndex)
 		{
-			UIAlertView error = new UIAlertView (title, text, null, "Ok");
-			error.Show ();
+			switch (buttonIndex) {
+			case 0:
+				{
+					DismissViewController (true, null);
+					break;
+				}
+			case 1:
+				{
+					PerformSegue (Segue.ReviewSegue, this);
+					break;
+				}
+			}
 		}
+
+		#endregion
 
 		[Export ("positionForBar:")]
 		public  UIBarPosition GetPositionForBar (IUIBarPositioning barPositioning)
@@ -80,27 +177,36 @@ namespace HalalGuide.iOS
 
 		async partial void EnteredPostalCode (UITextField sender)
 		{
+			XUbertesters.LogInfo ("AddNewDiningController: EnteredPostalCode-Start");
 			string cityName = await ViewModel.GetCityNameFromPostalCode (sender.Text);
 			City.Text = cityName ?? City.Text;
+			XUbertesters.LogInfo ("AddNewDiningController: EnteredPostalCode-End");
 		}
 
 		partial void AlcoholValueChanged (UISwitch sender)
 		{
+			XUbertesters.LogInfo ("AddNewDiningController: AlcoholValueChanged-Start");
 			AlcoholImage.Image = UIImage.FromBundle (Constants.DiningAttributeAlcohol + sender.On);
+			XUbertesters.LogInfo ("AddNewDiningController: AlcoholValueChanged-End");
 		}
 
 		partial void HalalValueChanged (UISwitch sender)
 		{
+			XUbertesters.LogInfo ("AddNewDiningController: HalalValueChanged-Start");
 			HalalImage.Image = UIImage.FromBundle (Constants.DiningAttributeHalal + sender.On);
+			XUbertesters.LogInfo ("AddNewDiningController: HalalValueChanged-End");
 		}
 
 		partial void PorkValueChanged (UISwitch sender)
 		{
+			XUbertesters.LogInfo ("AddNewDiningController: PorkValueChanged-Start");
 			PorkImage.Image = UIImage.FromBundle (Constants.DiningAttributePig + sender.On);
+			XUbertesters.LogInfo ("AddNewDiningController: PorkValueChanged-End");
 		}
 
 		partial  void  PickImage (UIButton sender)
 		{
+			XUbertesters.LogInfo ("AddNewDiningController: PickImage-Start");
 			if (ViewModel.IsCameraAvailable ()) {
 
 				UIActionSheet actionSheet = new UIActionSheet ("Tilføj billede", null, "Fortryd", null, "Tag med kamera", "Vælg fra kamerarulle");
@@ -136,9 +242,115 @@ namespace HalalGuide.iOS
 				actionSheet.ShowInView (View);
 
 			} else {
+				XUbertesters.LogWarn ("AddNewDiningController: noCameraFound");
 				UIAlertView noCameraFound = new UIAlertView ("Fejl", "Intet kamera tilgængeligt", null, "Luk");
 				noCameraFound.Show ();
 			}
+			XUbertesters.LogInfo ("AddNewDiningController: PickImage-End");
+		}
+
+		partial void ResetCategory (UIButton sender)
+		{
+			XUbertesters.LogInfo ("AddNewDiningController: ResetCategory-Start");
+			View.EndEditing (true);
+
+			CategoriesChoosen.Clear ();
+			NumberOfCategoriesLabel.Text = "0";
+			foreach (UIView view in CategoryTableView.Subviews) {
+				if (view is UITableViewCell) {
+					((UITableViewCell)view).Accessory = UITableViewCellAccessory.None;
+				}
+			}
+			XUbertesters.LogInfo ("AddNewDiningController: ResetCategory-End");
+		}
+
+		partial void ChooseCategory (UIButton sender)
+		{
+			XUbertesters.LogInfo ("AddNewDiningController: ChooseCategory-Start");
+			View.EndEditing (true);
+
+			sender.SetTitle (isExpanded ? "Vælg" : "Luk", UIControlState.Normal);
+
+			if (isExpanded) {
+
+				int count = CategoriesShown.Count;
+
+				for (int i = 0; i < count; i++) {
+					CategoryTableView.BeginUpdates ();
+					// insert the 'ADD NEW' row at the end of table display
+					CategoryTableView.DeleteRows (new NSIndexPath[] { NSIndexPath.FromRowSection (CategoryTableView.NumberOfRowsInSection (0) - 1, 0) }, UITableViewRowAnimation.Fade);
+					// create a new item and add it to our underlying data (it is not intended to be permanent)
+
+					DiningCategory cat = CategoriesShown [CategoryTableView.NumberOfRowsInSection (0) - 1];
+					CategoriesHidden.Add (cat);
+					CategoriesShown.Remove (cat);
+					CategoryTableView.EndUpdates (); // applies the changes
+				}
+
+			} else {
+
+				foreach (DiningCategory category in DiningCategory.Categories) {
+					CategoryTableView.BeginUpdates ();
+					// insert the 'ADD NEW' row at the end of table display
+					CategoryTableView.InsertRows (new NSIndexPath[] { NSIndexPath.FromRowSection (CategoryTableView.NumberOfRowsInSection (0), 0) }, UITableViewRowAnimation.Fade);
+					// create a new item and add it to our underlying data (it is not intended to be permanent)
+					CategoriesHidden.Remove (category);
+					CategoriesShown.Add (category);
+					CategoryTableView.EndUpdates (); // applies the changes
+				}
+			}
+
+			UIView.Animate (
+				duration : 0.2,
+				animation: () => {
+					CategoryTableView.Frame = new RectangleF (CategoryTableView.Frame.X, CategoryTableView.Frame.Y, 320, isExpanded ? 0 : this.View.Frame.Height - CategoryTableView.Frame.Y);
+				}
+			);
+			isExpanded = !isExpanded;
+
+			XUbertesters.LogInfo ("AddNewDiningController: ChooseCategory-End");
+		}
+
+		[Export ("tableView:numberOfRowsInSection:")]
+		public  int RowsInSection (UITableView tableview, int section)
+		{
+			return CategoriesShown.Count;
+		}
+
+		[Export ("tableView:cellForRowAtIndexPath:")]
+		public  UITableViewCell GetCell (UITableView tableView, NSIndexPath indexPath)
+		{
+
+			UITableViewCell cell = tableView.DequeueReusableCell (cellIdentifier);
+
+			if (cell == null) {
+				cell = new UITableViewCell (UITableViewCellStyle.Default, cellIdentifier);
+				cell.SelectionStyle = UITableViewCellSelectionStyle.None;
+			}
+
+			cell.TextLabel.Text = "\t" + CategoriesShown [indexPath.Row].Title;
+
+			bool selected = CategoriesChoosen.Contains (CategoriesShown [indexPath.Row]);
+			cell.Accessory = selected ? UITableViewCellAccessory.Checkmark : UITableViewCellAccessory.None;
+
+			return cell;
+		}
+
+		[Export ("tableView:didSelectRowAtIndexPath:")]
+		public  void RowSelected (UITableView tableView, NSIndexPath indexPath)
+		{
+			var cell = tableView.CellAt (indexPath);
+			DiningCategory cat = CategoriesShown [indexPath.Row];
+
+			if (CategoriesChoosen.Contains (cat)) {
+				CategoriesChoosen.Remove (CategoriesShown [indexPath.Row]);
+				cell.Accessory = UITableViewCellAccessory.None;
+			} else {
+				CategoriesChoosen.Add (CategoriesShown [indexPath.Row]);
+				cell.Accessory = UITableViewCellAccessory.Checkmark;
+			}
+
+			NumberOfCategoriesLabel.Text = CategoriesChoosen.Count.ToString ();
 		}
 	}
 }

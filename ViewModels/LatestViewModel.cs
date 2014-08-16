@@ -4,6 +4,7 @@ using HalalGuide.Domain;
 using SimpleDBPersistence.SimpleDB.Model.Parameters;
 using System.Threading.Tasks;
 using HalalGuide.Domain.Enum;
+using System;
 
 namespace HalalGuide.ViewModels
 {
@@ -29,10 +30,12 @@ namespace HalalGuide.ViewModels
 
 		public async Task Update ()
 		{
+			/*
 			Location l0 = new Location () {
 				Id = "0",
 				Name = "Marco's Pizzabar",
-				AddressRoad = "Hulgårdsvej 7",
+				AddressRoad = "Hulgårdsvej",
+				AddressRoadNumber = "7",
 				AddressCity = "København N",
 				AddressPostalCode = "2400",
 				Latitude = "55.6951012",
@@ -53,7 +56,8 @@ namespace HalalGuide.ViewModels
 			Location l1 = new Location () {
 				Id = "1",
 				Name = "Curry Take Away",
-				AddressRoad = "Borups Alle 29",
+				AddressRoad = "Borups Alle",
+				AddressRoadNumber = "29",
 				AddressCity = "København N",
 				AddressPostalCode = "2200",
 				Latitude = "55.6903656",
@@ -73,7 +77,8 @@ namespace HalalGuide.ViewModels
 			Location l2 = new Location () {
 				Id = "2",
 				Name = "Sultan's Café",
-				AddressRoad = "Borups Alle 112",
+				AddressRoad = "Borups Alle",
+				AddressRoadNumber = "112",
 				AddressCity = "Frederiksberg",
 				AddressPostalCode = "2000",
 				Latitude = "55.6920414",
@@ -94,7 +99,8 @@ namespace HalalGuide.ViewModels
 			Location l3 = new Location () {
 				Id = "3",
 				Name = "Dansk Islamisk Råd",
-				AddressRoad = "Vingelodden 1",
+				AddressRoad = "Vingelodden",
+				AddressRoadNumber = "1",
 				AddressCity = "København N",
 				AddressPostalCode = "2200",
 				Latitude = "55.7084999",
@@ -111,7 +117,8 @@ namespace HalalGuide.ViewModels
 			Location l4 = new Location () {
 				Id = "4",
 				Name = "Wakf",
-				AddressRoad = "Dortheavej 45 - 47",
+				AddressRoad = "Dortheavej ",
+				AddressRoadNumber = "45 - 47",
 				AddressCity = "København NV",
 				AddressPostalCode = "2400",
 				Latitude = "55.7083465",
@@ -128,7 +135,8 @@ namespace HalalGuide.ViewModels
 			Location l5 = new Location () {
 				Id = "5",
 				Name = "Istanbul Bazar",
-				AddressRoad = "Frederiksborgvej 15",
+				AddressRoad = "Frederiksborgvej",
+				AddressRoadNumber = "15",
 				AddressCity = "København NV",
 				AddressPostalCode = "2400",
 				Latitude = "55.702917",
@@ -143,7 +151,8 @@ namespace HalalGuide.ViewModels
 			Location l6 = new Location () {
 				Id = "6",
 				Name = "J & B Supermarked ApS",
-				AddressRoad = "Frederikssundsvej 11",
+				AddressRoad = "Frederikssundsvej",
+				AddressRoadNumber = "11",
 				AddressCity = "København NV",
 				AddressPostalCode = "2400",
 				Latitude = "55.701255",
@@ -155,18 +164,17 @@ namespace HalalGuide.ViewModels
 
 			await DAO.SaveOrReplace (l6);
 
-            
-			IsBusy = true;
+            */
 
 			SelectQuery<Location> query = new SelectQuery<Location> ();
+			query.Equal ("LocationStatus", LocationStatus.Approved.ToString ());
 			query.NotNull ("Updated");
 			query.SortOrder = "Updated";
 			query.Limit = 10;
 
 			List = await DAO.Select (query);
 
-			IsBusy = false;
-
+			OnLoadedListEvent (EventArgs.Empty);
 		}
 
 	}

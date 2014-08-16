@@ -1,7 +1,7 @@
 ﻿
 namespace HalalGuide.Domain.Enum
 {
-	public enum LocationStatus
+	public enum ReviewStatus
 	{
 		AwaitingApproval,
 		Approved,

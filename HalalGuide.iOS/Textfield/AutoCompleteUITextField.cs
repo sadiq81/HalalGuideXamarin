@@ -18,7 +18,7 @@ namespace HalalGuide.iOS
 {
 	public partial class AutoCompleteUITextField : UITextField
 	{
-		private readonly int kHTAutoCompleteButtonWidth = 30;
+		//private readonly int kHTAutoCompleteButtonWidth = 30;
 
 		public List<string> AutoCompleteValues { get; set; }
 

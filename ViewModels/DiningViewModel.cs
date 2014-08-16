@@ -8,13 +8,14 @@ using HalalGuide.Util;
 using HalalGuide.Domain.Enum;
 using System.Linq;
 using System.Globalization;
+using System;
+using XUbertestersSDK;
 
 namespace HalalGuide.ViewModels
 {
 	public class DiningViewModel : BaseViewModel, ITableViewModel
 	{
 		private readonly static LocationDAO DAO = SimpleDBPersistence.Service.ServiceContainer.Resolve<LocationDAO> ();
-
 
 		private List<Location> List = new List<Location> ();
 		private List<Location> Filtered = new List<Location> ();
@@ -36,6 +37,8 @@ namespace HalalGuide.ViewModels
 			PorkFilter = true;
 			AlcoholFilter = true;
 			HalalFilter = true;
+
+			LocationChangedEvent += (sender, e) => FilterLocations ();
 		}
 
 		public int Rows ()
@@ -50,6 +53,9 @@ namespace HalalGuide.ViewModels
 
 		private void FilterLocations ()
 		{
+
+			XUbertesters.LogInfo (string.Format ("DiningViewModel: Filtering locations, before: {0}", List.Count));
+
 			List<Location> temp = new List<Location> ();
 
 			foreach (Location loc in List) {
@@ -81,26 +87,18 @@ namespace HalalGuide.ViewModels
 				}
 			}
 			temp = temp.OrderBy (l => l.Distance).ToList ();
+
 			Filtered = new List<Location> (temp);
-		}
 
-		protected override void LocationChanged (object sender, PositionEventArgs e)
-		{
-			IsBusy = true;
-			Position = e.Position;
+			XUbertesters.LogInfo (string.Format ("DiningViewModel: Filtering locations, after: {0} with args DistanceFilter: {1} PorkFilter: {2} AlcoholFilter: {3} HalalFilter: {4}", Filtered.Count, DistanceFilter, PorkFilter, AlcoholFilter, HalalFilter));
 
-			base.LocationChanged (sender, e);
-
-			FilterLocations ();
-
-			IsBusy = false;
+			OnLoadedListEvent (EventArgs.Empty);
 		}
 
 		public async Task Update ()
 		{
-			IsBusy = true;
-
 			SelectQuery<Location> query = new SelectQuery<Location> ();
+			query.Equal ("LocationStatus", LocationStatus.Approved.ToString ());
 			query.Equal ("LocationType", LocationType.Dining.ToString ());
 			query.NotNull ("Updated");
 			query.SortOrder = "Updated";
@@ -108,10 +106,6 @@ namespace HalalGuide.ViewModels
 			List = await DAO.Select (query);
 
 			FilterLocations ();
-
-			IsBusy = false;
-
-
 		}
 
 	}

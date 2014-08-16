@@ -6,12 +6,10 @@ using MonoTouch.Foundation;
 using MonoTouch.UIKit;
 using System.Collections.Generic;
 using HalalGuide.Domain.Enum;
-using HalalGuide.Util;
-using MonoTouch.CoreImage;
 using System.Drawing;
-using SimpleDBPersistence.SimpleDB.Model.Parameters;
 using HalalGuide.ViewModels;
 using SimpleDBPersistence.Service;
+using XUbertestersSDK;
 
 namespace HalalGuide.iOS
 {
@@ -31,53 +29,30 @@ namespace HalalGuide.iOS
 
 		}
 
-		partial void SliderValueChanged (UISlider sender)
-		{
-			sender.Value = (float)Math.Round (sender.Value, MidpointRounding.AwayFromZero);
-			ViewModel.DistanceFilter = (int)sender.Value;
-			SliderValueLabel.Text = sender.Value + " km";
-		}
-
-		partial void PorkValueChanged (UISwitch sender)
-		{
-			ViewModel.PorkFilter = sender.On;
-		}
-
-		partial void AlcoholValueChanged (UISwitch sender)
-		{
-			ViewModel.AlcoholFilter = sender.On;
-		}
-
-		partial void HalalValueChanged (UISwitch sender)
-		{
-			ViewModel.HalalFilter = sender.On;
-		}
-
-		partial void ResetCategory (UIButton sender)
-		{
-			ViewModel.CategoryFilter.Clear ();
-			NumberOfCategoriesLabel.Text = "0";
-			foreach (UIView view in CategoryTableView.Subviews) {
-				if (view is UITableViewCell) {
-					((UITableViewCell)view).Accessory = UITableViewCellAccessory.None;
-				}
-			}
-		}
-
-		[Export ("positionForBar:")]
-		public  UIBarPosition GetPositionForBar (IUIBarPositioning barPositioning)
-		{
-			return UIBarPosition.TopAttached;
-		}
-
 		public  override void ViewDidLoad ()
 		{
+			XUbertesters.LogInfo ("FilterDiningPageController: ViewDidLoad-Start");
 			base.ViewDidLoad ();
 
+			SetupTableView ();
+
+			SetupUIValues ();
+
+			XUbertesters.LogInfo ("FilterDiningPageController: ViewDidLoad-End");
+		}
+
+		#region Setup
+
+		private void SetupTableView ()
+		{
 			CategoryTableView.WeakDataSource = this;
 			CategoryTableView.WeakDelegate = this;
 
 			CategoryTableView.TableFooterView = new UIView ();
+		}
+
+		private void SetupUIValues ()
+		{
 
 			Slider.Value = (float)ViewModel.DistanceFilter;
 			SliderValueLabel.Text = ViewModel.DistanceFilter.ToString ();
@@ -87,11 +62,58 @@ namespace HalalGuide.iOS
 			HalalSwitch.On = ViewModel.HalalFilter;
 
 			NumberOfCategoriesLabel.Text = ViewModel.CategoryFilter.Count.ToString ();
+		}
 
+		#endregion
+
+		#region Actions
+
+		partial void SliderValueChanged (UISlider sender)
+		{
+			XUbertesters.LogInfo ("FilterDiningPageController: SliderValueChanged-Start");
+			sender.Value = (float)Math.Round (sender.Value, MidpointRounding.AwayFromZero);
+			ViewModel.DistanceFilter = (int)sender.Value;
+			SliderValueLabel.Text = sender.Value + " km";
+			XUbertesters.LogInfo ("FilterDiningPageController: SliderValueChanged-End");
+		}
+
+		partial void PorkValueChanged (UISwitch sender)
+		{
+			XUbertesters.LogInfo ("FilterDiningPageController: PorkValueChanged-Start");
+			ViewModel.PorkFilter = sender.On;
+			XUbertesters.LogInfo ("FilterDiningPageController: PorkValueChanged-End");
+		}
+
+		partial void AlcoholValueChanged (UISwitch sender)
+		{
+			XUbertesters.LogInfo ("FilterDiningPageController: AlcoholValueChanged-Start");
+			ViewModel.AlcoholFilter = sender.On;
+			XUbertesters.LogInfo ("FilterDiningPageController: AlcoholValueChanged-End");
+		}
+
+		partial void HalalValueChanged (UISwitch sender)
+		{
+			XUbertesters.LogInfo ("FilterDiningPageController: HalalValueChanged-Start");
+			ViewModel.HalalFilter = sender.On;
+			XUbertesters.LogInfo ("FilterDiningPageController: HalalValueChanged-End");
+		}
+
+		partial void ResetCategory (UIButton sender)
+		{
+			XUbertesters.LogInfo ("FilterDiningPageController: ResetCategory-Start");
+			ViewModel.CategoryFilter.Clear ();
+			NumberOfCategoriesLabel.Text = "0";
+			foreach (UIView view in CategoryTableView.Subviews) {
+				if (view is UITableViewCell) {
+					((UITableViewCell)view).Accessory = UITableViewCellAccessory.None;
+				}
+			}
+			XUbertesters.LogInfo ("FilterDiningPageController: ResetCategory-End");
 		}
 
 		partial void ChooseCategory (UIButton sender)
 		{
+			XUbertesters.LogInfo ("FilterDiningPageController: ChooseCategory-Start");
 			sender.SetTitle (isExpanded ? "Vælg" : "Luk", UIControlState.Normal);
 
 			if (isExpanded) {
@@ -130,8 +152,18 @@ namespace HalalGuide.iOS
 				}
 			);
 			isExpanded = !isExpanded;
-
+			XUbertesters.LogInfo ("FilterDiningPageController: ChooseCategory-End");
 		}
+
+		[Export ("positionForBar:")]
+		public  UIBarPosition GetPositionForBar (IUIBarPositioning barPositioning)
+		{
+			return UIBarPosition.TopAttached;
+		}
+
+		#endregion
+
+		#region TableView
 
 		[Export ("tableView:numberOfRowsInSection:")]
 		public  int RowsInSection (UITableView tableview, int section)
@@ -174,6 +206,8 @@ namespace HalalGuide.iOS
 
 			NumberOfCategoriesLabel.Text = ViewModel.CategoryFilter.Count.ToString ();
 		}
+
+		#endregion
 	}
 }
 

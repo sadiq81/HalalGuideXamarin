@@ -8,9 +8,9 @@ using System.Drawing;
 using HalalGuide.ViewModels;
 using HalalGuide.Domain;
 using HalalGuide.Util;
-using HalalGuide.Domain.Enum;
 using SimpleDBPersistence.Service;
 using Xamarin.Auth;
+using XUbertestersSDK;
 
 namespace HalalGuide.iOS
 {
@@ -44,10 +44,29 @@ namespace HalalGuide.iOS
 
 		}
 
-
 		public override void  ViewDidLoad ()
 		{
+			XUbertesters.LogInfo ("DiningPageController: ViewDidLoad-Start");
 			base.ViewDidLoad ();
+
+			SetupTableView ();
+
+			SetupEventListeners ();
+
+			XUbertesters.LogInfo ("DiningPageController: ViewDidLoad-End");
+		}
+
+		public async override void  ViewDidAppear (bool animated)
+		{
+			base.ViewDidAppear (animated);
+
+			await ViewModel.Update ();
+		}
+
+		#region Setup
+
+		private void SetupTableView ()
+		{
 
 			TableView.WeakDataSource = this;
 			TableView.WeakDelegate = this;
@@ -56,32 +75,32 @@ namespace HalalGuide.iOS
 
 			TableViewController.TableView = TableView;
 			TableViewController.RefreshControl = RefreshControl;
+
 			RefreshControl.ValueChanged += async (sender, e) => {
 				RefreshControl.BeginRefreshing ();
 				await ViewModel.Update ();
 				RefreshControl.EndRefreshing ();
 
 				UIView.Animate (
-					duration : 0.2,
-					animation: () => {
+					0.2,
+					() => {
 						TableViewController.TableView.ContentInset = new UIEdgeInsets (0, 0, 0, 0);
 					}
 				);
 			};
 
-			SearchBar = new UISearchBar (new RectangleF (0, -44, TableView.Frame.Width, 44)) {
+			TableViewController.TableView.AddSubview (SearchBar = new UISearchBar (new RectangleF (0, -44, TableView.Frame.Width, 44)) {
 				BackgroundColor = UIColor.Clear
-			};
-			TableViewController.TableView.AddSubview (SearchBar);
+			});
+		}
 
-			ViewModel.IsBusyChanged += (object sender, EventArgs e) => {
-				if (ViewModel.IsBusy == false) {
-					ReloadData ();
-				}
-			};
+		private void SetupEventListeners ()
+		{
+
+			ViewModel.LoadedListEvent += (sender, e) => InvokeOnMainThread (() => TableViewController.TableView.ReloadSections (new NSIndexSet (0), UITableViewRowAnimation.Top));
 
 			//TODO move to base class
-			ViewModel.LoginCompleted += (object sender, AuthenticatorCompletedEventArgs e) => {
+			ViewModel.LoginCompletedEvent += (object sender, AuthenticatorCompletedEventArgs e) => {
 				if (Login != null) {
 					Login.DismissViewController (true, delegate {
 
@@ -98,29 +117,53 @@ namespace HalalGuide.iOS
 			};
 		}
 
-		public override void ViewWillAppear (bool animated)
-		{
-			base.ViewWillAppear (animated);
-			ViewModel.Update ();
-		}
+		#endregion
 
 		public override bool ShouldPerformSegue (string segueIdentifier, NSObject sender)
 		{
-			if (segueIdentifier.Equals (Segue.AddDiningSegue)) {
+			XUbertesters.LogInfo ("DiningPageController: ShouldPerformSegue-Start");
+			if (segueIdentifier != null && segueIdentifier.Equals (Segue.AddDiningSegue)) {
 
 				//TODO move to base class
 				if (ViewModel.IsAuthenticated ()) {
+					XUbertesters.LogInfo ("DiningPageController: ShouldPerformSegue-End");
 					return true;
 				} else {
 					var auth = ViewModel.Authenticate ();
 					PresentViewController (Login = auth.GetUI (), true, null);
+					XUbertesters.LogInfo ("DiningPageController: ShouldPerformSegue-End");
 					return false;
 				}
-
 			} else {
+				XUbertesters.LogInfo ("DiningPageController: ShouldPerformSegue-End");
 				return base.ShouldPerformSegue (segueIdentifier, sender);
 			}
 		}
+
+		[Export ("scrollViewDidEndDragging:willDecelerate:")]
+		public  void DraggingEnded (UIScrollView scrollView, bool willDecelerate)
+		{
+			if (willDecelerate) {
+				SearchBar.ResignFirstResponder ();
+			}
+			if (scrollView.ContentOffset.Y < 0) {
+				UIView.Animate (
+					0.2,
+					() => {
+						TableViewController.TableView.ContentInset = new UIEdgeInsets (44, 0, 0, 0);
+					}
+				);
+			} else {
+				UIView.Animate (
+					0.2,
+					() => {
+						TableViewController.TableView.ContentInset = new UIEdgeInsets (0, 0, 0, 0);
+					}
+				);
+			}
+		}
+
+		#region TableView
 
 		[Export ("tableView:numberOfRowsInSection:")]
 		public  int RowsInSection (UITableView tableview, int section)
@@ -170,33 +213,9 @@ namespace HalalGuide.iOS
 			tableView.DeselectRow (indexPath, true); // normal iOS behaviour is to remove the blue highlight
 		}
 
-		[Export ("scrollViewDidEndDragging:willDecelerate:")]
-		public  void DraggingEnded (UIScrollView scrollView, bool willDecelerate)
-		{
-			if (willDecelerate) {
-				SearchBar.ResignFirstResponder ();
-			}
-			if (scrollView.ContentOffset.Y < 0) {
-				UIView.Animate (
-					duration : 0.2,
-					animation: () => {
-						TableViewController.TableView.ContentInset = new UIEdgeInsets (44, 0, 0, 0);
-					}
-				);
-			} else {
-				UIView.Animate (
-					duration : 0.2,
-					animation: () => {
-						TableViewController.TableView.ContentInset = new UIEdgeInsets (0, 0, 0, 0);
-					}
-				);
-			}
-		}
+		#endregion
 
-		public void ReloadData ()
-		{
-			TableViewController.TableView.ReloadSections (new NSIndexSet (0), UITableViewRowAnimation.Top);
-		}
+
 
 	}
 

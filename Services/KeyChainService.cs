@@ -16,8 +16,8 @@ namespace HalalGuide.Services
 		{
 			List<Account> accounts = Store.FindAccountsForService (Constants.Facebook).ToList ();
 			if (accounts.Count > 0) {
-				//Facebook = accounts [0];
-				Store.Delete (accounts [0], Constants.Facebook);
+				//Store.Delete (accounts [0], Constants.Facebook);
+				Facebook = accounts [0];				
 			}
 		}
 
