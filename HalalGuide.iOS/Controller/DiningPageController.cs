@@ -11,12 +11,13 @@ using HalalGuide.Util;
 using SimpleDBPersistence.Service;
 using Xamarin.Auth;
 using XUbertestersSDK;
+using System.Globalization;
 
 namespace HalalGuide.iOS
 {
 	public partial class DiningPageController : UIViewController
 	{
-		private static string cellIdentifier = "DiningTableCell";
+		private const string cellIdentifier = "Dining";
 
 		public DiningViewModel ViewModel = ServiceContainer.Resolve<DiningViewModel> ();
 
@@ -25,17 +26,7 @@ namespace HalalGuide.iOS
 
 		UISearchBar SearchBar;
 
-		private static readonly int PORK_IMAGE_TAG = 102;
-		private static readonly int ALCOHOL_IMAGE_TAG = 103;
-		private static readonly int HALAL_IMAGE_TAG = 104;
 
-		private static readonly int KM_TEXT_TAG = 200;
-		private static readonly int NAME_TEXT_TAG = 201;
-		private static readonly int ADDRESS1_TEXT_TAG = 202;
-		private static readonly int ADDRESS2_TEXT_TAG = 203;
-		private static readonly int PORK_TEXT_TAG = 204;
-		private static readonly int ALCOHOL_TEXT_TAG = 205;
-		private static readonly int HALAL_TEXT_TAG = 206;
 
 		private UIViewController Login;
 
@@ -178,31 +169,7 @@ namespace HalalGuide.iOS
 
 			Location l = ViewModel.GetLocationAtRow (indexPath.Item);
 
-			UILabel km = (UILabel)cell.ViewWithTag (KM_TEXT_TAG);
-			km.Text = l.Distance.Equals (0) ? "N/A" : l.Distance.ToString ("N");
-
-			UILabel name = (UILabel)cell.ViewWithTag (NAME_TEXT_TAG);
-			name.Text = l.Name;
-
-			UILabel address1 = (UILabel)cell.ViewWithTag (ADDRESS1_TEXT_TAG);
-			address1.Text = l.AddressRoad;
-			UILabel address2 = (UILabel)cell.ViewWithTag (ADDRESS2_TEXT_TAG);
-			address2.Text = l.AddressPostalCode + " " + l.AddressCity;
-
-			UIImageView porkImage = (UIImageView)cell.ViewWithTag (PORK_IMAGE_TAG);
-			porkImage.Image = UIImage.FromBundle (Constants.DiningAttributePig + l.Pork);
-			UILabel porkLabel = (UILabel)cell.ViewWithTag (PORK_TEXT_TAG);
-			porkLabel.TextColor = l.Pork ? UIColor.Red : UIColor.Green;
-
-			UIImageView alcoholImage = (UIImageView)cell.ViewWithTag (ALCOHOL_IMAGE_TAG);
-			UILabel alcoholLabel = (UILabel)cell.ViewWithTag (ALCOHOL_TEXT_TAG);
-			alcoholImage.Image = UIImage.FromBundle (Constants.DiningAttributeAlcohol + l.Alcohol);
-			alcoholLabel.TextColor = l.Pork ? UIColor.Red : UIColor.Green;
-
-			UIImageView halalImage = (UIImageView)cell.ViewWithTag (HALAL_IMAGE_TAG);
-			halalImage.Image = UIImage.FromBundle (Constants.DiningAttributeHalal + l.NonHalal);
-			UILabel halalLabel = (UILabel)cell.ViewWithTag (HALAL_TEXT_TAG);
-			halalLabel.TextColor = l.NonHalal ? UIColor.Red : UIColor.Green;
+			((DiningCell)cell).ConfigureLocation (l);
 
 			return cell;
 		}

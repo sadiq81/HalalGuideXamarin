@@ -57,8 +57,8 @@
     <MtouchI18n>
     </MtouchI18n>
     <MtouchArch>ARMv7</MtouchArch>
-    <BuildIpa>true</BuildIpa>
     <AssemblyName>HalalGuide</AssemblyName>
+    <MtouchFastDev>true</MtouchFastDev>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhone' ">
     <DebugType>full</DebugType>
@@ -177,10 +177,7 @@
     <BundleResource Include="Resources\diningAttributeAlcoholFalse.png" />
     <BundleResource Include="Resources\diningAttributePigTrue.png" />
     <BundleResource Include="Resources\diningAttributeAlcoholTrue.png" />
-    <BundleResource Include="Resources\landingPageShop.png" />
-    <BundleResource Include="Resources\landingPageDining.png" />
     <BundleResource Include="Resources\landingPageENumber.png" />
-    <BundleResource Include="Resources\landingPageMosque.png" />
     <BundleResource Include="Resources\landingPageIndstillinger.png" />
     <BundleResource Include="Resources\toolbarFilter.png" />
     <BundleResource Include="Resources\toolbarFilter%402x.png" />
@@ -192,6 +189,9 @@
     <BundleResource Include="Resources\star%402x.png" />
     <BundleResource Include="Resources\starSelected.png" />
     <BundleResource Include="Resources\starSelected%402x.png" />
+    <BundleResource Include="Resources\locationMosque.png" />
+    <BundleResource Include="Resources\locationDining.png" />
+    <BundleResource Include="Resources\locationShop.png" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Info.plist" />
@@ -243,6 +243,8 @@
     <Compile Include="Controller\ReviewController.designer.cs">
       <DependentUpon>ReviewController.cs</DependentUpon>
     </Compile>
+    <Compile Include="Tables\Cells\LocationCell.cs" />
+    <Compile Include="Tables\Cells\ILocationCell.cs" />
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="MainStoryboard.storyboard" />

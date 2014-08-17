@@ -19,7 +19,7 @@ namespace HalalGuide.ViewModels
 {
 	public class ReviewViewModel : BaseViewModel
 	{
-		private ReviewDAO ReviewDAO = ServiceContainer.Resolve<ReviewDAO> ();
+
 
 		public ReviewViewModel () : base ()
 		{
@@ -43,14 +43,14 @@ namespace HalalGuide.ViewModels
 
 			} catch (AWSErrorException e) {
 				XUbertesters.LogError ("ReviewViewModel: CouldNotUploadReviewToS3: " + e);
-				ReviewDAO.Delete (r);
+				ReviewDAO.Delete (r).RunSynchronously ();
 				return CreateReviewResult.CouldNotUploadReviewToS3;
 
 			} catch (SimpleDBPersistence.SimpleDB.Model.AWSException.AWSErrorException e) {
 
 				XUbertesters.LogError ("ReviewViewModel: CouldNotCreateEntityInSimpleDB: " + e);
-				S3.DeleteObject (Constants.S3Bucket, objectName);
-				ReviewDAO.Delete (r);
+				S3.DeleteObject (Constants.S3Bucket, objectName).RunSynchronously ();
+				ReviewDAO.Delete (r).RunSynchronously ();
 				return CreateReviewResult.CouldNotCreateEntityInSimpleDB;
 			}
 

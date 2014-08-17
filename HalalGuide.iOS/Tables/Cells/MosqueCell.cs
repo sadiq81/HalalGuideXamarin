@@ -6,45 +6,27 @@ using MonoTouch.Foundation;
 using MonoTouch.UIKit;
 using HalalGuide.Domain;
 using HalalGuide.Util;
+using HalalGuide.iOS.Tables.Cells;
 
 namespace HalalGuide.iOS
 {
-	public partial class MosqueCell : UITableViewCell
+	public partial class MosqueCell : LocationCell
 	{
 
-		public static readonly int CategoryImageTag = 101;
-		public static readonly int LaguageImageTag = 102;
 
-		public static readonly int NameLabelTag = 201;
-		public static readonly int AddressLabelTag = 202;
-		public static readonly int PostalCodeLabelTag = 203;
-		public static readonly int LanguageLabelTag = 204;
 
 		public MosqueCell (IntPtr handle) : base (handle)
 		{
 		}
 
-		public void ConfigureLocation (Location l)
+		public override void ConfigureLocation (Location l)
 		{
-			UIImageView category = (UIImageView)ViewWithTag (CategoryImageTag);
-			category.Image = UIImage.FromBundle (Constants.LandingPage + l.LocationType);
-
-			UILabel name = (UILabel)ViewWithTag (NameLabelTag);
-			name.Text = l.Name;
-
-			UILabel address1 = (UILabel)ViewWithTag (AddressLabelTag);
-			address1.Text = l.AddressRoad;
-			UILabel address2 = (UILabel)ViewWithTag (PostalCodeLabelTag);
-			address2.Text = l.AddressPostalCode + " " + l.AddressCity;
-
+			base.ConfigureLocation (l);
 			UIImageView firstImage = (UIImageView)ViewWithTag (LaguageImageTag);
 			firstImage.Image = UIImage.FromBundle (Constants.Flag + l.Language.ToString ());
 
 			UILabel firstLabel = (UILabel)ViewWithTag (LanguageLabelTag);
 			firstLabel.Text = l.Language.ToString ().ToLower ().FirstToUpper ();
-
-
-
 
 		}
 	}

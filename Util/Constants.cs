@@ -19,6 +19,8 @@ namespace HalalGuide.Util
 		public static readonly string Flag = "flag";
 		public static readonly string LandingPage = "landingPage";
 
+		public static readonly string Location = "location";
+
 		public static readonly string S3Bucket = "halalguide";
 
 		public static readonly string Facebook = "Facebook";

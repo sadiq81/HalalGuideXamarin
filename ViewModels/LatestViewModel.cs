@@ -10,8 +10,6 @@ namespace HalalGuide.ViewModels
 {
 	public class LatestViewModel : BaseViewModel, ITableViewModel
 	{
-		private readonly static LocationDAO DAO = SimpleDBPersistence.Service.ServiceContainer.Resolve<LocationDAO> ();
-
 		private List<Location> List = new List<Location> ();
 
 		public LatestViewModel () : base ()
@@ -172,7 +170,9 @@ namespace HalalGuide.ViewModels
 			query.SortOrder = "Updated";
 			query.Limit = 10;
 
-			List = await DAO.Select (query);
+			List = await LocationDAO.Select (query);
+
+			CalculateDistances (ref List);
 
 			OnLoadedListEvent (EventArgs.Empty);
 		}

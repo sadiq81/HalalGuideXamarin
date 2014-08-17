@@ -18,15 +18,9 @@ namespace HalalGuide.ViewModels
 {
 	public class AddDiningViewModel : BaseViewModel
 	{
-		private readonly MediaPicker MediaPicker = ServiceContainer.Resolve<MediaPicker> ();
-
 		private MediaFile Image { get; set; }
 
 		private Dictionary<string, Address> StreetNumbersMap { get; set; }
-
-		private LocationDAO LocationDAO = ServiceContainer.Resolve<LocationDAO> ();
-
-		private LocationPictureDAO LocationPictureDAO = ServiceContainer.Resolve<LocationPictureDAO> ();
 
 		public Location Location { get; set; }
 
@@ -166,14 +160,14 @@ namespace HalalGuide.ViewModels
 
 				} catch (AWSErrorException e) {
 					XUbertesters.LogError ("AddDiningViewModel: CouldNotUploadPictureToS3: " + e);
-					LocationDAO.Delete (l);
+					LocationDAO.Delete (l).RunSynchronously ();
 					return CreateDiningResult.CouldNotUploadPictureToS3;
 
 				} catch (SimpleDBPersistence.SimpleDB.Model.AWSException.AWSErrorException e) {
 
 					XUbertesters.LogError ("AddDiningViewModel: CouldNotCreateEntityInSimpleDB: " + e);
-					S3.DeleteObject (Constants.S3Bucket, objectName);
-					LocationDAO.Delete (l);
+					S3.DeleteObject (Constants.S3Bucket, objectName).RunSynchronously ();
+					LocationDAO.Delete (l).RunSynchronously ();
 					return CreateDiningResult.CouldNotUploadPictureToS3;
 				}
 			}

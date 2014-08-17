@@ -8,44 +8,21 @@ using MonoTouch.AddressBook;
 using MonoTouch.CoreImage;
 using HalalGuide.Domain;
 using HalalGuide.Util;
+using HalalGuide.iOS.Tables.Cells;
 
 namespace HalalGuide.iOS
 {
-	public partial class DiningCell : UITableViewCell
+	public partial class DiningCell : LocationCell
 	{
 
-		public static readonly int CategoryImageTag = 101;
-		public static readonly int PigImageTag = 102;
-		public static readonly int AlcoholImageTag = 103;
-		public static readonly int HalalImageTag = 104;
-
-		public static readonly int NameLabelTag = 201;
-		public static readonly int AddressLabelTag = 202;
-		public static readonly int PostalCodeLabelTag = 203;
-		public static readonly int PigLabelTag = 204;
-		public static readonly int AlcoholLabelTag = 205;
-		public static readonly int HalalLabelTag = 206;
 
 		public DiningCell (IntPtr handle) : base (handle)
 		{
-
-
 		}
 
-
-
-		public void ConfigureLocation (Location l)
+		public override void ConfigureLocation (Location l)
 		{
-			UIImageView category = (UIImageView)ViewWithTag (CategoryImageTag);
-			category.Image = UIImage.FromBundle (Constants.LandingPage + l.LocationType);
-
-			UILabel name = (UILabel)ViewWithTag (NameLabelTag);
-			name.Text = l.Name;
-
-			UILabel address1 = (UILabel)ViewWithTag (AddressLabelTag);
-			address1.Text = l.AddressRoad;
-			UILabel address2 = (UILabel)ViewWithTag (PostalCodeLabelTag);
-			address2.Text = l.AddressPostalCode + " " + l.AddressCity;
+			base.ConfigureLocation (l);
 
 			UIImageView firstImage = (UIImageView)ViewWithTag (PigImageTag);
 			firstImage.Image = UIImage.FromBundle (Constants.DiningAttributePig + l.Pork);
@@ -64,6 +41,7 @@ namespace HalalGuide.iOS
 
 			UILabel thirdLabel = (UILabel)ViewWithTag (HalalLabelTag);
 			thirdLabel.TextColor = l.NonHalal ? UIColor.Red : UIColor.Green;
+
 
 		}
 	}

@@ -11,6 +11,9 @@ using HalalGuide.ViewModels;
 using SimpleDBPersistence.Service;
 using HalalGuide.Util;
 using XUbertestersSDK;
+using System.Threading.Tasks;
+using S3Storage.Response;
+using HalalGuide.iOS.Tables.Cells;
 
 namespace HalalGuide.iOS
 {
@@ -25,7 +28,7 @@ namespace HalalGuide.iOS
 		{
 		}
 
-		public async override void  ViewDidLoad ()
+		public override void  ViewDidLoad ()
 		{
 			XUbertesters.LogInfo ("LandingPageController: ViewDidLoad-Start");
 			base.ViewDidLoad ();
@@ -83,24 +86,7 @@ namespace HalalGuide.iOS
 			Location l = ViewModel.GetLocationAtRow (indexPath.Item);
 
 			UITableViewCell cell = tableView.DequeueReusableCell (l.LocationType.ToString ());
-
-			switch (l.LocationType) {
-			case LocationType.Dining:
-				{
-					((DiningCell)cell).ConfigureLocation (l);
-					break;
-				}
-			case LocationType.Shop:
-				{
-					((ShopCell)cell).ConfigureLocation (l);
-					break;
-				}
-			case LocationType.Mosque:
-				{
-					((MosqueCell)cell).ConfigureLocation (l);
-					break;
-				}
-			}
+			((ILocationCell)cell).ConfigureLocation (l);
 
 			return cell;
 		}

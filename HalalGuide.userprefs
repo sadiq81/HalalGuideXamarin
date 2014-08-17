@@ -1,14 +1,35 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|iPhone" PreferredExecutionTarget="MonoDevelop.IPhone.IPhoneDeviceTarget.Tommy Sadiqs iPhone" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="HalalGuide.iOS/Controller/AddNewDiningController.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="HalalGuide.iOS/Tables/Cells/LocationCell.cs">
     <Files>
-      <File FileName="HalalGuide.iOS/Controller/LandingPageController.cs" Line="4" Column="4" />
-      <File FileName="HalalGuide.iOS/Controller/DiningPageController.cs" Line="9" Column="9" />
-      <File FileName="HalalGuide.iOS/Controller/FilterDiningPageController.cs" Line="1" Column="1" />
-      <File FileName="HalalGuide.iOS/Controller/AddNewDiningController.cs" Line="5" Column="5" />
-      <File FileName="HalalGuide.iOS/Controller/ReviewController.cs" Line="28" Column="28" />
-      <File FileName="HalalGuide.iOS/Controller/ReviewController.designer.cs" Line="1" Column="1" />
+      <File FileName="ViewModels/BaseViewModel.cs" Line="1" Column="1" />
+      <File FileName="HalalGuide.iOS/Controller/LandingPageController.cs" Line="1" Column="1" />
+      <File FileName="HalalGuide.iOS/Controller/AddNewDiningController.cs" Line="10" Column="10" />
+      <File FileName="ViewModels/DiningViewModel.cs" Line="25" Column="25" />
+      <File FileName="../AWSSimpleDBPersistence/SimpleDBPersistence/SimpleDB/SimpleDBClientCore.cs" Line="1" Column="1" />
+      <File FileName="HalalGuide.iOS/Tables/Cells/MosqueCell.cs" Line="19" Column="19" />
+      <File FileName="HalalGuide.iOS/Tables/Cells/LocationCell.cs" Line="1" Column="1" />
+      <File FileName="HalalGuide.iOS/Tables/Cells/DiningCell.cs" Line="2" Column="2" />
+      <File FileName="HalalGuide.iOS/Tables/Cells/ShopCell.cs" Line="19" Column="19" />
+      <File FileName="HalalGuide.iOS/Controller/DiningPageController.cs" Line="3" Column="3" />
+      <File FileName="../../../Developer/MonoTouch/Source/mono/mcs/class/corlib/System.Runtime.CompilerServices/AsyncVoidMethodBuilder.cs" Line="1" Column="1" />
+      <File FileName="HalalGuide.iOS/Tables/Cells/ILocationCell.cs" Line="32" Column="32" />
     </Files>
+    <Pads>
+      <Pad Id="ProjectPad">
+        <State expanded="True">
+          <Node name="HalalGuide.iOS" expanded="True" selected="True">
+            <Node name="Controller" expanded="True" />
+            <Node name="Tables" expanded="True">
+              <Node name="Cells" expanded="True" />
+            </Node>
+          </Node>
+          <Node name="SimpleDBPersistence" expanded="True">
+            <Node name="SimpleDB" expanded="True" />
+          </Node>
+        </State>
+      </Pad>
+    </Pads>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore>
@@ -16,10 +37,9 @@
       <Breakpoint file="/Users/Privat/HalalGuide/Components/googlemapsios-1.8.1/samples/GoogleMapsAdvSample/GoogleMapsAdvSample/Samples/Map Demos/BasicMapViewController.cs" line="19" column="34" />
       <Breakpoint file="/Users/Privat/AWSSimpleDBPersistence/SimpleDBPersistence/SimpleDB/Marshalling/Response/BaseUnMarshaller.cs" line="41" column="1" />
       <Breakpoint file="/Users/Privat/S3Storage/Service/ServiceContainer.cs" line="26" column="1" />
-      <Breakpoint file="/Users/Privat/HalalGuide/ViewModels/AddDiningViewModel.cs" line="173" column="1" />
-      <Breakpoint file="/Users/Privat/HalalGuide/ViewModels/AddDiningViewModel.cs" line="166" column="1" />
       <Breakpoint file="/Users/Privat/HalalGuide/HalalGuide.iOS/AppDelegate.cs" line="91" column="1" />
-      <Breakpoint file="/Users/Privat/HalalGuide/HalalGuide.iOS/Controller/LandingPageController.cs" line="111" column="1" />
+      <Breakpoint file="/Users/Privat/HalalGuide/HalalGuide.iOS/Controller/DiningPageController.cs" line="182" column="1" />
+      <Breakpoint file="/Users/Privat/HalalGuide/HalalGuide.iOS/Tables/Cells/LocationCell.cs" line="64" column="11" />
     </BreakpointStore>
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />

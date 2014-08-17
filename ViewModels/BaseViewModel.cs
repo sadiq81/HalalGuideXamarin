@@ -10,6 +10,15 @@ using Newtonsoft.Json.Linq;
 using System.Security.Cryptography;
 using S3Storage.S3;
 using XUbertestersSDK;
+using System.IO;
+using System.Collections.Generic;
+using HalalGuide.Domain;
+using SimpleDBPersistence.SimpleDB.Model.Parameters;
+using HalalGuide.DAO;
+using Xamarin.Media;
+using S3Storage.Response;
+using S3Storage.AWSException;
+using System.Globalization;
 
 namespace HalalGuide.ViewModels
 {
@@ -51,7 +60,15 @@ namespace HalalGuide.ViewModels
 
 		protected static  AddressService AddressService = ServiceContainer.Resolve<AddressService> ();
 
+		protected LocationDAO LocationDAO = ServiceContainer.Resolve<LocationDAO> ();
+
+		protected LocationPictureDAO LocationPictureDAO = ServiceContainer.Resolve<LocationPictureDAO> ();
+
+		protected ReviewDAO ReviewDAO = ServiceContainer.Resolve<ReviewDAO> ();
+
 		protected static  S3ClientCore S3 = ServiceContainer.Resolve<S3ClientCore> ();
+
+		protected readonly MediaPicker MediaPicker = ServiceContainer.Resolve<MediaPicker> ();
 
 		protected static Position Position { get; set; }
 
@@ -122,6 +139,40 @@ namespace HalalGuide.ViewModels
 			};
 
 			return auth;
+		}
+
+		protected void CalculateDistances (ref List<Location> locations)
+		{
+
+			foreach (Location loc in locations) {
+
+				if (Position != null) {
+					double distance = CalcUtil.GetDistanceKM (Position, new Position () {
+						Latitude = double.Parse (loc.Latitude, CultureInfo.InvariantCulture),
+						Longitude = double.Parse (loc.Longtitude, CultureInfo.InvariantCulture)
+					});
+					loc.Distance = distance;
+				}
+			}
+		}
+
+		public async Task<Stream> GetFirstImageForLocation (Location location)
+		{
+			SelectQuery<LocationPicture> query = new SelectQuery<LocationPicture> ();
+			query.Equal ("LocationId", location.Id);
+			List<LocationPicture> list = await LocationPictureDAO.Select (query);
+			if (list != null && list.Count > 0) {
+				try {
+					GetObjectResult result = await S3.GetObject (Constants.S3Bucket, list [0].Id);
+					return result.Stream;
+				} catch (AWSErrorException ex) {
+					XUbertesters.LogError (string.Format ("BaseViewModel: Error downloading image: {0} due to: {1}", list [0].Id, ex));
+					return null;
+				}
+
+			} else {
+				return null;
+			}
 		}
 	}
 }

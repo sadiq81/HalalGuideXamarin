@@ -15,8 +15,6 @@ namespace HalalGuide.ViewModels
 {
 	public class DiningViewModel : BaseViewModel, ITableViewModel
 	{
-		private readonly static LocationDAO DAO = SimpleDBPersistence.Service.ServiceContainer.Resolve<LocationDAO> ();
-
 		private List<Location> List = new List<Location> ();
 		private List<Location> Filtered = new List<Location> ();
 
@@ -58,15 +56,9 @@ namespace HalalGuide.ViewModels
 
 			List<Location> temp = new List<Location> ();
 
-			foreach (Location loc in List) {
+			CalculateDistances (ref List);
 
-				if (Position != null) {
-					double distance = CalcUtil.GetDistanceKM (Position, new Position () {
-						Latitude = double.Parse (loc.Latitude, CultureInfo.InvariantCulture),
-						Longitude = double.Parse (loc.Longtitude, CultureInfo.InvariantCulture)
-					});
-					loc.Distance = distance;
-				}
+			foreach (Location loc in List) {
 
 				bool ok = true;
 
@@ -103,7 +95,7 @@ namespace HalalGuide.ViewModels
 			query.NotNull ("Updated");
 			query.SortOrder = "Updated";
 
-			List = await DAO.Select (query);
+			List = await LocationDAO.Select (query);
 
 			FilterLocations ();
 		}
