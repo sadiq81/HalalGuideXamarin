@@ -9,18 +9,12 @@ using System.CodeDom.Compiler;
 
 namespace HalalGuide.iOS
 {
-	[Register ("DiningPageController")]
-	partial class DiningPageController
+	[Register ("AppDelegate")]
+	partial class AppDelegate
 	{
-		[Outlet]
-		MonoTouch.UIKit.UITableView TableView { get; set; }
-
+		
 		void ReleaseDesignerOutlets ()
 		{
-			if (TableView != null) {
-				TableView.Dispose ();
-				TableView = null;
-			}
 		}
 	}
 }

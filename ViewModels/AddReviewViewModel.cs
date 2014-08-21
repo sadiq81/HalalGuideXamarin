@@ -17,11 +17,9 @@ using System.Text;
 
 namespace HalalGuide.ViewModels
 {
-	public class ReviewViewModel : BaseViewModel
+	public class AddReviewViewModel : BaseViewModel
 	{
-
-
-		public ReviewViewModel () : base ()
+		public AddReviewViewModel () : base ()
 		{
 		}
 
@@ -29,16 +27,15 @@ namespace HalalGuide.ViewModels
 		{
 
 			Review r = new Review () {
+				Id = KeyChain.GetFaceBookAccount ().Username + "-" + DateTime.Now.Ticks,
 				LocationId = location.Id,
 				Rating = rating,
-				Submitter = KeyChain.GetFaceBookAccount ().Username
 			};
 
-			string objectName = location.Name + "/" + r.Submitter + "-" + DateTime.Now.Ticks + ".txt";
-			r.Id = objectName;
+			string objectName = r.Id + ".txt";
 
 			try {
-				await S3.PutObject (Constants.S3Bucket, objectName, Encoding.UTF8.GetBytes (review));
+				await S3.PutObject (Constants.S3Bucket, location.Id + "/" + objectName, Encoding.UTF8.GetBytes (review));
 				await ReviewDAO.SaveOrReplace (r);
 
 			} catch (AWSErrorException e) {

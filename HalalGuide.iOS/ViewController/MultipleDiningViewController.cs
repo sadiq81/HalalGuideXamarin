@@ -4,33 +4,29 @@ using System;
 
 using MonoTouch.Foundation;
 using MonoTouch.UIKit;
-using System.Drawing;
 using HalalGuide.ViewModels;
-using HalalGuide.Domain;
-using HalalGuide.Util;
-using SimpleDBPersistence.Service;
-using Xamarin.Auth;
 using XUbertestersSDK;
-using System.Globalization;
+using System.Drawing;
+using HalalGuide.Util;
+using HalalGuide.Domain;
+using SimpleDBPersistence.Service;
 
-namespace HalalGuide.iOS
+namespace HalalGuide.iOS.ViewController
 {
-	public partial class DiningPageController : UIViewController
+	public partial class MultipleDiningViewController : UIViewController
 	{
 		private const string cellIdentifier = "Dining";
 
-		public DiningViewModel ViewModel = ServiceContainer.Resolve<DiningViewModel> ();
+		public MultipleDiningViewModel ViewModel = ServiceContainer.Resolve<MultipleDiningViewModel> ();
 
 		private UITableViewController TableViewController = new UITableViewController ();
 		private UIRefreshControl RefreshControl = new UIRefreshControl ();
 
 		UISearchBar SearchBar;
 
-
-
 		private UIViewController Login;
 
-		public DiningPageController (IntPtr handle) : base (handle)
+		public MultipleDiningViewController (IntPtr handle) : base (handle)
 		{
 
 		}
@@ -58,13 +54,10 @@ namespace HalalGuide.iOS
 
 		private void SetupTableView ()
 		{
+		
+			DiningTableView.TableFooterView = new UIView ();
 
-			TableView.WeakDataSource = this;
-			TableView.WeakDelegate = this;
-
-			TableView.TableFooterView = new UIView ();
-
-			TableViewController.TableView = TableView;
+			TableViewController.TableView = DiningTableView;
 			TableViewController.RefreshControl = RefreshControl;
 
 			RefreshControl.ValueChanged += async (sender, e) => {
@@ -80,7 +73,7 @@ namespace HalalGuide.iOS
 				);
 			};
 
-			TableViewController.TableView.AddSubview (SearchBar = new UISearchBar (new RectangleF (0, -44, TableView.Frame.Width, 44)) {
+			TableViewController.TableView.AddSubview (SearchBar = new UISearchBar (new RectangleF (0, -44, DiningTableView.Frame.Width, 44)) {
 				BackgroundColor = UIColor.Clear
 			});
 		}
@@ -91,6 +84,7 @@ namespace HalalGuide.iOS
 			ViewModel.LoadedListEvent += (sender, e) => InvokeOnMainThread (() => TableViewController.TableView.ReloadSections (new NSIndexSet (0), UITableViewRowAnimation.Top));
 
 			//TODO move to base class
+			/*
 			ViewModel.LoginCompletedEvent += (object sender, AuthenticatorCompletedEventArgs e) => {
 				if (Login != null) {
 					Login.DismissViewController (true, delegate {
@@ -106,6 +100,7 @@ namespace HalalGuide.iOS
 					Login = null;
 				}
 			};
+			*/
 		}
 
 		#endregion
@@ -113,21 +108,32 @@ namespace HalalGuide.iOS
 		public override bool ShouldPerformSegue (string segueIdentifier, NSObject sender)
 		{
 			XUbertesters.LogInfo ("DiningPageController: ShouldPerformSegue-Start");
-			if (segueIdentifier != null && segueIdentifier.Equals (Segue.AddDiningSegue)) {
+			if (segueIdentifier != null && segueIdentifier.Equals (Segue.AddNewDiningViewControllerSegue)) {
 
-				//TODO move to base class
 				if (ViewModel.IsAuthenticated ()) {
 					XUbertesters.LogInfo ("DiningPageController: ShouldPerformSegue-End");
 					return true;
 				} else {
+					/*
 					var auth = ViewModel.Authenticate ();
 					PresentViewController (Login = auth.GetUI (), true, null);
+					*/
 					XUbertesters.LogInfo ("DiningPageController: ShouldPerformSegue-End");
 					return false;
 				}
 			} else {
 				XUbertesters.LogInfo ("DiningPageController: ShouldPerformSegue-End");
-				return base.ShouldPerformSegue (segueIdentifier, sender);
+				return true;
+			}
+
+
+		}
+
+		public override void PrepareForSegue (UIStoryboardSegue segue, NSObject sender)
+		{
+			if (Segue.SingleDiningViewControllerSegue.Equals (segue.Identifier)) {
+				NSIndexPath indexPath = DiningTableView.IndexPathForCell ((UITableViewCell)sender);
+				BaseViewModel.SelectedLocation = ViewModel.GetLocationAtRow (indexPath.Item);
 			}
 		}
 
@@ -185,6 +191,4 @@ namespace HalalGuide.iOS
 
 
 	}
-
 }
-

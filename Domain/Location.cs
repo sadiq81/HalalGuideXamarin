@@ -4,67 +4,108 @@ using SimpleDBPersistence.SimpleDB.Model;
 using System.Text;
 using HalalGuide.Domain.Enum;
 using System.Linq;
+using MonoTouch.CoreImage;
 
 namespace HalalGuide.Domain
 {
 	[SimpleDBDomain ("Location")]
 	public class Location : Entity
 	{
+		public const string NameIdentifier = "Name";
+
 		[SimpleDBFieldAttribute ("Name")]
 		public string Name { get; set; }
 
-		[SimpleDBFieldAttribute ("AddressRoad")]
+		public const string AddressRoadIdentifier = "AddressRoad";
+
+		[SimpleDBFieldAttribute (AddressRoadIdentifier)]
 		public string AddressRoad { get; set; }
 
-		[SimpleDBFieldAttribute ("AddressRoadNumber")]
+		public const string AddressRoadNumberIdentifier = "AddressRoadNumber";
+
+		[SimpleDBFieldAttribute (AddressRoadNumberIdentifier)]
 		public string AddressRoadNumber { get; set; }
 
-		[SimpleDBFieldAttribute ("AddressPostalCode")]
+		public const string AddressPostalCodeIdentifier = "AddressPostalCode";
+
+		[SimpleDBFieldAttribute (AddressPostalCodeIdentifier)]
 		public string AddressPostalCode { get; set; }
 
-		[SimpleDBFieldAttribute ("AddressCity")]
+		public const string AddressCityIdentifier = "AddressCity";
+
+		[SimpleDBFieldAttribute (AddressCityIdentifier)]
 		public string AddressCity { get; set; }
 
-		[SimpleDBFieldAttribute ("Latitude")]
+		public const string LatitudeIdentifier = "Latitude";
+
+		[SimpleDBFieldAttribute (LatitudeIdentifier)]
 		public string Latitude { get; set; }
 
-		[SimpleDBFieldAttribute ("Longtitude")]
+		public const string LongtitudeIdentifier = "Longtitude";
+
+		[SimpleDBFieldAttribute (LongtitudeIdentifier)]
 		public string Longtitude { get; set; }
 
-		[SimpleDBFieldAttribute ("Telephone")]
+		public const string TelephoneIdentifier = "Telephone";
+
+		[SimpleDBFieldAttribute (TelephoneIdentifier)]
 		public string Telephone { get; set; }
 
-		[SimpleDBFieldAttribute ("HomePage")]
+		public const string HomePageIdentifier = "HomePage";
+
+		[SimpleDBFieldAttribute (HomePageIdentifier)]
 		public string HomePage { get; set; }
 
-		[SimpleDBFieldAttribute ("LocationType")]
+		public const string LocationTypeIdentifier = "LocationType";
+
+		[SimpleDBFieldAttribute (LocationTypeIdentifier)]
 		public LocationType LocationType  { get; set; }
 
+
 		//Only for Dining
-		[SimpleDBListAttribute ("DiningCategory")]
+		public const string DiningCategoryIdentifier = "DiningCategory";
+
+		[SimpleDBListAttribute (DiningCategoryIdentifier)]
 		public List<DiningCategory> Categories  { get; set; }
 
 		//Only for Dining
-		[SimpleDBFieldAttribute ("NonHalal")]
+		public const string NonHalalIdentifier = "NonHalal";
+
+		[SimpleDBFieldAttribute (NonHalalIdentifier)]
 		public bool NonHalal { get; set; }
 
 		//Only for Dining
-		[SimpleDBFieldAttribute ("Alcohol")]
+		public const string AlcoholIdentifier = "Alcohol";
+
+		[SimpleDBFieldAttribute (AlcoholIdentifier)]
 		public bool Alcohol { get; set; }
 
 		//Only for Dining
-		[SimpleDBFieldAttribute ("Pork")]
+		public const string PorkIdentifier = "Pork";
+
+		[SimpleDBFieldAttribute (PorkIdentifier)]
 		public bool Pork { get; set; }
 
 		//Only for Mosque
-		[SimpleDBFieldAttribute ("Language")]
+		public const string LanguageIdentifier = "Language";
+
+		[SimpleDBFieldAttribute (LanguageIdentifier)]
 		public Language Language { get; set; }
 
-		[SimpleDBFieldAttribute ("LocationStatus")]
+		public const string LocationStatusIdentifier = "LocationStatus";
+
+		[SimpleDBFieldAttribute (LocationStatusIdentifier)]
 		public LocationStatus LocationStatus { get; set; }
 
-		[SimpleDBFieldAttribute ("Submitter")]
-		public string Submitter { get; set; }
+		public string Submitter { 
+			get {
+				if (Id != null) {
+					return Id.Split (new []{ '-' }, 2) [0];
+				} else {
+					return"";
+				}
+			} 
+		}
 
 		public double Distance { get; set; }
 
@@ -90,6 +131,20 @@ namespace HalalGuide.Domain
 			this.Pork = pork;
 			this.Language = language;
 			this.LocationStatus = locationStatus;
+		}
+
+		public string GetCategoriesAsString ()
+		{
+			if (Categories == null || Categories.Count == 0) {
+				return "";
+			}
+
+			StringBuilder sb = new StringBuilder ();
+			foreach (DiningCategory cat in Categories) {
+				sb.Append (string.Format ("{0},", cat.Title));
+			}
+			sb.Remove (sb.Length - 1, 1);
+			return sb.ToString ();
 		}
 
 		public override string ToString ()

@@ -1,15 +1,12 @@
-﻿using System;
-using HalalGuide.Domain;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 
 namespace HalalGuide.ViewModels
 {
-	public interface ITableViewModel
+	public interface ITableViewModel<T>
 	{
-
 		int Rows ();
 
-		Location GetLocationAtRow (int row);
+		T GetLocationAtRow (int row);
 
 		Task Update ();
 	}

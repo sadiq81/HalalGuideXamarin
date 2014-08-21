@@ -10,10 +10,11 @@ using System.Linq;
 using System.Globalization;
 using System;
 using XUbertestersSDK;
+using SimpleDBPersistence.Domain;
 
 namespace HalalGuide.ViewModels
 {
-	public class DiningViewModel : BaseViewModel, ITableViewModel
+	public class MultipleDiningViewModel : BaseViewModel, ITableViewModel<Location>
 	{
 		private List<Location> List = new List<Location> ();
 		private List<Location> Filtered = new List<Location> ();
@@ -28,7 +29,7 @@ namespace HalalGuide.ViewModels
 
 		public bool HalalFilter { get; set; }
 
-		public DiningViewModel () : base ()
+		public MultipleDiningViewModel () : base ()
 		{
 			DistanceFilter = 5;
 			CategoryFilter = new List<DiningCategory> ();
@@ -90,10 +91,10 @@ namespace HalalGuide.ViewModels
 		public async Task Update ()
 		{
 			SelectQuery<Location> query = new SelectQuery<Location> ();
-			query.Equal ("LocationStatus", LocationStatus.Approved.ToString ());
-			query.Equal ("LocationType", LocationType.Dining.ToString ());
-			query.NotNull ("Updated");
-			query.SortOrder = "Updated";
+			query.Equal (Location.LocationStatusIdentifier, LocationStatus.Approved.ToString ());
+			query.Equal (Location.LocationTypeIdentifier, LocationType.Dining.ToString ());
+			query.NotNull (Entity.UpdatedIdentifier);
+			query.SortOrder = Entity.UpdatedIdentifier;
 
 			List = await LocationDAO.Select (query);
 

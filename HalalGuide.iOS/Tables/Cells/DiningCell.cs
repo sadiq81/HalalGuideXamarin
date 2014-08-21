@@ -25,13 +25,13 @@ namespace HalalGuide.iOS
 			base.ConfigureLocation (l);
 
 			UIImageView firstImage = (UIImageView)ViewWithTag (PigImageTag);
-			firstImage.Image = UIImage.FromBundle (Constants.DiningAttributePig + l.Pork);
+			firstImage.Image = UIImage.FromBundle (Images.Pig + l.Pork);
 
 			UIImageView secondImage = (UIImageView)ViewWithTag (AlcoholImageTag);
-			secondImage.Image = UIImage.FromBundle (Constants.DiningAttributeAlcohol + l.Alcohol);
+			secondImage.Image = UIImage.FromBundle (Images.Alcohol + l.Alcohol);
 
 			UIImageView thirdImage = (UIImageView)ViewWithTag (HalalImageTag);
-			thirdImage.Image = UIImage.FromBundle (Constants.DiningAttributeHalal + l.NonHalal);
+			thirdImage.Image = UIImage.FromBundle (Images.NonHalal + l.NonHalal);
 
 			UILabel firstLabel = (UILabel)ViewWithTag (PigLabelTag);
 			firstLabel.TextColor = l.Pork ? UIColor.Red : UIColor.Green;

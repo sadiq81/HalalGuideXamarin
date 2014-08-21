@@ -7,22 +7,19 @@
 using MonoTouch.Foundation;
 using System.CodeDom.Compiler;
 
-namespace HalalGuide.iOS
+namespace HalalGuide.iOS.ViewController
 {
-	[Register ("LandingPageController")]
-	partial class LandingPageController
+	[Register ("LandingViewController")]
+	partial class LandingViewController
 	{
 		[Outlet]
-		MonoTouch.UIKit.UITableView LatestUpdated { get; set; }
+		MonoTouch.UIKit.UITableView LatestUpdatedTableView { get; set; }
 
-		[Action ("Navigate:")]
-		partial void Navigate (MonoTouch.Foundation.NSObject sender);
-		
 		void ReleaseDesignerOutlets ()
 		{
-			if (LatestUpdated != null) {
-				LatestUpdated.Dispose ();
-				LatestUpdated = null;
+			if (LatestUpdatedTableView != null) {
+				LatestUpdatedTableView.Dispose ();
+				LatestUpdatedTableView = null;
 			}
 		}
 	}

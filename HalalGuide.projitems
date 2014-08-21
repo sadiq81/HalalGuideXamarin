@@ -22,9 +22,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Domain\Location.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DAO\LocationDAO.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\BaseViewModel.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\LatestViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Util\StringUtils.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\DiningViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\ITableViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Util\DistanceUtil.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Domain\Enum\DiningCategory.cs" />
@@ -37,7 +35,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Domain\Enum\LocationStatus.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\KeyChainService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Domain\Address.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Util\Segue.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Util\Credentials.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Domain\Enum\CreateDiningResult.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Util\StreamUtil.cs" />
@@ -46,8 +43,13 @@
     <Compile Include="$(MSBuildThisFileDirectory)DAO\HalalGenericDAO.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Domain\Review.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DAO\ReviewDAO.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\ReviewViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Domain\Enum\CreateReviewResult.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Domain\Enum\ReviewStatus.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\SingleDiningViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\LoginViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Util\Images.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\AddReviewViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\LandingViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\MultipleDiningViewModel.cs" />
   </ItemGroup>
 </Project>

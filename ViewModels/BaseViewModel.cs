@@ -22,7 +22,7 @@ using System.Globalization;
 
 namespace HalalGuide.ViewModels
 {
-	public abstract class BaseViewModel
+	public  class BaseViewModel
 	{
 		public event EventHandler LoadedListEvent = delegate { };
 
@@ -44,15 +44,7 @@ namespace HalalGuide.ViewModels
 			}
 		}
 
-		public event EventHandler<AuthenticatorCompletedEventArgs> LoginCompletedEvent = delegate { };
 
-		protected virtual void OnLoginCompletedEvent (AuthenticatorCompletedEventArgs e)
-		{
-			EventHandler<AuthenticatorCompletedEventArgs> handler = LoginCompletedEvent;
-			if (handler != null) {
-				handler (this, e);
-			}
-		}
 
 		protected static Geolocator Locator = ServiceContainer.Resolve<Geolocator> ();
 
@@ -72,6 +64,8 @@ namespace HalalGuide.ViewModels
 
 		protected static Position Position { get; set; }
 
+		public static Location SelectedLocation { get; set; }
+
 		protected readonly TaskScheduler UiScheduler = TaskScheduler.FromCurrentSynchronizationContext ();
 
 		public BaseViewModel ()
@@ -83,7 +77,14 @@ namespace HalalGuide.ViewModels
 
 			Locator.PositionChanged += (object sender, PositionEventArgs e) => {
 				XUbertesters.LogInfo (string.Format ("BaseViewModel: Location changed")); 
+
 				Position = e.Position;
+				if (SelectedLocation != null) {
+					SelectedLocation.Distance = CalcUtil.GetDistanceKM (Position, new Position () {
+						Latitude = double.Parse (SelectedLocation.Latitude, CultureInfo.InvariantCulture),
+						Longitude = double.Parse (SelectedLocation.Longtitude, CultureInfo.InvariantCulture)
+					});
+				}
 				LocationChanged (this, e);
 			};
 		}
@@ -98,47 +99,9 @@ namespace HalalGuide.ViewModels
 			return KeyChain.IsFaceBookAccountAuthenticated ();
 		}
 
-		public OAuth2Authenticator Authenticate ()
+		public void SaveCredentials ()
 		{
-			XUbertesters.LogInfo (string.Format ("BaseViewModel: Authenticate")); 
 
-			var auth = new OAuth2Authenticator (
-				           clientId: Credentials.FacebookAppId,
-				           scope: "",
-				           authorizeUrl: new Uri ("https://m.facebook.com/dialog/oauth/"),
-				           redirectUrl: new Uri ("http://www.facebook.com/connect/login_success.html"));
-			auth.AllowCancel = true;
-			auth.Completed += (sender, eventArgs) => {
-
-				if (eventArgs.IsAuthenticated) {
-
-					XUbertesters.LogInfo (string.Format ("BaseViewModel: Authenticated facebook with facebook account:"));
-
-					Account ac = eventArgs.Account;
-					var getFacebookInfo = new OAuth2Request ("GET", new Uri ("https://graph.facebook.com/me"), null, eventArgs.Account);
-
-					getFacebookInfo.GetResponseAsync ().ContinueWith (t => {
-						if (t.IsFaulted) {
-							XUbertesters.LogInfo (String.Format ("BaseViewModel: Could not get facebook information: {0}", t.Result.GetResponseText ()));
-							LoginCompletedEvent (auth, new AuthenticatorCompletedEventArgs (null));
-						} else {
-							string stringFullOfJson = t.Result.GetResponseText ();
-							JToken token = JObject.Parse (stringFullOfJson);
-							string id = (string)token.SelectToken ("id");
-							eventArgs.Account.Username = id;
-							KeyChain.StoreAccount (eventArgs.Account);
-							XUbertesters.LogInfo (string.Format ("BaseViewModel: Got facebook information from user: {0}", id));
-							LoginCompletedEvent (auth, new AuthenticatorCompletedEventArgs (ac));
-						}
-					}, UiScheduler);
-
-				} else {
-					XUbertesters.LogWarn (string.Format ("BaseViewModel: Could not authenticate with facebook: {0}", eventArgs.ToString ()));
-					LoginCompletedEvent (sender, eventArgs);
-				}
-			};
-
-			return auth;
 		}
 
 		protected void CalculateDistances (ref List<Location> locations)
@@ -159,11 +122,11 @@ namespace HalalGuide.ViewModels
 		public async Task<Stream> GetFirstImageForLocation (Location location)
 		{
 			SelectQuery<LocationPicture> query = new SelectQuery<LocationPicture> ();
-			query.Equal ("LocationId", location.Id);
+			query.Equal (LocationPicture.LocationIdIdentifier, location.Id);
 			List<LocationPicture> list = await LocationPictureDAO.Select (query);
 			if (list != null && list.Count > 0) {
 				try {
-					GetObjectResult result = await S3.GetObject (Constants.S3Bucket, list [0].Id);
+					GetObjectResult result = await S3.GetObject (Constants.S3Bucket, location.Id + "/" + list [0].Id);
 					return result.Stream;
 				} catch (AWSErrorException ex) {
 					XUbertesters.LogError (string.Format ("BaseViewModel: Error downloading image: {0} due to: {1}", list [0].Id, ex));

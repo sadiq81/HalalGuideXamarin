@@ -3,7 +3,6 @@ using System.Globalization;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
-using RestSharp;
 using Xamarin.Geolocation;
 using System.Collections.Generic;
 using HalalGuide.Domain.Dawa;

@@ -13,61 +13,61 @@ namespace HalalGuide.DAO
 
 		public override async Task<T> Get (string id, bool consistentRead)
 		{
-			XUbertesters.LogInfo ("Getting " + typeof(T).Name + " with id: " + id);
+			XUbertesters.LogInfo (typeof(T).Name + ": Getting entity with id: " + id);
 			return await base.Get (id, consistentRead);
 		}
 
 		public override async Task<List<T>> GetAll (bool consistentRead)
 		{
-			XUbertesters.LogInfo ("Getting all " + typeof(T).Name);
+			XUbertesters.LogInfo (typeof(T).Name + ": Getting all");
 			return await base.GetAll (consistentRead);
 		}
 
 		public override async Task<long> CountAll (bool consistentRead)
 		{
-			XUbertesters.LogInfo ("Counting all " + typeof(T).Name);
+			XUbertesters.LogInfo (typeof(T).Name + ": Counting all");
 			return await base.CountAll (consistentRead);
 		}
 
 		public override async Task<bool> CreateTable ()
 		{
-			XUbertesters.LogInfo ("Creating Table: " + typeof(T).Name);
+			XUbertesters.LogInfo (typeof(T).Name + ": Creating Table");
 			return await base.CreateTable ();
 		}
 
 		public override async Task<bool> DeleteTable ()
 		{
-			XUbertesters.LogInfo ("Deleting table: " + typeof(T).Name);
+			XUbertesters.LogInfo (typeof(T).Name + ": Deleting table");
 			return await base.DeleteTable ();
 		}
 
 		public override async Task<bool> Delete (T entity)
 		{
-			XUbertesters.LogInfo ("Deleting " + typeof(T).Name + " with id " + entity.Id);
+			XUbertesters.LogInfo (typeof(T).Name + ": Deleting entity with id: " + entity.Id);
 			return await base.SaveOrReplace (entity);
 		}
 
 		public override async Task<bool> DeleteMultiple (List<T> entities)
 		{
-			XUbertesters.LogInfo ("Deleting multiple " + typeof(T).Name);
+			XUbertesters.LogInfo (typeof(T).Name + ": Deleting multiple");
 			return await base.DeleteMultiple (entities);
 		}
 
 		public override async Task<bool> SaveOrReplace (T entity)
 		{
-			XUbertesters.LogInfo ("Saving: " + entity);
+			XUbertesters.LogInfo (typeof(T).Name + ": Saving entity: " + entity);
 			return await base.SaveOrReplace (entity);
 		}
 
 		public override async Task<bool> SaveOrReplaceMultiple (List<T> entities)
 		{
-			XUbertesters.LogInfo ("Saving: " + entities);
+			XUbertesters.LogInfo (typeof(T).Name + ": Saving entities: " + entities);
 			return await base.SaveOrReplaceMultiple (entities);
 		}
 
 		public override async Task<List<T>> Select (SelectQuery<T> query)
 		{
-			XUbertesters.LogInfo ("Running Query : " + query);
+			XUbertesters.LogInfo (typeof(T).Name + ": Running Query : " + query);
 			return await base.Select (query);
 		}
 	}

@@ -3,16 +3,12 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using Xamarin.Media;
-using SimpleDBPersistence.Service;
 using HalalGuide.Domain;
 using HalalGuide.Domain.Enum;
-using HalalGuide.DAO;
 using S3Storage.AWSException;
-using System.Security.Cryptography;
 using HalalGuide.Util;
 using HalalGuide.Domain.Dawa;
 using XUbertestersSDK;
-using System.IO;
 
 namespace HalalGuide.ViewModels
 {
@@ -21,8 +17,6 @@ namespace HalalGuide.ViewModels
 		private MediaFile Image { get; set; }
 
 		private Dictionary<string, Address> StreetNumbersMap { get; set; }
-
-		public Location Location { get; set; }
 
 		public AddDiningViewModel () : base ()
 		{
@@ -138,9 +132,7 @@ namespace HalalGuide.ViewModels
 				             0,
 				             LocationStatus.AwaitingApproval);
 
-			l.Submitter = KeyChain.GetFaceBookAccount ().Username;
-
-			l.Id = l.Submitter + "-" + DateTime.Now.Ticks;
+			l.Id = KeyChain.GetFaceBookAccount ().Username + "-" + DateTime.Now.Ticks;
 
 			try {
 				await LocationDAO.SaveOrReplace (l);
@@ -151,11 +143,13 @@ namespace HalalGuide.ViewModels
 
 			if (Image != null) {
 
-				string objectName = name + "/" + l.Submitter + "-" + DateTime.Now.Ticks + ".jpeg";
+				string objectName = l.Submitter + "-" + DateTime.Now.Ticks + ".jpeg";
 
 				try {
-					await S3.PutObject (Constants.S3Bucket, objectName, StreamUtil.ReadToEnd (Image.GetStream ()));
-					LocationPicture picture = new LocationPicture (){ Id = objectName, LocationId = l.Id, Submitter = l.Submitter };
+					await S3.PutObject (Constants.S3Bucket, l.Id + "/" + objectName, StreamUtil.ReadToEnd (Image.GetStream ()));
+
+					LocationPicture picture = new LocationPicture (){ Id = objectName, LocationId = l.Id };
+
 					await LocationPictureDAO.SaveOrReplace (picture);
 
 				} catch (AWSErrorException e) {
@@ -172,7 +166,7 @@ namespace HalalGuide.ViewModels
 				}
 			}
 
-			Location = l;
+			BaseViewModel.SelectedLocation = l;
 			return CreateDiningResult.OK;
 		}
 

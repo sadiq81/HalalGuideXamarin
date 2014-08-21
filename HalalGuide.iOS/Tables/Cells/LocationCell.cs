@@ -31,7 +31,7 @@ namespace HalalGuide.iOS.Tables.Cells
 		protected static readonly int LaguageImageTag = 102;
 		protected static readonly int LanguageLabelTag = 204;
 
-		public LatestViewModel ViewModel = ServiceContainer.Resolve<LatestViewModel> ();
+		public SingleDiningViewModel ViewModel = ServiceContainer.Resolve<SingleDiningViewModel> ();
 
 		public LocationCell (IntPtr handle) : base (handle)
 		{
@@ -40,7 +40,7 @@ namespace HalalGuide.iOS.Tables.Cells
 		public virtual void ConfigureLocation (Location l)
 		{
 			UIImageView category = (UIImageView)ViewWithTag (CategoryImageTag);
-			category.Image = UIImage.FromBundle (Constants.Location + l.LocationType);
+			category.Image = UIImage.FromBundle (l.LocationType.ToString ());
 
 			Task.Factory.StartNew (() => 
 				ViewModel.GetFirstImageForLocation (l).
@@ -61,7 +61,7 @@ namespace HalalGuide.iOS.Tables.Cells
 			address2.Text = l.AddressPostalCode + " " + l.AddressCity;
 
 			UILabel km = (UILabel)ViewWithTag (KmTextTag);
-			km.Text = 0.Equals (l.Distance) ? "N/A" : l.Distance.ToString ("#,###", CultureInfo.CurrentUICulture);
+			km.Text = 0.Equals (l.Distance) ? "N/A" : l.Distance.ToString (Constants.NumberFormat, CultureInfo.CurrentUICulture);
 		}
 	}
 }

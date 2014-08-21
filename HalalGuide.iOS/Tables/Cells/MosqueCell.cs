@@ -23,7 +23,7 @@ namespace HalalGuide.iOS
 		{
 			base.ConfigureLocation (l);
 			UIImageView firstImage = (UIImageView)ViewWithTag (LaguageImageTag);
-			firstImage.Image = UIImage.FromBundle (Constants.Flag + l.Language.ToString ());
+			firstImage.Image = UIImage.FromBundle (l.Language.ToString ());
 
 			UILabel firstLabel = (UILabel)ViewWithTag (LanguageLabelTag);
 			firstLabel.Text = l.Language.ToString ().ToLower ().FirstToUpper ();

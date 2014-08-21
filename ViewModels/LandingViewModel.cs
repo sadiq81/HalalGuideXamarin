@@ -5,14 +5,15 @@ using SimpleDBPersistence.SimpleDB.Model.Parameters;
 using System.Threading.Tasks;
 using HalalGuide.Domain.Enum;
 using System;
+using SimpleDBPersistence.Domain;
 
 namespace HalalGuide.ViewModels
 {
-	public class LatestViewModel : BaseViewModel, ITableViewModel
+	public class LandingViewModel : BaseViewModel, ITableViewModel<Location>
 	{
 		private List<Location> List = new List<Location> ();
 
-		public LatestViewModel () : base ()
+		public LandingViewModel () : base ()
 		{
 		}
 
@@ -165,9 +166,9 @@ namespace HalalGuide.ViewModels
             */
 
 			SelectQuery<Location> query = new SelectQuery<Location> ();
-			query.Equal ("LocationStatus", LocationStatus.Approved.ToString ());
-			query.NotNull ("Updated");
-			query.SortOrder = "Updated";
+			query.Equal (Location.LocationStatusIdentifier, LocationStatus.Approved.ToString ());
+			query.NotNull (Entity.UpdatedIdentifier);
+			query.SortOrder = Entity.UpdatedIdentifier;
 			query.Limit = 10;
 
 			List = await LocationDAO.Select (query);

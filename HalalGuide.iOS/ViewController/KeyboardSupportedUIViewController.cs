@@ -3,7 +3,7 @@ using System.Drawing;
 using MonoTouch.Foundation;
 using MonoTouch.UIKit;
 
-namespace HalalGuide.iOS
+namespace HalalGuide.iOS.ViewController
 {
 	public partial class KeyboardSupportedUIViewController : UIViewController, IUITextFieldDelegate
 	{

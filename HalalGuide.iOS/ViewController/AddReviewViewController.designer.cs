@@ -7,16 +7,16 @@
 using MonoTouch.Foundation;
 using System.CodeDom.Compiler;
 
-namespace HalalGuide.iOS
+namespace HalalGuide.iOS.ViewController
 {
-	[Register ("ReviewController")]
-	partial class ReviewController
+	[Register ("AddReviewViewController")]
+	partial class AddReviewViewController
 	{
 		[Outlet]
 		MonoTouch.UIKit.UIActivityIndicatorView ActivityIndicator { get; set; }
 
 		[Outlet]
-		MonoTouch.UIKit.UITextView ReviewTextField { get; set; }
+		MonoTouch.UIKit.UITextView Review { get; set; }
 
 		[Outlet]
 		MonoTouch.UIKit.UIButton Star1 { get; set; }
@@ -34,19 +34,24 @@ namespace HalalGuide.iOS
 		MonoTouch.UIKit.UIButton Star5 { get; set; }
 
 		[Action ("Regreet:")]
-		partial void Regreet (MonoTouch.Foundation.NSObject sender);
+		partial void Regreet (MonoTouch.UIKit.UIBarButtonItem sender);
 
 		[Action ("Save:")]
-		partial void Save (MonoTouch.Foundation.NSObject sender);
+		partial void Save (MonoTouch.UIKit.UIBarButtonItem sender);
 
 		[Action ("StarPressed:")]
 		partial void StarPressed (MonoTouch.UIKit.UIButton sender);
 		
 		void ReleaseDesignerOutlets ()
 		{
-			if (ReviewTextField != null) {
-				ReviewTextField.Dispose ();
-				ReviewTextField = null;
+			if (ActivityIndicator != null) {
+				ActivityIndicator.Dispose ();
+				ActivityIndicator = null;
+			}
+
+			if (Review != null) {
+				Review.Dispose ();
+				Review = null;
 			}
 
 			if (Star1 != null) {
@@ -72,11 +77,6 @@ namespace HalalGuide.iOS
 			if (Star5 != null) {
 				Star5.Dispose ();
 				Star5 = null;
-			}
-
-			if (ActivityIndicator != null) {
-				ActivityIndicator.Dispose ();
-				ActivityIndicator = null;
 			}
 		}
 	}
