@@ -7,7 +7,7 @@
 using MonoTouch.Foundation;
 using System.CodeDom.Compiler;
 
-namespace HalalGuide.iOS.ViewController
+namespace HalalGuide.iOS
 {
 	[Register ("AddNewDiningViewController")]
 	partial class AddNewDiningViewController
@@ -22,13 +22,10 @@ namespace HalalGuide.iOS.ViewController
 		MonoTouch.UIKit.UISwitch AlcoholSwitch { get; set; }
 
 		[Outlet]
-		MonoTouch.UIKit.UILabel CategoriesLabel { get; set; }
-
-		[Outlet]
-		MonoTouch.UIKit.UITableView CategoriesTableView { get; set; }
-
-		[Outlet]
 		MonoTouch.UIKit.UITextField City { get; set; }
+
+		[Outlet]
+		MonoTouch.UIKit.UILabel CountLabel { get; set; }
 
 		[Outlet]
 		MonoTouch.UIKit.UIImageView DiningImage { get; set; }
@@ -64,16 +61,13 @@ namespace HalalGuide.iOS.ViewController
 		HalalGuide.iOS.AutoCompleteUITextField RoadNumber { get; set; }
 
 		[Outlet]
-		MonoTouch.UIKit.UIView SwitchView { get; set; }
-
-		[Outlet]
 		MonoTouch.UIKit.UITextField Telephone { get; set; }
 
 		[Action ("AlcoholValueChanged:")]
 		partial void AlcoholValueChanged (MonoTouch.UIKit.UISwitch sender);
 
-		[Action ("ChooseCategories:")]
-		partial void ChooseCategories (MonoTouch.UIKit.UIButton sender);
+		[Action ("Choose:")]
+		partial void Choose (MonoTouch.UIKit.UIButton sender);
 
 		[Action ("HalalValueChanged:")]
 		partial void HalalValueChanged (MonoTouch.UIKit.UISwitch sender);
@@ -87,8 +81,8 @@ namespace HalalGuide.iOS.ViewController
 		[Action ("Regreet:")]
 		partial void Regreet (MonoTouch.UIKit.UIBarButtonItem sender);
 
-		[Action ("ResetCategories:")]
-		partial void ResetCategories (MonoTouch.UIKit.UIButton sender);
+		[Action ("Reset:")]
+		partial void Reset (MonoTouch.UIKit.UIButton sender);
 
 		[Action ("Save:")]
 		partial void Save (MonoTouch.UIKit.UIBarButtonItem sender);
@@ -110,19 +104,14 @@ namespace HalalGuide.iOS.ViewController
 				AlcoholSwitch = null;
 			}
 
-			if (CategoriesLabel != null) {
-				CategoriesLabel.Dispose ();
-				CategoriesLabel = null;
-			}
-
-			if (CategoriesTableView != null) {
-				CategoriesTableView.Dispose ();
-				CategoriesTableView = null;
-			}
-
 			if (City != null) {
 				City.Dispose ();
 				City = null;
+			}
+
+			if (CountLabel != null) {
+				CountLabel.Dispose ();
+				CountLabel = null;
 			}
 
 			if (DiningImage != null) {
@@ -178,11 +167,6 @@ namespace HalalGuide.iOS.ViewController
 			if (RoadNumber != null) {
 				RoadNumber.Dispose ();
 				RoadNumber = null;
-			}
-
-			if (SwitchView != null) {
-				SwitchView.Dispose ();
-				SwitchView = null;
 			}
 
 			if (Telephone != null) {

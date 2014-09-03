@@ -7,10 +7,10 @@
 using MonoTouch.Foundation;
 using System.CodeDom.Compiler;
 
-namespace HalalGuide.iOS.ViewController
+namespace HalalGuide.iOS
 {
-	[Register ("LoginViewController")]
-	partial class LoginViewController
+	[Register ("CategoryCell")]
+	partial class CategoryCell
 	{
 		
 		void ReleaseDesignerOutlets ()

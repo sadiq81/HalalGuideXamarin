@@ -28,7 +28,6 @@
     <AssemblyName>HalalGuideiOS</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhoneSimulator' ">
-    <DebugType>full</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\iPhoneSimulator\Release</OutputPath>
     <DefineConstants>__MOBILE__;__IOS__;</DefineConstants>
@@ -62,7 +61,6 @@
     <MtouchLink>None</MtouchLink>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhone' ">
-    <DebugType>full</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\iPhone\Release</OutputPath>
     <DefineConstants>__MOBILE__;__IOS__;</DefineConstants>
@@ -100,7 +98,6 @@
     </CustomCommands>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'AppStore|iPhone' ">
-    <DebugType>full</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\iPhone\AppStore</OutputPath>
     <DefineConstants>__MOBILE__;__IOS__;</DefineConstants>
@@ -131,6 +128,7 @@
     </MtouchI18n>
     <MtouchArch>ARMv7</MtouchArch>
     <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
+    <DefineConstants>__MOBILE__;__IOS__;</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -147,9 +145,6 @@
     <Reference Include="XUbertestersSDK">
       <HintPath>..\Components\UbertestersSDK-1.0.0\lib\ios\XUbertestersSDK.dll</HintPath>
     </Reference>
-    <Reference Include="SQLite">
-      <HintPath>..\Components\sqlite-net-1.0.8\lib\ios\SQLite.dll</HintPath>
-    </Reference>
     <Reference Include="Xamarin.Auth.iOS">
       <HintPath>..\Components\xamarin.auth-1.2.2\lib\ios\Xamarin.Auth.iOS.dll</HintPath>
     </Reference>
@@ -158,6 +153,9 @@
     </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\packages\Newtonsoft.Json.6.0.4\lib\portable-net45+wp80+win8+wpa81\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="SQLite">
+      <HintPath>..\Components\sqlite-net-1.0.8\lib\ios\SQLite.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -226,7 +224,6 @@
     <Compile Include="Tables\Cells\LocationCell.cs" />
     <Compile Include="Tables\Cells\ILocationCell.cs" />
     <Compile Include="CollectionView\LineLayout.cs" />
-    <Compile Include="CollectionView\ImageCell.cs" />
     <Compile Include="Tables\Cells\ReviewCell.cs" />
     <Compile Include="Tables\Cells\ReviewCell.designer.cs">
       <DependentUpon>..\..\ReviewCell.cs</DependentUpon>
@@ -236,17 +233,9 @@
     </Compile>
     <Compile Include="Util\Segue.cs" />
     <Compile Include="Util\ViewController.cs" />
-    <Compile Include="ViewController\AddNewDiningViewController.cs" />
-    <Compile Include="ViewController\AddNewDiningViewController.designer.cs">
-      <DependentUpon>AddNewDiningViewController.cs</DependentUpon>
-    </Compile>
     <Compile Include="ViewController\AddReviewViewController.cs" />
     <Compile Include="ViewController\AddReviewViewController.designer.cs">
       <DependentUpon>AddReviewViewController.cs</DependentUpon>
-    </Compile>
-    <Compile Include="ViewController\FilterMultipleDiningViewController.cs" />
-    <Compile Include="ViewController\FilterMultipleDiningViewController.designer.cs">
-      <DependentUpon>FilterMultipleDiningViewController.cs</DependentUpon>
     </Compile>
     <Compile Include="ViewController\LandingViewController.cs" />
     <Compile Include="ViewController\LandingViewController.designer.cs">
@@ -261,9 +250,22 @@
       <DependentUpon>SingleDiningViewController.cs</DependentUpon>
     </Compile>
     <Compile Include="ViewController\KeyboardSupportedUIViewController.cs" />
-    <Compile Include="ViewController\LoginViewController.cs" />
-    <Compile Include="ViewController\LoginViewController.designer.cs">
-      <DependentUpon>LoginViewController.cs</DependentUpon>
+    <Compile Include="ViewController\BaseViewController.cs" />
+    <Compile Include="Views\CategorySelectionView.cs" />
+    <Compile Include="CollectionView\LocationPictureImageCell.cs" />
+    <Compile Include="ViewController\FilterMultipleDiningViewController.cs" />
+    <Compile Include="ViewController\FilterMultipleDiningViewController.designer.cs">
+      <DependentUpon>FilterMultipleDiningViewController.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Tables\Cells\CategoryCell.cs" />
+    <Compile Include="Tables\Cells\CategoryCell.designer.cs">
+      <DependentUpon>..\..\CategoryCell.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ViewController\BaseTableViewController.cs" />
+    <Compile Include="ViewController\KeyboardSupportedTableViewController.cs" />
+    <Compile Include="ViewController\AddNewDiningViewController.cs" />
+    <Compile Include="ViewController\AddNewDiningViewController.designer.cs">
+      <DependentUpon>AddNewDiningViewController.cs</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -292,6 +294,7 @@
     <Folder Include="CollectionView\" />
     <Folder Include="Util\" />
     <Folder Include="ViewController\" />
+    <Folder Include="Views\" />
   </ItemGroup>
   <ItemGroup>
     <XamarinComponentReference Include="xamarin.mobile">
@@ -308,6 +311,10 @@
     </XamarinComponentReference>
     <XamarinComponentReference Include="facebook-sdk">
       <Version>6.2.1</Version>
+      <Visible>False</Visible>
+    </XamarinComponentReference>
+    <XamarinComponentReference Include="sqlite-net">
+      <Version>1.0.8</Version>
       <Visible>False</Visible>
     </XamarinComponentReference>
   </ItemGroup>

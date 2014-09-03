@@ -15,6 +15,9 @@ namespace HalalGuide.iOS.ViewController
 		[Outlet]
 		MonoTouch.UIKit.UITableView LatestUpdatedTableView { get; set; }
 
+		[Action ("GoToLogin:")]
+		partial void GoToLogin (MonoTouch.UIKit.UIButton sender);
+		
 		void ReleaseDesignerOutlets ()
 		{
 			if (LatestUpdatedTableView != null) {

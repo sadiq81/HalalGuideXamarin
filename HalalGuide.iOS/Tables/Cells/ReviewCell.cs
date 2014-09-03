@@ -3,11 +3,18 @@ using System;
 
 using MonoTouch.UIKit;
 using System.Drawing;
+using HalalGuide.Domain;
+using System.Threading.Tasks;
+using HalalGuide.Util;
+using HalalGuide.ViewModels;
+using SimpleDBPersistence.Service;
 
 namespace HalalGuide.iOS
 {
 	public partial class ReviewCell : UITableViewCell
 	{
+		public UIImageView ProfilePicture { get; internal set; }
+
 		public UIImageView Star1Image { get; internal set; }
 
 		public UIImageView Star2Image{ get; internal set; }
@@ -22,35 +29,84 @@ namespace HalalGuide.iOS
 
 		public UILabel Submitter{ get; internal set; }
 
+		private Review _Review { get; set; }
+
+		public SingleDiningViewModel ViewModel = ServiceContainer.Resolve<SingleDiningViewModel> ();
+
 		public ReviewCell (IntPtr handle) : base (handle)
 		{
-			Configure ();
+			Setup ();
 		}
 
 		public ReviewCell (UITableViewCellStyle style, string reuseIdentifier) : base (style, reuseIdentifier)
 		{
-			Configure ();
+			Setup ();
 		}
 
-		private void Configure ()
+		private void Setup ()
 		{
-			Star1Image = new UIImageView (new RectangleF (20, 12, 20, 20));
-			Star2Image = new UIImageView (new RectangleF (46, 12, 20, 20));
-			Star3Image = new UIImageView (new RectangleF (72, 12, 20, 20));
-			Star4Image = new UIImageView (new RectangleF (98, 12, 20, 20));
-			Star5Image = new UIImageView (new RectangleF (124, 12, 20, 20));
+			ProfilePicture = new UIImageView (new RectangleF (20, 12, 25, 25));
+
+			Star1Image = new UIImageView (new RectangleF (192, 12, 20, 20));
+			Star2Image = new UIImageView (new RectangleF (214, 12, 20, 20));
+			Star3Image = new UIImageView (new RectangleF (236, 12, 20, 20));
+			Star4Image = new UIImageView (new RectangleF (258, 12, 20, 20));
+			Star5Image = new UIImageView (new RectangleF (280, 12, 20, 20));
 
 			AddSubviews (Star1Image, Star2Image, Star3Image, Star4Image, Star5Image);
 
-			Submitter = new UILabel (new RectangleF (158, 12, 146, 21)) {
+			Submitter = new UILabel (new RectangleF (53, 12, 131, 25)) {
 				TextAlignment = UITextAlignment.Right
 			};
-			Review = new UILabel (new RectangleF (20, 40, 284, 42)) {
+			Review = new UILabel (new RectangleF (20, 40, 280, 42)) {
 				Lines = 2,
 				Font = UIFont.SystemFontOfSize (13)
 
 			};
 			AddSubviews (Submitter, Review);
+		}
+
+		public void Configure (Review review)
+		{
+			_Review = review;
+
+
+			Task.Factory.StartNew (() => 
+				ViewModel.GetProfilePicture (review.Submitter).
+				ContinueWith (t => {
+				if (t.Result != null && review == _Review) {
+					InvokeOnMainThread (delegate {
+						ProfilePicture.Image = UIImage.FromFile (t.Result);
+					});
+				}
+			}));
+            
+
+			Task.Factory.StartNew (() => 
+				ViewModel.NameOfSubmitter (review.Submitter).
+				ContinueWith (t => {
+				if (t.Result != null && review == _Review) {
+					InvokeOnMainThread (delegate {
+						Submitter.Text = t.Result;
+					});
+				}
+			}));
+
+			Star1Image.Image = review.Rating >= 1 ? UIImage.FromBundle (Images.StarSelected) : UIImage.FromBundle (Images.Star);
+			Star2Image.Image = review.Rating >= 2 ? UIImage.FromBundle (Images.StarSelected) : UIImage.FromBundle (Images.Star);
+			Star3Image.Image = review.Rating >= 3 ? UIImage.FromBundle (Images.StarSelected) : UIImage.FromBundle (Images.Star);
+			Star4Image.Image = review.Rating >= 4 ? UIImage.FromBundle (Images.StarSelected) : UIImage.FromBundle (Images.Star);
+			Star5Image.Image = review.Rating >= 5 ? UIImage.FromBundle (Images.StarSelected) : UIImage.FromBundle (Images.Star);
+
+			Task.Factory.StartNew (() => 
+				ViewModel.GetReviewText (review).
+				ContinueWith (t => {
+				if (t.Result != null && review == _Review) {
+					InvokeOnMainThread (delegate {
+						Review.Text = t.Result;
+					});
+				}
+			}));
 		}
 		
 	}

@@ -31,6 +31,8 @@ namespace HalalGuide.iOS.Tables.Cells
 		protected static readonly int LaguageImageTag = 102;
 		protected static readonly int LanguageLabelTag = 204;
 
+		protected Location location;
+
 		public SingleDiningViewModel ViewModel = ServiceContainer.Resolve<SingleDiningViewModel> ();
 
 		public LocationCell (IntPtr handle) : base (handle)
@@ -39,15 +41,17 @@ namespace HalalGuide.iOS.Tables.Cells
 
 		public virtual void ConfigureLocation (Location l)
 		{
+			location = l;
+
 			UIImageView category = (UIImageView)ViewWithTag (CategoryImageTag);
 			category.Image = UIImage.FromBundle (l.LocationType.ToString ());
 
 			Task.Factory.StartNew (() => 
-				ViewModel.GetFirstImageForLocation (l).
+				ViewModel.GetFirstImagePathForLocation (l).
 				ContinueWith (t => {
-				if (t.Result != null) {
+				if (t.Result != null && l == location) {
 					InvokeOnMainThread (delegate {
-						category.Image = UIImage.LoadFromData (NSData.FromStream (t.Result));
+						category.Image = UIImage.FromFile (t.Result);
 					});
 				}
 			}));

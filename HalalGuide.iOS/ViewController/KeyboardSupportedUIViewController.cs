@@ -5,7 +5,7 @@ using MonoTouch.UIKit;
 
 namespace HalalGuide.iOS.ViewController
 {
-	public partial class KeyboardSupportedUIViewController : UIViewController, IUITextFieldDelegate
+	public partial class KeyboardSupportedUIViewController : BaseViewController, IUITextFieldDelegate
 	{
 		private float animatedDistance;
 		const float KEYBOARD_ANIMATION_DURATION = 0.3f;

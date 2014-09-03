@@ -9,6 +9,8 @@ using S3Storage.AWSException;
 using HalalGuide.Util;
 using HalalGuide.Domain.Dawa;
 using XUbertestersSDK;
+using System.Linq;
+using System.Globalization;
 
 namespace HalalGuide.ViewModels
 {
@@ -21,6 +23,11 @@ namespace HalalGuide.ViewModels
 		public AddDiningViewModel () : base ()
 		{
 			StreetNumbersMap = new Dictionary<string, Address> ();
+		}
+
+		public override void RefreshCache ()
+		{
+			//DO Nothing
 		}
 
 		public List<string> StreetNames ()
@@ -53,7 +60,7 @@ namespace HalalGuide.ViewModels
 		public async Task<string> GetCityNameFromPostalCode (string postalcode)
 		{
 			if (postalcode != null && postalcode.Length == 4 && Regex.IsMatch (postalcode, @"^[0-9]+$")) {
-				var name = await AddressService.GetNameOfPostDistrict (postalcode);
+				var name = await _AddressService.GetNameOfPostDistrict (postalcode);
 				return name;
 			} else {
 				return null;
@@ -62,7 +69,7 @@ namespace HalalGuide.ViewModels
 
 		public async Task<Adgangsadresse> DoesAddressExists (string roadName, string roadNumber, string postalCode)
 		{
-			return await AddressService.DoesAddressExits (roadName, roadNumber, postalCode);
+			return await _AddressService.DoesAddressExits (roadName, roadNumber, postalCode);
 		}
 
 		//TODO Make sure position is known before calling this function
@@ -70,7 +77,7 @@ namespace HalalGuide.ViewModels
 		{
 			Dictionary<string, Address> temp = new Dictionary<string, Address> ();
 
-			List<Adgangsadresse> adresses = await AddressService.AddressNearPosition (Position, 150);
+			List<Adgangsadresse> adresses = await _AddressService.AddressNearPosition (Position, 150);
 
 			if (adresses != null) {
 			
@@ -98,7 +105,7 @@ namespace HalalGuide.ViewModels
 
 		}
 
-		public async Task<CreateDiningResult> CreateNewLocation (string name, string road, string roadNumber, string postalCode, string city, string telephone, string homePage, bool pork, bool alcohol, bool nonHalal, List<DiningCategory> categoriesChoosen)
+		public async Task<CreateEntityResult> CreateNewLocation (string name, string road, string roadNumber, string postalCode, string city, string telephone, string homePage, bool pork, bool alcohol, bool nonHalal, List<DiningCategory> categoriesChoosen)
 		{
 			name = name.Trim ();
 			road = road.Trim ();
@@ -111,7 +118,7 @@ namespace HalalGuide.ViewModels
 			Adgangsadresse addressFromGeoService = await DoesAddressExists (road, roadNumber, postalCode);
 
 			if (addressFromGeoService == null) {
-				return CreateDiningResult.AddressDoesNotExist;
+				return CreateEntityResult.AddressDoesNotExist;
 			}
 
 			Location l = new Location (
@@ -120,54 +127,32 @@ namespace HalalGuide.ViewModels
 				             roadNumber, 
 				             postalCode, 
 				             city,
-				             addressFromGeoService.Adgangspunkt.Koordinater [1],
-				             addressFromGeoService.Adgangspunkt.Koordinater [0],
+				             double.Parse (addressFromGeoService.Adgangspunkt.Koordinater [1], CultureInfo.InvariantCulture),
+				             double.Parse (addressFromGeoService.Adgangspunkt.Koordinater [0], CultureInfo.InvariantCulture),
 				             telephone, 
 				             homePage,
 				             LocationType.Dining,
-				             categoriesChoosen,
+				             String.Join (", ", categoriesChoosen.Select (s => s.Title)),
 				             nonHalal, 
 				             alcohol, 
 				             pork,
 				             0,
-				             LocationStatus.AwaitingApproval);
+				             CreationStatus.AwaitingApproval);
 
-			l.Id = KeyChain.GetFaceBookAccount ().Username + "-" + DateTime.Now.Ticks;
+			l.Id = _KeyChain.GetFaceBookAccount ().Username + "-" + DateTime.UtcNow.Ticks;
 
-			try {
-				await LocationDAO.SaveOrReplace (l);
-			} catch (AWSErrorException e) {
-				XUbertesters.LogError ("AddDiningViewModel: CouldNotCreateEntityInSimpleDB: " + e);
-				return CreateDiningResult.CouldNotCreateEntityInSimpleDB;
-			}
+			CreateEntityResult result = await _LocationService.SaveLocation (l);
 
-			if (Image != null) {
+			if (result == CreateEntityResult.OK) {
 
-				string objectName = l.Submitter + "-" + DateTime.Now.Ticks + ".jpeg";
+				result = await _ImageService.UploadLocationPicture (l, Image != null ? StreamUtil.ReadToEnd (Image.GetStream ()) : null);
 
-				try {
-					await S3.PutObject (Constants.S3Bucket, l.Id + "/" + objectName, StreamUtil.ReadToEnd (Image.GetStream ()));
-
-					LocationPicture picture = new LocationPicture (){ Id = objectName, LocationId = l.Id };
-
-					await LocationPictureDAO.SaveOrReplace (picture);
-
-				} catch (AWSErrorException e) {
-					XUbertesters.LogError ("AddDiningViewModel: CouldNotUploadPictureToS3: " + e);
-					LocationDAO.Delete (l).RunSynchronously ();
-					return CreateDiningResult.CouldNotUploadPictureToS3;
-
-				} catch (SimpleDBPersistence.SimpleDB.Model.AWSException.AWSErrorException e) {
-
-					XUbertesters.LogError ("AddDiningViewModel: CouldNotCreateEntityInSimpleDB: " + e);
-					S3.DeleteObject (Constants.S3Bucket, objectName).RunSynchronously ();
-					LocationDAO.Delete (l).RunSynchronously ();
-					return CreateDiningResult.CouldNotUploadPictureToS3;
+				if (result != CreateEntityResult.OK) {
+					await _LocationService.DeleteLocation (l);
 				}
-			}
+			} 
 
-			BaseViewModel.SelectedLocation = l;
-			return CreateDiningResult.OK;
+			return result;
 		}
 
 		public async Task<MediaFile> TakePicture (string path, string fileName)

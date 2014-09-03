@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using Newtonsoft.Json;
-using System.Runtime.InteropServices.WindowsRuntime;
+﻿using System.Collections.Generic;
+using System;
 
 namespace HalalGuide.Domain.Enum
 {
@@ -134,100 +132,20 @@ namespace HalalGuide.Domain.Enum
 			Pakistani, Persian, Pizza, Portugese, Russian, Seafood, Salat, Sandwhich, Spanish, Steak, Soup,
 			Sushi, Tapas, Thai, Tibetan, Tyrkish, Vegan, Vietnamese, Wok
 		};
+
+		public static List<DiningCategory> GetCategoriesFromString (string categoryString)
+		{
+			List<DiningCategory> categories = new List<DiningCategory> ();
+
+			foreach (string cat in categoryString.Split (new []{ ',' })) {
+				foreach (DiningCategory dcat in Categories) {
+					if (cat.Equals (dcat.Title)) {
+						categories.Add (dcat);
+					}
+				}
+			}
+			return categories;
+		}
 	}
-	/*
-	public enum DiningCategory
-	{
-		AFGHAN,
-		AFRICAN,
-		AMERICAN,
-		ARGENTINE,
-		ASIAN,
-
-		BELGIAN,
-		BRASILIAN,
-		BRITISH,
-		BUFFET,
-		BURGER,
-		BAKERY,
-		BAGELS,
-		BUBBLE_TEA,
-		BUTCHER,
-
-		CAFE,
-		CARIBIAN,
-		CUPCAKES,
-		CANDY,
-		CHINESE,
-
-		DANISH,
-		DESSERTS,
-
-		FISH_SELLER,
-		FISH_MARKET,
-		FRUIT_SELLER,
-		FASTFOOD,
-		FRANSK,
-
-		GERMAN,
-		GRILL,
-		GREEK,
-
-		ICECREAM,
-
-		JUICE,
-
-		KIOSK,
-
-		INDIAN,
-		INDONESIAN,
-		IRISH,
-		ITALIEN,
-		IRAN,
-
-		JAPANESE,
-
-		KEBAB,
-		KOREAN,
-		KOSHER,
-
-		LIBANESE,
-
-		MEDITERANIEN,
-		MALAYSIAN,
-		MAROCAN,
-		MEXICAN,
-
-		NORDIC,
-		NEPALISE,
-
-		PASTERY,
-		PAKISTANI,
-		PERSIAN,
-		PIZZA,
-		PORTUGESE,
-
-		RUSSIAN,
-
-		SEAFOOD,
-		SALAT,
-		SANDWICH,
-		SPANISH,
-		STEAK,
-		SOUP,
-		SUSHI,
-
-		TAIWANESE,
-		TAPAS,
-		THAI,
-		TIBETAN,
-		TYRKISH,
-
-		VEGAN,
-		VIETNAMISE,
-
-		WOK
-	}
-	*/
 }
 

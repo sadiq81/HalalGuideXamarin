@@ -39,7 +39,7 @@ namespace HalalGuide.Services
 						XUbertesters.LogWarn (string.Format ("AddressService-GetNameOfPostDistrict: request url: {0} found no results: {1}", url, message.ReasonPhrase));
 					}
 				} catch (TaskCanceledException ex) {
-					XUbertesters.LogError (string.Format ("request url: {0} timed out", url));
+					XUbertesters.LogError (string.Format ("request url: {0} timed out {1}", url, ex));
 					return null;
 				}
 			}
@@ -69,7 +69,7 @@ namespace HalalGuide.Services
 						XUbertesters.LogWarn (string.Format ("AddressService-DoesAddressExits: request url: {0} found no results: {1}", url, message.ReasonPhrase));
 					}
 				} catch (TaskCanceledException ex) {
-					XUbertesters.LogError (string.Format ("request url: {0} timed out", url));
+					XUbertesters.LogError (string.Format ("request url: {0} timed out {1}", url, ex));
 					return null;
 				}
 			}
@@ -103,7 +103,7 @@ namespace HalalGuide.Services
 						XUbertesters.LogWarn (string.Format ("AddressService-AddressNearPosition: request url: {0} found no results: {1}", url, message.ReasonPhrase));
 					}
 				} catch (TaskCanceledException ex) {
-					XUbertesters.LogError (string.Format ("request url: {0} timed out", url));
+					XUbertesters.LogError (string.Format ("request url: {0} timed out {1}", url, ex));
 					return null;
 				}
 			}

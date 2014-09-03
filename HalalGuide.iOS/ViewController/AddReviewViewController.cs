@@ -16,7 +16,6 @@ namespace HalalGuide.iOS.ViewController
 	public partial class AddReviewViewController : KeyboardSupportedUIViewController
 	{
 		private readonly AddReviewViewModel ViewModel = ServiceContainer.Resolve<AddReviewViewModel> ();
-		private readonly AddDiningViewModel AddViewModel = ServiceContainer.Resolve<AddDiningViewModel> ();
 		private readonly int STAR_TAG_START = 101;
 		private readonly int STAR_TAG_END = 105;
 
@@ -62,11 +61,11 @@ namespace HalalGuide.iOS.ViewController
 
 			InvokeOnMainThread (ActivityIndicator.StartAnimating);
 
-			CreateReviewResult result = await ViewModel.CreateNewReview (BaseViewModel.SelectedLocation, Rating, Review.Text);
+			CreateEntityResult result = await ViewModel.CreateNewReview (BaseViewModel.SelectedLocation, Rating, Review.Text);
 
 			ActivityIndicator.StopAnimating ();
 
-			if (result == CreateReviewResult.OK) {
+			if (result == CreateEntityResult.OK) {
 				new UIAlertView ("Ok", "Din anmeldelse er sent til godkendelse", null, "Ok", null){ WeakDelegate = this }.Show ();
 			} else {
 				new UIAlertView ("Fejl", result.ToString (), null, "Ok", null).Show ();

@@ -7,6 +7,7 @@ using MonoTouch.UIKit;
 using HalalGuide.Domain;
 using HalalGuide.Util;
 using HalalGuide.iOS.Tables.Cells;
+using HalalGuide.Domain;
 
 namespace HalalGuide.iOS
 {

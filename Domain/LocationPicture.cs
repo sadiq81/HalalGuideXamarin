@@ -1,16 +1,23 @@
 ﻿using SimpleDBPersistence.SimpleDB.Model;
-using SimpleDBPersistence.Domain;
-using MonoTouch.CoreImage;
+using SQLite;
 
 namespace HalalGuide.Domain
 {
+	[Table ("LocationPicture")] 
 	[SimpleDBDomain ("LocationPicture")]
-	public class LocationPicture : Entity
+	public class LocationPicture : DBEntity
 	{
 		public const string LocationIdIdentifier = "LocationId";
 
+		[Column (LocationIdIdentifier)] 
 		[SimpleDBFieldAttribute (LocationIdIdentifier)]
 		public string LocationId { get; set; }
+
+		public const string CreationStatusIdentifier = "CreationStatus";
+
+		[Column (CreationStatusIdentifier)] 
+		[SimpleDBFieldAttribute (CreationStatusIdentifier)]
+		public CreationStatus CreationStatus { get; set; }
 
 		public string Submitter { 
 			get {

@@ -1,22 +1,30 @@
-﻿using System;
-using SimpleDBPersistence.SimpleDB.Model;
-using SimpleDBPersistence.Domain;
+﻿using SimpleDBPersistence.SimpleDB.Model;
+using HalalGuide.Domain.Enum;
+using SQLite;
 
 namespace HalalGuide.Domain
 {
+	[Table ("Review")] 
 	[SimpleDBDomain ("Review")]
-	public class Review : Entity
+	public class Review : DBEntity
 	{
-
 		public const string LocationIdIdentifier = "LocationId";
 
+		[Column (LocationIdIdentifier)] 
 		[SimpleDBFieldAttribute (LocationIdIdentifier)]
 		public string LocationId { get; set; }
 
 		public const string RatingIdIdentifier = "Rating";
 
+		[Column (RatingIdIdentifier)] 
 		[SimpleDBFieldAttribute (RatingIdIdentifier)]
 		public int Rating { get; set; }
+
+		public const string CreationStatusIdentifier = "CreationStatus";
+
+		[Column (CreationStatusIdentifier)] 
+		[SimpleDBFieldAttribute (CreationStatusIdentifier)]
+		public CreationStatus CreationStatus { get; set; }
 
 		public string Submitter { 
 			get {

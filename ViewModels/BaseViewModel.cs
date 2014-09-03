@@ -2,12 +2,8 @@
 using Xamarin.Geolocation;
 using SimpleDBPersistence.Service;
 using HalalGuide.Services;
-using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
-using Xamarin.Auth;
 using HalalGuide.Util;
-using Newtonsoft.Json.Linq;
-using System.Security.Cryptography;
 using S3Storage.S3;
 using XUbertestersSDK;
 using System.IO;
@@ -19,48 +15,39 @@ using Xamarin.Media;
 using S3Storage.Response;
 using S3Storage.AWSException;
 using System.Globalization;
+using System.Linq;
+using HalalGuide.Domain.Enum;
+using SimpleDBPersistence.Domain;
+using MonoTouch.CoreText;
+using MonoTouch.CoreImage;
+using MonoTouch.Foundation;
+using System.Runtime.InteropServices;
 
 namespace HalalGuide.ViewModels
 {
-	public  class BaseViewModel
+	public abstract  class BaseViewModel
 	{
-		public event EventHandler LoadedListEvent = delegate { };
-
-		protected virtual void OnLoadedListEvent (EventArgs e)
-		{
-			EventHandler handler = LoadedListEvent;
-			if (handler != null) {
-				handler (this, e);
-			}
-		}
+		public event EventHandler RefreshLocationsCompletedEvent = delegate { };
 
 		public event EventHandler LocationChangedEvent = delegate { };
 
-		protected virtual void OnLocationChangedEvent (EventArgs e)
-		{
-			EventHandler handler = LocationChangedEvent;
-			if (handler != null) {
-				handler (this, e);
-			}
-		}
+		protected  Geolocator _Locator = ServiceContainer.Resolve<Geolocator> ();
 
+		protected  KeyChainService _KeyChain = ServiceContainer.Resolve<KeyChainService> ();
 
+		protected   AddressService _AddressService = ServiceContainer.Resolve<AddressService> ();
 
-		protected static Geolocator Locator = ServiceContainer.Resolve<Geolocator> ();
+		protected   ImageService _ImageService = ServiceContainer.Resolve<ImageService> ();
 
-		protected static KeyChainService KeyChain = ServiceContainer.Resolve<KeyChainService> ();
+		protected   LocationService _LocationService = ServiceContainer.Resolve<LocationService> ();
 
-		protected static  AddressService AddressService = ServiceContainer.Resolve<AddressService> ();
+		protected   ReviewService _ReviewService = ServiceContainer.Resolve<ReviewService> ();
 
-		protected LocationDAO LocationDAO = ServiceContainer.Resolve<LocationDAO> ();
+		protected   FacebookService _FacebookService = ServiceContainer.Resolve<FacebookService> ();
 
-		protected LocationPictureDAO LocationPictureDAO = ServiceContainer.Resolve<LocationPictureDAO> ();
+		//------------------------------------------------------------------------
 
-		protected ReviewDAO ReviewDAO = ServiceContainer.Resolve<ReviewDAO> ();
-
-		protected static  S3ClientCore S3 = ServiceContainer.Resolve<S3ClientCore> ();
-
-		protected readonly MediaPicker MediaPicker = ServiceContainer.Resolve<MediaPicker> ();
+		protected static  MediaPicker MediaPicker = ServiceContainer.Resolve<MediaPicker> ();
 
 		protected static Position Position { get; set; }
 
@@ -70,71 +57,195 @@ namespace HalalGuide.ViewModels
 
 		public BaseViewModel ()
 		{
-			if (Locator.IsGeolocationAvailable && !Locator.IsListening) {
+			if (_Locator.IsGeolocationAvailable && !_Locator.IsListening) {
 				XUbertesters.LogInfo (string.Format ("BaseViewModel: started listening on location")); 
-				Locator.StartListening (10 * 60, 300);
+				_Locator.StartListening (10 * 60, 300);
 			}
 
-			Locator.PositionChanged += (object sender, PositionEventArgs e) => {
+			_Locator.PositionChanged += (object sender, PositionEventArgs e) => {
 				XUbertesters.LogInfo (string.Format ("BaseViewModel: Location changed")); 
 
 				Position = e.Position;
 				if (SelectedLocation != null) {
 					SelectedLocation.Distance = CalcUtil.GetDistanceKM (Position, new Position () {
-						Latitude = double.Parse (SelectedLocation.Latitude, CultureInfo.InvariantCulture),
-						Longitude = double.Parse (SelectedLocation.Longtitude, CultureInfo.InvariantCulture)
+						Latitude = SelectedLocation.Latitude,
+						Longitude = SelectedLocation.Longtitude
 					});
 				}
-				LocationChanged (this, e);
+				LocationChangedEvent (this, e);
 			};
 		}
 
-		protected virtual void LocationChanged (object sender, PositionEventArgs e)
+		protected List<Location>  CalculateDistances (List<Location> locations, bool sortByDistance = false)
 		{
-			LocationChangedEvent (sender, e);
-		}
-
-		public bool IsAuthenticated ()
-		{
-			return KeyChain.IsFaceBookAccountAuthenticated ();
-		}
-
-		public void SaveCredentials ()
-		{
-
-		}
-
-		protected void CalculateDistances (ref List<Location> locations)
-		{
-
 			foreach (Location loc in locations) {
 
 				if (Position != null) {
 					double distance = CalcUtil.GetDistanceKM (Position, new Position () {
-						Latitude = double.Parse (loc.Latitude, CultureInfo.InvariantCulture),
-						Longitude = double.Parse (loc.Longtitude, CultureInfo.InvariantCulture)
+						Latitude = loc.Latitude,
+						Longitude = loc.Longtitude
 					});
 					loc.Distance = distance;
 				}
 			}
+
+			if (sortByDistance) {
+				locations.Sort ((x, y) => x.Distance.CompareTo (y.Distance));
+			}
+
+			return locations;
 		}
 
-		public async Task<Stream> GetFirstImageForLocation (Location location)
+		//TODO divide into smaller methods
+		public async Task<string> GetFirstImagePathForLocation (Location location)
 		{
-			SelectQuery<LocationPicture> query = new SelectQuery<LocationPicture> ();
-			query.Equal (LocationPicture.LocationIdIdentifier, location.Id);
-			List<LocationPicture> list = await LocationPictureDAO.Select (query);
-			if (list != null && list.Count > 0) {
-				try {
-					GetObjectResult result = await S3.GetObject (Constants.S3Bucket, location.Id + "/" + list [0].Id);
-					return result.Stream;
-				} catch (AWSErrorException ex) {
-					XUbertesters.LogError (string.Format ("BaseViewModel: Error downloading image: {0} due to: {1}", list [0].Id, ex));
-					return null;
-				}
+			return await _ImageService.GetFirstImagePathForLocation (location);
+		}
 
-			} else {
-				return null;
+		public abstract void RefreshCache ();
+
+		public async Task RefreshLocations ()
+		{
+			/*
+			Location l0 = new Location () {
+				Id = "0",
+				Name = "Marco's Pizzabar",
+				AddressRoad = "Hulgårdsvej",
+				AddressRoadNumber = "7",
+				AddressCity = "København N",
+				AddressPostalCode = "2400",
+				Latitude = 55.6951012,
+				Longtitude = 12.5106906,
+				Telephone = "00000000",
+				HomePage = "www.currytakeaway.dk",
+				LocationType = LocationType.Dining,
+				Categories = new List<DiningCategory> (){ DiningCategory.Pizza }.Select (cat => cat.Title).Aggregate ((current, next) => current + "," + next),
+				NonHalal = true,
+				Alcohol = true,
+				Pork = true,
+				CreationStatus = CreationStatus.Approved
+
+			};
+
+			_LocationService.SaveLocation (l0);
+
+			Location l1 = new Location () {
+				Id = "1",
+				Name = "Curry Take Away",
+				AddressRoad = "Borups Alle",
+				AddressRoadNumber = "29",
+				AddressCity = "København N",
+				AddressPostalCode = "2200",
+				Latitude = 55.6903656,
+				Longtitude = 12.5428984,
+				Telephone = "00000000",
+				HomePage = "www.currytakeaway.dk",
+				LocationType = LocationType.Dining,
+				Categories = new List<DiningCategory> (){ DiningCategory.Pakistani, DiningCategory.Indian }.Select (cat => cat.Title).Aggregate ((current, next) => current + "," + next),
+				NonHalal = false,
+				Alcohol = false,
+				Pork = false,
+				CreationStatus = CreationStatus.Approved
+			};
+
+			_LocationService.SaveLocation (l1);
+
+			Location l2 = new Location () {
+				Id = "2",
+				Name = "Sultan's Café",
+				AddressRoad = "Borups Alle",
+				AddressRoadNumber = "112",
+				AddressCity = "Frederiksberg",
+				AddressPostalCode = "2000",
+				Latitude = 55.6920414,
+				Longtitude = 12.5352193,
+				Telephone = "00000000",
+				HomePage = "",
+				LocationType = LocationType.Dining,
+				Categories = new List<DiningCategory> (){ DiningCategory.Cafe }.Select (cat => cat.Title).Aggregate ((current, next) => current + "," + next),
+				NonHalal = true,
+				Alcohol = true,
+				Pork = true,
+				CreationStatus = CreationStatus.Approved
+
+			};
+
+			_LocationService.SaveLocation (l2);
+
+			Location l3 = new Location () {
+				Id = "3",
+				Name = "Dansk Islamisk Råd",
+				AddressRoad = "Vingelodden",
+				AddressRoadNumber = "1",
+				AddressCity = "København N",
+				AddressPostalCode = "2200",
+				Latitude = 55.7084999,
+				Longtitude = 12.549223,
+				Telephone = "00000000",
+				HomePage = "http://www.disr.info/",
+				LocationType = LocationType.Mosque,
+				Language = Language.Danish,
+				CreationStatus = CreationStatus.Approved
+			};
+
+			_LocationService.SaveLocation (l3);
+
+			Location l4 = new Location () {
+				Id = "4",
+				Name = "Wakf",
+				AddressRoad = "Dortheavej ",
+				AddressRoadNumber = "45 - 47",
+				AddressCity = "København NV",
+				AddressPostalCode = "2400",
+				Latitude = 55.7083465,
+				Longtitude = 12.5254281,
+				Telephone = "00000000",
+				HomePage = "http://www.wakf.com/",
+				LocationType = LocationType.Mosque,
+				Language = Language.Arabic,
+				CreationStatus = CreationStatus.Approved
+			};
+
+			_LocationService.SaveLocation (l4);
+
+			Location l5 = new Location () {
+				Id = "5",
+				Name = "Istanbul Bazar",
+				AddressRoad = "Frederiksborgvej",
+				AddressRoadNumber = "15",
+				AddressCity = "København NV",
+				AddressPostalCode = "2400",
+				Latitude = 55.702917,
+				Longtitude = 12.532926,
+				Telephone = "00000000",
+				LocationType = LocationType.Shop,
+				CreationStatus = CreationStatus.Approved
+			};
+
+			_LocationService.SaveLocation (l5);
+
+			Location l6 = new Location () {
+				Id = "6",
+				Name = "J & B Supermarked ApS",
+				AddressRoad = "Frederikssundsvej",
+				AddressRoadNumber = "11",
+				AddressCity = "København NV",
+				AddressPostalCode = "2400",
+				Latitude = 55.701255,
+				Longtitude = 12.535705,
+				Telephone = "00000000",
+				LocationType = LocationType.Shop,
+				CreationStatus = CreationStatus.Approved
+			};
+
+			_LocationService.SaveLocation (l6);
+
+             */
+			List<Location> locations = await _LocationService.RetrieveLatestLocations ();
+
+			if (locations != null && locations.Count > 0) {
+				RefreshCache ();
+				RefreshLocationsCompletedEvent (this, EventArgs.Empty);
 			}
 		}
 	}

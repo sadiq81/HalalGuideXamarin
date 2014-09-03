@@ -7,7 +7,7 @@
 using MonoTouch.Foundation;
 using System.CodeDom.Compiler;
 
-namespace HalalGuide.iOS.ViewController
+namespace HalalGuide.iOS
 {
 	[Register ("FilterMultipleDiningViewController")]
 	partial class FilterMultipleDiningViewController
@@ -16,10 +16,7 @@ namespace HalalGuide.iOS.ViewController
 		MonoTouch.UIKit.UISwitch AlcoholSwitch { get; set; }
 
 		[Outlet]
-		MonoTouch.UIKit.UILabel CategoriesLabel { get; set; }
-
-		[Outlet]
-		MonoTouch.UIKit.UITableView CategoryTableView { get; set; }
+		MonoTouch.UIKit.UILabel CountLabel { get; set; }
 
 		[Outlet]
 		MonoTouch.UIKit.UILabel DistanceLabel { get; set; }
@@ -31,10 +28,13 @@ namespace HalalGuide.iOS.ViewController
 		MonoTouch.UIKit.UISwitch HalalSwitch { get; set; }
 
 		[Outlet]
+		MonoTouch.UIKit.UINavigationItem NavigationItem { get; set; }
+
+		[Outlet]
 		MonoTouch.UIKit.UISwitch PorkSwitch { get; set; }
 
-		[Action ("ChooseCategories:")]
-		partial void ChooseCategories (MonoTouch.UIKit.UIButton sender);
+		[Action ("Choose:")]
+		partial void Choose (MonoTouch.Foundation.NSObject sender);
 
 		[Action ("DistanceSliderValueChanged:")]
 		partial void DistanceSliderValueChanged (MonoTouch.UIKit.UISlider sender);
@@ -42,24 +42,14 @@ namespace HalalGuide.iOS.ViewController
 		[Action ("Done:")]
 		partial void Done (MonoTouch.Foundation.NSObject sender);
 
-		[Action ("ResetCategories:")]
-		partial void ResetCategories (MonoTouch.UIKit.UIButton sender);
+		[Action ("Reset:")]
+		partial void Reset (MonoTouch.Foundation.NSObject sender);
 		
 		void ReleaseDesignerOutlets ()
 		{
-			if (AlcoholSwitch != null) {
-				AlcoholSwitch.Dispose ();
-				AlcoholSwitch = null;
-			}
-
-			if (CategoriesLabel != null) {
-				CategoriesLabel.Dispose ();
-				CategoriesLabel = null;
-			}
-
-			if (CategoryTableView != null) {
-				CategoryTableView.Dispose ();
-				CategoryTableView = null;
+			if (DistanceSlider != null) {
+				DistanceSlider.Dispose ();
+				DistanceSlider = null;
 			}
 
 			if (DistanceLabel != null) {
@@ -67,9 +57,14 @@ namespace HalalGuide.iOS.ViewController
 				DistanceLabel = null;
 			}
 
-			if (DistanceSlider != null) {
-				DistanceSlider.Dispose ();
-				DistanceSlider = null;
+			if (PorkSwitch != null) {
+				PorkSwitch.Dispose ();
+				PorkSwitch = null;
+			}
+
+			if (AlcoholSwitch != null) {
+				AlcoholSwitch.Dispose ();
+				AlcoholSwitch = null;
 			}
 
 			if (HalalSwitch != null) {
@@ -77,9 +72,14 @@ namespace HalalGuide.iOS.ViewController
 				HalalSwitch = null;
 			}
 
-			if (PorkSwitch != null) {
-				PorkSwitch.Dispose ();
-				PorkSwitch = null;
+			if (CountLabel != null) {
+				CountLabel.Dispose ();
+				CountLabel = null;
+			}
+
+			if (NavigationItem != null) {
+				NavigationItem.Dispose ();
+				NavigationItem = null;
 			}
 		}
 	}

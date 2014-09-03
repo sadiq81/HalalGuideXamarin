@@ -12,6 +12,7 @@ namespace HalalGuide.Util
 		public  const string AddReviewViewControllerSegue = "AddReviewViewControllerSegue";
 		public  const string LoginViewControllerSegue = "LoginViewControllerSegue";
 		public  const string DismissSeque = "DismissSeque";
+		public  const string UnwindToMultipleDiningViewController = "UnwindToMultipleDiningViewController";
 	}
 }
 

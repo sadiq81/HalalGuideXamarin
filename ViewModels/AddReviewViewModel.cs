@@ -23,35 +23,23 @@ namespace HalalGuide.ViewModels
 		{
 		}
 
-		public async Task<CreateReviewResult> CreateNewReview (Location location, int rating, string review)
+		public override void RefreshCache ()
+		{
+			//throw new NotImplementedException ();
+		}
+
+		public async Task<CreateEntityResult> CreateNewReview (Location location, int rating, string reviewText)
 		{
 
-			Review r = new Review () {
-				Id = KeyChain.GetFaceBookAccount ().Username + "-" + DateTime.Now.Ticks,
+			Review review = new Review () {
+				Id = _KeyChain.GetFaceBookAccount ().Username + "-" + DateTime.Now.Ticks,
 				LocationId = location.Id,
 				Rating = rating,
 			};
 
-			string objectName = r.Id + ".txt";
+			CreateEntityResult result = await _ReviewService.SaveReview (review, Encoding.UTF8.GetBytes (reviewText));
 
-			try {
-				await S3.PutObject (Constants.S3Bucket, location.Id + "/" + objectName, Encoding.UTF8.GetBytes (review));
-				await ReviewDAO.SaveOrReplace (r);
-
-			} catch (AWSErrorException e) {
-				XUbertesters.LogError ("ReviewViewModel: CouldNotUploadReviewToS3: " + e);
-				ReviewDAO.Delete (r).RunSynchronously ();
-				return CreateReviewResult.CouldNotUploadReviewToS3;
-
-			} catch (SimpleDBPersistence.SimpleDB.Model.AWSException.AWSErrorException e) {
-
-				XUbertesters.LogError ("ReviewViewModel: CouldNotCreateEntityInSimpleDB: " + e);
-				S3.DeleteObject (Constants.S3Bucket, objectName).RunSynchronously ();
-				ReviewDAO.Delete (r).RunSynchronously ();
-				return CreateReviewResult.CouldNotCreateEntityInSimpleDB;
-			}
-
-			return CreateReviewResult.OK;
+			return result;
 		}
 	}
 }

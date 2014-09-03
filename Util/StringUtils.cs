@@ -39,6 +39,8 @@ namespace HalalGuide.Util
 				return Encoding.Unicode.GetString (mso.ToArray ());
 			}
 		}
+
+
 	}
 }
 

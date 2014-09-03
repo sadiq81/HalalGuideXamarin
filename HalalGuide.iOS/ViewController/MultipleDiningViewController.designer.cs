@@ -14,7 +14,7 @@ namespace HalalGuide.iOS.ViewController
 	{
 		[Outlet]
 		MonoTouch.UIKit.UITableView DiningTableView { get; set; }
-
+		
 		void ReleaseDesignerOutlets ()
 		{
 			if (DiningTableView != null) {

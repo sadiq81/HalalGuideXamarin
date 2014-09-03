@@ -13,20 +13,16 @@ using XUbertestersSDK;
 using System.IO;
 using S3Storage.Response;
 using S3Storage.AWSException;
+using HalalGuide.Services;
+using SimpleDBPersistence.Service;
 
 namespace HalalGuide.ViewModels
 {
-	public class SingleDiningViewModel : BaseViewModel, ITableViewModel<LocationPicture>
+	public sealed class SingleDiningViewModel : BaseViewModel
 	{
-		public event EventHandler LoadedReviewListEvent = delegate { };
+		public event EventHandler RefreshedReviewCompletedEvent = delegate { };
 
-		protected virtual void OnLoadedReviewListEvent (EventArgs e)
-		{
-			EventHandler handler = LoadedReviewListEvent;
-			if (handler != null) {
-				handler (this, e);
-			}
-		}
+		public event EventHandler RefreshedPicturesCompletedEvent = delegate { };
 
 		private List<LocationPicture> Pictures { get; set; }
 
@@ -36,48 +32,65 @@ namespace HalalGuide.ViewModels
 		{
 			Pictures = new List<LocationPicture> ();
 			Reviews = new List<Review> ();
-			//LocationChangedEvent += (sender, e) => ;
+
+			RefreshCache ();
 		}
 
-		public int Rows ()
+		public override void RefreshCache ()
+		{
+			if (SelectedLocation != null) {
+				Pictures = _ImageService.GetImagesForLocation (SelectedLocation);
+				Reviews = _ReviewService.GetReviewsForLocation (SelectedLocation);
+			}
+		}
+
+		public int PicturesItems ()
 		{
 			return Pictures.Count;
 		}
 
-		public LocationPicture GetLocationAtRow (int row)
+		public int ReviewsInSection ()
+		{
+			return Reviews.Count;
+		}
+
+		public LocationPicture  GetLocationPictureAtRow (int row)
 		{
 			return Pictures [row];
 		}
 
-		public async Task<Stream> GetLocationPictureAtRow (int row)
+		public async Task<string> GetLocationPicturePath (LocationPicture locationPicture)
 		{
-			try {
-				GetObjectResult result = await S3.GetObject (Constants.S3Bucket, Pictures [row].LocationId + "/" + Pictures [row].Id);
-				return result.Stream;
-			} catch (AWSErrorException ex) {
-				XUbertesters.LogError (string.Format ("BaseViewModel: Error downloading image: {0} due to: {1}", Pictures [row].Id, ex));
-				return null;
-			}
+			return await _ImageService.GetPicturePath (locationPicture);
 		}
 
-
-		public async Task Update ()
+		public  Review GetReviewAtRow (int row)
 		{
-			XUbertesters.LogInfo (string.Format ("SingleDiningViewModel: Fetching pictures for Location: {0}", SelectedLocation.Id));
-			SelectQuery<LocationPicture> query = new SelectQuery<LocationPicture> ();
-			query.Equal (LocationPicture.LocationIdIdentifier, SelectedLocation.Id);
-			Pictures = await LocationPictureDAO.Select (query);
-			XUbertesters.LogInfo (string.Format ("SingleDiningViewModel: Fetched pictures for Location: {0}, found: {1}", SelectedLocation.Id, Pictures.Count));
+			return Reviews [row];
+		}
 
-			OnLoadedListEvent (EventArgs.Empty);
+		public async Task<string> GetReviewText (Review review)
+		{
+			return await _ReviewService.GetReviewText (review);
+		}
 
-			XUbertesters.LogInfo (string.Format ("SingleDiningViewModel: Fetching Review for Location: {0}", SelectedLocation.Id));
-			SelectQuery<Review> query2 = new SelectQuery<Review> ();
-			query2.Equal (Review.LocationIdIdentifier, SelectedLocation.Id);
-			Reviews = await ReviewDAO.Select (query2);
-			XUbertesters.LogInfo (string.Format ("SingleDiningViewModel: Fetched Review for Location: {0}, found: {1}", SelectedLocation.Id, Reviews.Count));
+		public async Task RefreshDataForLocation ()
+		{
 
-			LoadedReviewListEvent (this, EventArgs.Empty);
+			List<LocationPicture> pictures = await _ImageService.GetLatestImagesForLocation (SelectedLocation);
+
+			List<Review> reviews = await _ReviewService.GetLatestReviews (SelectedLocation);
+
+			if (pictures != null && pictures.Count > 0) {
+				RefreshedPicturesCompletedEvent (this, EventArgs.Empty);
+				RefreshCache ();
+			}
+
+			if (reviews != null && reviews.Count > 0) {
+				RefreshedReviewCompletedEvent (this, EventArgs.Empty);
+				RefreshCache ();
+			}
+
 		}
 
 		public int NumberOfReviews ()
@@ -85,36 +98,25 @@ namespace HalalGuide.ViewModels
 			return Reviews.Count;
 		}
 
-		public Review GetReviewAtRow (int item)
-		{
-			return Reviews [item];
-		}
-
 		public double AverageReviewScore ()
 		{
-			if (Reviews != null) {
+			if (Reviews != null && Reviews.Count > 0) {
 				return Reviews.Average (r => r.Rating);
 			} else {
 				return 0;
 			}
 		}
 
-		public async Task<string> GetReviewTextAtRow (int item)
+
+		public async Task<string> NameOfSubmitter (string id)
 		{
-			try {
-				String line = "";
-				GetObjectResult result = await S3.GetObject (Constants.S3Bucket, Reviews [item].LocationId + "/" + Reviews [item].Id + ".txt");
-				using (StreamReader sr = new StreamReader (result.Stream)) {
-					line = sr.ReadToEnd ();
-				}
-				return line;
-			} catch (AWSErrorException ex) {
-				XUbertesters.LogError (string.Format ("BaseViewModel: Error downloading review: {0} due to: {1}", Reviews [0].Id, ex));
-				return "ERROR";
-			} catch (Exception e) {
-				XUbertesters.LogError (string.Format ("BaseViewModel: Error parsing review: {0} due to: {1}", Reviews [0].Id, e));
-				return "ERROR";
-			}
+
+			return await _FacebookService.GetFacebookUserName (id);
+		}
+
+		public async Task<string> GetProfilePicture (string id)
+		{
+			return await _ImageService.GetPathForFacebookPicture (id);
 		}
 	}
 }

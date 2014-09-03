@@ -13,7 +13,7 @@ using SimpleDBPersistence.Service;
 
 namespace HalalGuide.iOS.ViewController
 {
-	public partial class MultipleDiningViewController : UIViewController
+	public partial class MultipleDiningViewController : BaseViewController
 	{
 		private const string cellIdentifier = "Dining";
 
@@ -23,8 +23,6 @@ namespace HalalGuide.iOS.ViewController
 		private UIRefreshControl RefreshControl = new UIRefreshControl ();
 
 		UISearchBar SearchBar;
-
-		private UIViewController Login;
 
 		public MultipleDiningViewController (IntPtr handle) : base (handle)
 		{
@@ -43,13 +41,6 @@ namespace HalalGuide.iOS.ViewController
 			XUbertesters.LogInfo ("DiningPageController: ViewDidLoad-End");
 		}
 
-		public async override void  ViewDidAppear (bool animated)
-		{
-			base.ViewDidAppear (animated);
-
-			await ViewModel.Update ();
-		}
-
 		#region Setup
 
 		private void SetupTableView ()
@@ -62,7 +53,7 @@ namespace HalalGuide.iOS.ViewController
 
 			RefreshControl.ValueChanged += async (sender, e) => {
 				RefreshControl.BeginRefreshing ();
-				await ViewModel.Update ();
+				await ViewModel.RefreshLocations ();
 				RefreshControl.EndRefreshing ();
 
 				UIView.Animate (
@@ -80,54 +71,16 @@ namespace HalalGuide.iOS.ViewController
 
 		private void SetupEventListeners ()
 		{
+			ViewModel.RefreshLocationsCompletedEvent += (sender, e) => InvokeOnMainThread (() => {
+				TableViewController.TableView.ReloadSections (new NSIndexSet (0), UITableViewRowAnimation.Top);
+			});
 
-			ViewModel.LoadedListEvent += (sender, e) => InvokeOnMainThread (() => TableViewController.TableView.ReloadSections (new NSIndexSet (0), UITableViewRowAnimation.Top));
 
-			//TODO move to base class
-			/*
-			ViewModel.LoginCompletedEvent += (object sender, AuthenticatorCompletedEventArgs e) => {
-				if (Login != null) {
-					Login.DismissViewController (true, delegate {
-
-						if (e.IsAuthenticated) {
-							PerformSegue (Segue.AddDiningSegue, this);
-
-						} else {
-							UIAlertView view = new UIAlertView ("Fejl", "Login fejlede, du skal bekræfte din identitet inden du kan tilføje emner til HalalGuide", null, "Luk");
-							view.Show ();
-						}
-					});
-					Login = null;
-				}
-			};
-			*/
 		}
 
 		#endregion
 
-		public override bool ShouldPerformSegue (string segueIdentifier, NSObject sender)
-		{
-			XUbertesters.LogInfo ("DiningPageController: ShouldPerformSegue-Start");
-			if (segueIdentifier != null && segueIdentifier.Equals (Segue.AddNewDiningViewControllerSegue)) {
 
-				if (ViewModel.IsAuthenticated ()) {
-					XUbertesters.LogInfo ("DiningPageController: ShouldPerformSegue-End");
-					return true;
-				} else {
-					/*
-					var auth = ViewModel.Authenticate ();
-					PresentViewController (Login = auth.GetUI (), true, null);
-					*/
-					XUbertesters.LogInfo ("DiningPageController: ShouldPerformSegue-End");
-					return false;
-				}
-			} else {
-				XUbertesters.LogInfo ("DiningPageController: ShouldPerformSegue-End");
-				return true;
-			}
-
-
-		}
 
 		public override void PrepareForSegue (UIStoryboardSegue segue, NSObject sender)
 		{
@@ -188,7 +141,13 @@ namespace HalalGuide.iOS.ViewController
 
 		#endregion
 
-
+		[Action ("UnwindToMultipleDiningViewController:")]
+		public void UnwindToMultipleDiningViewController (UIStoryboardSegue segue)
+		{
+			InvokeOnMainThread (() => {
+				TableViewController.TableView.ReloadSections (new NSIndexSet (0), UITableViewRowAnimation.Fade);
+			});
+		}
 
 	}
 }
