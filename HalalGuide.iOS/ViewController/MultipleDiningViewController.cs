@@ -34,7 +34,6 @@ namespace HalalGuide.iOS.ViewController
 
 		public override void  ViewDidLoad ()
 		{
-			XUbertesters.LogInfo ("DiningPageController: ViewDidLoad-Start");
 			base.ViewDidLoad ();
 
 			SetupTableView ();
@@ -42,14 +41,13 @@ namespace HalalGuide.iOS.ViewController
 			SetupSearchBar ();
 
 			SetupEventListeners ();
-
-			XUbertesters.LogInfo ("DiningPageController: ViewDidLoad-End");
 		}
 
 		public override void ViewDidAppear (bool animated)
 		{
 			base.ViewDidAppear (animated);
 			DiningTableView.SetContentOffset (new PointF (0, SearchBar.Frame.Size.Height), true);
+			XUbertesters.LogInfo ("MultipleDiningViewController: ViewDidAppear");
 		}
 
 		public override void PrepareForSegue (UIStoryboardSegue segue, NSObject sender)

@@ -33,14 +33,19 @@ namespace HalalGuide.iOS.ViewController.Table
 			VisibleCategories = new List<DiningCategory> ();
 			CategoriesChoosen = MultipleDiningViewModel.CategoryFilter;
 
-			XUbertesters.LogInfo ("FilterMultipleDiningTableViewController: ViewDidLoad-Start");
 			base.ViewDidLoad ();
 
 			SetupUIValues ();
 			SetupEventHandlers ();
 
-			XUbertesters.LogInfo ("FilterMultipleDiningTableViewController: ViewDidLoad-End");
 		}
+
+		public override void ViewDidAppear (bool animated)
+		{
+			base.ViewDidAppear (animated);
+			XUbertesters.LogInfo ("FilterMultipleDiningTableViewController: ViewDidAppear");
+		}
+
 
 		#region Setup
 
@@ -79,15 +84,12 @@ namespace HalalGuide.iOS.ViewController.Table
 
 		private void DistanceSliderValueChanged (UISlider sender)
 		{
-			XUbertesters.LogInfo ("FilterMultipleDiningTableViewController: SliderValueChanged-Start");
 			sender.Value = (float)Math.Round (sender.Value, MidpointRounding.AwayFromZero);
 			if (sender.Value < Constants.MaxDistanceLimit) {
 				DistanceLabel.Text = sender.Value + " km";
 			} else {
 				DistanceLabel.Text = "Ubegrænset";
 			}
-
-			XUbertesters.LogInfo ("FilterMultipleDiningTableViewController: SliderValueChanged-End");
 		}
 
 		public override void ViewDidDisappear (bool animated)

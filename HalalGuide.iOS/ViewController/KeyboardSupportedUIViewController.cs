@@ -49,7 +49,6 @@ namespace HalalGuide.iOS.ViewController
 		[Export ("gestureRecognizer:shouldReceiveTouch:")]
 		public bool ShouldReceiveTouch (UIGestureRecognizer recognizer, UITouch touch)
 		{
-
 			if (touch.View is UIButton || touch.View is UIBarButtonItem || touch.View is UISwitch) {
 				return false;
 			} else {

@@ -7,9 +7,7 @@
 	<key>CFBundleIdentifier</key>
 	<string>dk.eazyit.halalguide</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.0.12</string>
-	<key>CFBundleVersion</key>
-	<string>12</string>
+	<string>1.0.13</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>MinimumOSVersion</key>
@@ -30,5 +28,7 @@
 	</array>
 	<key>ubertesters_project_id</key>
 	<string>e8feaf3c-1e3c-11e4-a2cd-22000ac44c54</string>
+	<key>CFBundleVersion</key>
+	<string>13</string>
 </dict>
 </plist>

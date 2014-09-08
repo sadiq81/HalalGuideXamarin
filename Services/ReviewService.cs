@@ -32,6 +32,9 @@ namespace HalalGuide.Services
 
 		public async Task<CreateEntityResult> SaveReview (Review review, string reviewText)
 		{
+
+			XUbertesters.LogInfo (string.Format ("ReviewService-SaveReview: review: {0}", review));
+
 			try {
 				await _S3ReviewDAO.StoreReview (review, reviewText);
 				await _ReviewDAO.SaveOrReplace (review);
@@ -58,6 +61,7 @@ namespace HalalGuide.Services
 				return File.ReadAllText (filepath);
 			} else {
 				try {
+					XUbertesters.LogInfo (string.Format ("ReviewService-GetReviewText: review: {0}", review));
 					Stream text = await _S3ReviewDAO.RetrieveReview (review);
 					_FileService.StoreFile (text, filepath);
 					return File.ReadAllText (filepath);
@@ -76,6 +80,8 @@ namespace HalalGuide.Services
 			string updatedTime = DateTime.UtcNow.ToString (Constants.DateFormat);
 			string lastUpdated = _PreferencesService.GetString (Constants.ReviewLastUpdated + " - " + location.Id) ?? DateTime.MinValue.ToString (Constants.DateFormat);
 
+			XUbertesters.LogInfo (string.Format ("ReviewService-GetLatestReviews:"));
+
 			SelectQuery<Review> reviewQuery = new SelectQuery<Review> ()
 				.Equal (Review.CreationStatusIdentifier, CreationStatus.Approved.ToString ())
 				.Equal (Review.LocationIdIdentifier, location.Id)
@@ -86,6 +92,8 @@ namespace HalalGuide.Services
 			List<Review> reviews = await _ReviewDAO.Select (reviewQuery);
 
 			if (reviews != null && reviews.Count > 0) {
+				XUbertesters.LogInfo (string.Format ("ReviewService-GetLatestReviews: found: {0}", reviews.Count));
+
 				reviews.ForEach (_SQLiteConnection.InsertOrReplace);
 			}
 

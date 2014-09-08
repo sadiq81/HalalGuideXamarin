@@ -23,11 +23,9 @@ namespace HalalGuide.iOS.ViewController
 
 		public override bool ShouldPerformSegue (string segueIdentifier, NSObject sender)
 		{
-			XUbertesters.LogInfo (string.Format ("BaseViewController: ShouldPerformSegue-Start {0}", segueIdentifier));
 			if (segueIdentifier != null && (segueIdentifier.Equals (Segue.AddNewDiningViewControllerSegue) || segueIdentifier.Equals (Segue.AddReviewViewControllerSegue))) {
 
 				if (LoginViewModel.IsAuthenticated ()) {
-					XUbertesters.LogInfo ("BaseViewController: ShouldPerformSegue-End");
 					return true;
 				} else {
 					LoginViewModel.LoginCompletedEvent += (model, e) => LoginViewController.DismissViewController (true, delegate {
@@ -41,11 +39,9 @@ namespace HalalGuide.iOS.ViewController
 					var auth = LoginViewModel.Authenticate ();
 					PresentViewController (LoginViewController = auth.GetUI (), true, null);
 
-					XUbertesters.LogInfo ("BaseViewController: ShouldPerformSegue-End");
 					return false;
 				}
 			} else {
-				XUbertesters.LogInfo ("BaseViewController: ShouldPerformSegue-End");
 				return true;
 			}
 		}

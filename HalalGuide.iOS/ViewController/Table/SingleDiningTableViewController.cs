@@ -18,10 +18,12 @@ using HalalGuide.iOS.Util;
 
 namespace HalalGuide.iOS.ViewController.Table
 {
-	public partial class SingleDiningTableViewController : KeyboardSupportedTableViewController
+	public partial class SingleDiningTableViewController : UITableViewController
 	{
 		private readonly SingleDiningViewModel ViewModel = ServiceContainer.Resolve<SingleDiningViewModel> ();
 		private readonly AddReviewViewModel AddReviewViewModel = ServiceContainer.Resolve<AddReviewViewModel> ();
+		private UIImageView Expand;
+
 
 		public SingleDiningTableViewController (IntPtr handle) : base (handle)
 		{
@@ -40,6 +42,12 @@ namespace HalalGuide.iOS.ViewController.Table
 			SetupCollectionView ();
 
 			await ViewModel.RefreshDataForLocation ();
+		}
+
+		public override void ViewDidAppear (bool animated)
+		{
+			base.ViewDidAppear (animated);
+			XUbertesters.LogInfo ("SingleDiningTableViewController: ViewDidAppear");
 		}
 
 		private void SetupEventListeners ()
@@ -159,8 +167,38 @@ namespace HalalGuide.iOS.ViewController.Table
 
 				return cell;
 			} else {
+
+				if (cell.LocationPicture == null) {
+
+					UITapGestureRecognizer tap = new UITapGestureRecognizer (() => {
+						Expand = new UIImageView (cell.ImageView.Image);
+						Expand.ContentMode = UIViewContentMode.ScaleAspectFill;
+						Expand.Frame = View.ConvertRectFromView (cell.ImageView.Frame, cell.ImageView.Superview);
+						Expand.UserInteractionEnabled = true;
+						Expand.ClipsToBounds = true;
+
+						UIView.Transition (View, 0.5, UIViewAnimationOptions.AllowAnimatedContent, () => {
+							View.AddSubview (Expand);
+							Expand.Frame = View.Bounds;
+						}, () => {
+							UITapGestureRecognizer tapInner = new UITapGestureRecognizer (() => {
+								UIView.Animate (
+									0.5, 
+									() => {
+										Expand.Alpha = 0;
+									}, 
+									Expand.RemoveFromSuperview);
+								;
+							});
+							tapInner.WeakDelegate = this;
+							Expand.AddGestureRecognizer (tapInner);
+						});
+					});
+					cell.AddGestureRecognizer (tap);
+				}
 				LocationPicture lp = ViewModel.GetLocationPictureAtRow (indexPath.Row - 1);
 				cell.Configure (lp);
+
 			}
 			return cell;
 		}

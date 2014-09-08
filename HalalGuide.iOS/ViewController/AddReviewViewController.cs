@@ -29,10 +29,9 @@ namespace HalalGuide.iOS.ViewController
 
 		public override void ViewDidLoad ()
 		{
-			XUbertesters.LogInfo ("ReviewController: ViewDidLoad-Start");
+			XUbertesters.LogInfo ("ReviewController: ViewDidLoad");
 			base.ViewDidLoad ();
 			SetupReviewTextField ();
-			XUbertesters.LogInfo ("ReviewController: ViewDidLoad-End");
 		}
 
 		#region Setup
@@ -51,15 +50,14 @@ namespace HalalGuide.iOS.ViewController
 
 		partial void Regreet (UIBarButtonItem sender)
 		{
-			XUbertesters.LogInfo ("ReviewController: Regreet-Start");
+			XUbertesters.LogInfo ("ReviewController: Regreet");
 			DismissViewController (true, null);
-			XUbertesters.LogInfo ("ReviewController: Regreet-End");
 
 		}
 
 		async partial  void Save (UIBarButtonItem sender)
 		{
-			XUbertesters.LogInfo ("ReviewController: Save-Start");
+			XUbertesters.LogInfo ("ReviewController: Save");
 
 			ResignFirstResponder ();
 
@@ -75,7 +73,6 @@ namespace HalalGuide.iOS.ViewController
 				new UIAlertView ("Fejl", result.ToString (), null, "Ok", null).Show ();
 			}
 
-			XUbertesters.LogInfo ("ReviewController: Save-Start");
 		}
 
 		partial void StarPressed (UIButton sender)

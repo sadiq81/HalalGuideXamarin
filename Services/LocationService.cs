@@ -52,6 +52,8 @@ namespace HalalGuide.Services
 
 		public async Task<List<Location>> RetrieveLatestLocations ()
 		{
+			XUbertesters.LogInfo (string.Format ("LocationService-RetrieveLatestLocations"));
+
 			string updatedTime = DateTime.UtcNow.ToString (Constants.DateFormat);
 			string lastUpdated = _PreferencesService.GetString (Constants.LocationLastUpdated);
 
@@ -63,6 +65,7 @@ namespace HalalGuide.Services
 			List<Location> locations = await _LocationDAO.Select (locationQuery);
 
 			if (locations != null && locations.Count > 0) {
+				XUbertesters.LogInfo (string.Format ("LocationService-RetrieveLatestLocations: found: {0}", locations.Count));
 				locations.ForEach (_SQLiteConnection.InsertOrReplace);
 			}
 

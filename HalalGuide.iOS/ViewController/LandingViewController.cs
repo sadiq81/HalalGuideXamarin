@@ -26,21 +26,21 @@ namespace HalalGuide.iOS.ViewController
 		{
 			NavigationController.NavigationBar.Translucent = false;
 
-			XUbertesters.LogInfo ("LandingPageController: ViewDidLoad-Start");
 			base.ViewDidLoad ();
 
 			SetupTableView ();
 
 			SetupEventListeners ();
 
-			XUbertesters.LogInfo ("LandingPageController: ViewDidLoad-End");
 		}
 
 		public async override void ViewDidAppear (bool animated)
 		{
 			base.ViewDidAppear (animated);
 			await ViewModel.RefreshLocations ();
+			XUbertesters.LogInfo ("LandingPageController: ViewDidAppear");
 		}
+
 
 		#region Setup
 

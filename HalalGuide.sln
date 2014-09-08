@@ -24,8 +24,8 @@ Global
 		Ubertester|iPhone = Ubertester|iPhone
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{6545E392-67A6-46FC-9B8C-4011A725A1ED}.Ad-Hoc|iPhone.ActiveCfg = Debug|Any CPU
-		{6545E392-67A6-46FC-9B8C-4011A725A1ED}.Ad-Hoc|iPhone.Build.0 = Debug|Any CPU
+		{6545E392-67A6-46FC-9B8C-4011A725A1ED}.Ad-Hoc|iPhone.ActiveCfg = Release|Any CPU
+		{6545E392-67A6-46FC-9B8C-4011A725A1ED}.Ad-Hoc|iPhone.Build.0 = Release|Any CPU
 		{6545E392-67A6-46FC-9B8C-4011A725A1ED}.AppStore|iPhone.ActiveCfg = Debug|Any CPU
 		{6545E392-67A6-46FC-9B8C-4011A725A1ED}.AppStore|iPhone.Build.0 = Debug|Any CPU
 		{6545E392-67A6-46FC-9B8C-4011A725A1ED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -60,8 +60,8 @@ Global
 		{673B1636-6AC3-479F-BB4A-9F1AEA5C38AD}.Release|iPhoneSimulator.Build.0 = Release|Any CPU
 		{673B1636-6AC3-479F-BB4A-9F1AEA5C38AD}.Ubertester|iPhone.ActiveCfg = Release|Any CPU
 		{673B1636-6AC3-479F-BB4A-9F1AEA5C38AD}.Ubertester|iPhone.Build.0 = Release|Any CPU
-		{8CFB233F-84F6-45B0-89A5-9CE3EA4E05E2}.Ad-Hoc|iPhone.ActiveCfg = Debug|Any CPU
-		{8CFB233F-84F6-45B0-89A5-9CE3EA4E05E2}.Ad-Hoc|iPhone.Build.0 = Debug|Any CPU
+		{8CFB233F-84F6-45B0-89A5-9CE3EA4E05E2}.Ad-Hoc|iPhone.ActiveCfg = Release|Any CPU
+		{8CFB233F-84F6-45B0-89A5-9CE3EA4E05E2}.Ad-Hoc|iPhone.Build.0 = Release|Any CPU
 		{8CFB233F-84F6-45B0-89A5-9CE3EA4E05E2}.AppStore|iPhone.ActiveCfg = Debug|Any CPU
 		{8CFB233F-84F6-45B0-89A5-9CE3EA4E05E2}.AppStore|iPhone.Build.0 = Debug|Any CPU
 		{8CFB233F-84F6-45B0-89A5-9CE3EA4E05E2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU

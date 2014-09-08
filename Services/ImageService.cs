@@ -32,6 +32,8 @@ namespace HalalGuide.Services
 
 		public async Task<CreateEntityResult> UploadLocationPicture (Location location, byte[] data)
 		{
+			XUbertesters.LogInfo (string.Format ("ImageService-UploadLocationPicture: location: {0} ", location));
+
 			if (data == null) {
 				return CreateEntityResult.OK;
 			}
@@ -72,6 +74,9 @@ namespace HalalGuide.Services
 
 		public async Task<CreateEntityResult> UploadProfilePicture (FacebookUser user, byte[] data)
 		{
+
+			XUbertesters.LogInfo (string.Format ("ImageService-UploadProfilePicture: user: {0} ", user));
+
 			try {
 				await _S3ProfilePictureDAO.StoreProfilePicture (user, data);
 			} catch (AWSErrorException e) {
@@ -89,6 +94,7 @@ namespace HalalGuide.Services
 				return filepath;
 			} else {
 				try {
+					XUbertesters.LogInfo (string.Format ("ImageService-GetPathForFacebookPicture: userId: {0} ", userId));
 					Stream image = await _S3ProfilePictureDAO.RetrieveProfilePicture (userId);
 					_FileService.StoreFile (image, filepath);
 					return filepath;

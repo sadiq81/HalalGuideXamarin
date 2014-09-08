@@ -4,10 +4,11 @@ using System;
 
 using HalalGuide.ViewModels;
 using SimpleDBPersistence.Service;
+using MonoTouch.UIKit;
 
 namespace HalalGuide.iOS.ViewController
 {
-	public partial class SingleDiningViewController : KeyboardSupportedUIViewController
+	public partial class SingleDiningViewController : BaseViewController
 	{
 		private readonly SingleDiningViewModel SingleDiningViewModel = ServiceContainer.Resolve<SingleDiningViewModel> ();
 

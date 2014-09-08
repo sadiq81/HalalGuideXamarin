@@ -30,6 +30,8 @@ namespace HalalGuide.Services
 
 		public async Task<CreateEntityResult> SaveFacebookUser (string id, string name, byte[] image)
 		{
+			XUbertesters.LogInfo (string.Format ("FacebookService-SaveFacebookUser: id: {0} name: {1}", id, name));
+
 			FacebookUser fu = new FacebookUser (){ Id = id, Name = name };
 
 			try {

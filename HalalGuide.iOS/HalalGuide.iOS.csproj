@@ -52,13 +52,13 @@
     <CodesignKey>iPhone Developer: Tommy Lynge Hinrichsen (C7LH75JYEC)</CodesignKey>
     <IpaPackageName>
     </IpaPackageName>
-    <CodesignProvision>EFAFC88A-B29E-4979-A190-BE65AABA43E0</CodesignProvision>
     <MtouchI18n>
     </MtouchI18n>
     <MtouchArch>ARMv7</MtouchArch>
     <AssemblyName>HalalGuide</AssemblyName>
     <MtouchSdkVersion>7.1</MtouchSdkVersion>
     <MtouchLink>None</MtouchLink>
+    <CodesignProvision>e22f8091-5c15-4886-bbcd-96cdaaf6a71d</CodesignProvision>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhone' ">
     <Optimize>true</Optimize>
@@ -80,7 +80,6 @@
     <ConsolePause>false</ConsolePause>
     <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
     <BuildIpa>true</BuildIpa>
-    <CodesignProvision>6dadc790-be11-40a7-accd-f9fa2cae163f</CodesignProvision>
     <CodesignKey>iPhone Distribution: Tommy Hinrichsen (2Z296RX4K9)</CodesignKey>
     <AssemblyName>HalalGuide</AssemblyName>
     <IpaPackageName>
@@ -90,12 +89,7 @@
     <MtouchArch>ARMv7</MtouchArch>
     <MtouchSdkVersion>7.1</MtouchSdkVersion>
     <MtouchUseLlvm>true</MtouchUseLlvm>
-    <CustomCommands>
-      <CustomCommands>
-        <Command type="BeforeBuild" command="/bin/bash increment.sh " workingdir="${ProjectDir}" />
-        <Command type="BeforeBuild" command="/usr/bin/perl increment.pl" workingdir="${ProjectDir}" />
-      </CustomCommands>
-    </CustomCommands>
+    <CodesignProvision>6dadc790-be11-40a7-accd-f9fa2cae163f</CodesignProvision>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'AppStore|iPhone' ">
     <Optimize>true</Optimize>
@@ -113,7 +107,7 @@
     <Optimize>false</Optimize>
     <OutputPath>bin\iPhone\Ubertester</OutputPath>
     <WarningLevel>4</WarningLevel>
-    <CodesignKey>iPhone Distribution: Tommy Hinrichsen (2Z296RX4K9)</CodesignKey>
+    <CodesignKey>iPhone Distribution</CodesignKey>
     <CustomCommands>
       <CustomCommands>
         <Command type="AfterBuild" command="curl -X POST http://beta.ubertesters.com/api/client/upload_build.json -H &quot;X-UbertestersApiKey:fe35d4c0006e013217e722000ac44c54&quot; -F &quot;file=${TargetDir}/HalalGuide-${BundleVersion}.ipa&quot; -F &quot;title=${ProjectName}“ -F &quot;notes=${BundleIdentifier}-${BundleVersion}&quot; -F &quot;status=in_progress&quot; -F &quot;stop_previous=true&quot;" workingdir="" />
@@ -123,7 +117,6 @@
     <IpaPackageName>
     </IpaPackageName>
     <AssemblyName>HalalGuide</AssemblyName>
-    <CodesignProvision>6E755E65-0AF6-452C-8805-D05DC4A4B658</CodesignProvision>
     <MtouchI18n>
     </MtouchI18n>
     <MtouchArch>ARMv7</MtouchArch>
@@ -194,10 +187,10 @@
     <BundleResource Include="Resources\Camera.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Info.plist" />
     <None Include="Entitlements.plist" />
     <None Include="RELEASE-NOTES.txt" />
     <None Include="packages.config" />
+    <None Include="Info.plist" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Main.cs" />
@@ -277,8 +270,9 @@
     <Compile Include="ViewController\Table\AddNewDiningTableViewController.designer.cs">
       <DependentUpon>AddNewDiningTableViewController.cs</DependentUpon>
     </Compile>
-    <Compile Include="ViewController\Table\KeyboardSupportedUIViewController.cs" />
     <Compile Include="ViewController\Table\BaseTableViewController.cs" />
+    <Compile Include="Util\AssociationPolicy.cs" />
+    <Compile Include="ViewController\Table\KeyboardSupportedTableViewController.cs" />
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="MainStoryboard.storyboard" />

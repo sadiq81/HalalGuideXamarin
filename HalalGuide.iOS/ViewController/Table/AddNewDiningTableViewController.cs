@@ -28,14 +28,14 @@ namespace HalalGuide.iOS.ViewController.Table
 
 		public async  override void ViewDidLoad ()
 		{
-			XUbertesters.LogInfo ("AddNewDiningController: ViewDidLoad-Start");
-
 			SetupEventListeners ();
-
 			await SetupUIElements ();
+		}
 
-			XUbertesters.LogInfo ("AddNewDiningController: ViewDidLoad-End");
-
+		public override void ViewDidAppear (bool animated)
+		{
+			base.ViewDidAppear (animated);
+			XUbertesters.LogInfo ("AddNewDiningTableViewController: ViewDidAppear");
 		}
 
 		#region Setup
@@ -107,14 +107,13 @@ namespace HalalGuide.iOS.ViewController.Table
 
 		private void Regreet (UIBarButtonItem sender)
 		{
-			XUbertesters.LogInfo ("AddNewDiningController: Regreet-Start");
+			XUbertesters.LogInfo ("AddNewDiningController: Regreet");
 			DismissViewController (true, null);
-			XUbertesters.LogInfo ("AddNewDiningController: Regreet-End");
 		}
 
 		public async Task Save (UIBarButtonItem sender)
 		{
-			XUbertesters.LogInfo ("AddNewDiningController: Save-Start");
+			XUbertesters.LogInfo ("AddNewDiningController: Save");
 
 			ResignKeyboard ();
 
@@ -166,8 +165,6 @@ namespace HalalGuide.iOS.ViewController.Table
 				new UIAlertView ("Fejl", result.ToString (), null, "Ok", null).Show ();
 			}
 
-			XUbertesters.LogInfo ("AddNewDiningController: Save-End");
-
 		}
 
 		[Export ("alertView:clickedButtonAtIndex:")]
@@ -200,28 +197,19 @@ namespace HalalGuide.iOS.ViewController.Table
 		private void AlcoholValueChanged (UISwitch sender)
 		{
 			ResignKeyboard ();
-
-			XUbertesters.LogInfo ("AddNewDiningController: AlcoholValueChanged-Start");
 			AlcoholImage.Image = UIImage.FromBundle (Images.Alcohol + sender.On);
-			XUbertesters.LogInfo ("AddNewDiningController: AlcoholValueChanged-End");
 		}
 
 		private void HalalValueChanged (UISwitch sender)
 		{
 			ResignKeyboard ();
-
-			XUbertesters.LogInfo ("AddNewDiningController: HalalValueChanged-Start");
 			HalalImage.Image = UIImage.FromBundle (Images.NonHalal + sender.On);
-			XUbertesters.LogInfo ("AddNewDiningController: HalalValueChanged-End");
 		}
 
 		private void PorkValueChanged (UISwitch sender)
 		{
 			ResignKeyboard ();
-
-			XUbertesters.LogInfo ("AddNewDiningController: PorkValueChanged-Start");
 			PorkImage.Image = UIImage.FromBundle (Images.Pig + sender.On);
-			XUbertesters.LogInfo ("AddNewDiningController: PorkValueChanged-End");
 		}
 
 		private void SelectImage (UIButton sender)
@@ -268,7 +256,6 @@ namespace HalalGuide.iOS.ViewController.Table
 				UIAlertView noCameraFound = new UIAlertView ("Fejl", "Intet kamera tilgægeligt", null, "Luk");
 				noCameraFound.Show ();
 			}
-			XUbertesters.LogInfo ("AddNewDiningController: PickImage-End");
 		}
 
 		#endregion

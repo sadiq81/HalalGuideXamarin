@@ -44,13 +44,10 @@ namespace HalalGuide.ViewModels
 		public BaseViewModel ()
 		{
 			if (_Locator.IsGeolocationAvailable && !_Locator.IsListening) {
-				XUbertesters.LogInfo (string.Format ("BaseViewModel: started listening on location")); 
 				_Locator.StartListening (10 * 60, 300);
 			}
 
 			_Locator.PositionChanged += (object sender, PositionEventArgs e) => {
-				XUbertesters.LogInfo (string.Format ("BaseViewModel: Location changed")); 
-
 				Position = e.Position;
 				if (SelectedLocation != null) {
 					SelectedLocation.Distance = CalcUtil.GetDistanceKM (Position, new Position () {
@@ -243,7 +240,6 @@ namespace HalalGuide.ViewModels
 		public async Task<MediaFile> TakePicture (string path, string fileName)
 		{
 			MediaFile image = null;
-			XUbertesters.LogInfo (String.Format ("BaseViewModel: TakePicture-Start with args path: {0} filename: {1}", path, fileName));
 
 			XUbertesters.HideMenu ();
 			await MediaPicker.TakePhotoAsync (new StoreCameraMediaOptions {
@@ -251,30 +247,23 @@ namespace HalalGuide.ViewModels
 				Directory = path
 			}).ContinueWith (t => {
 				if (t.IsCanceled || t.IsFaulted) {
-					XUbertesters.LogError (String.Format ("BaseViewModel: TakePicture cancelled or faulted: {0}", t.Exception));
 				} else {
-					XUbertesters.LogError ("BaseViewModel: TakePicture ok");
 					image = t.Result;
 				}
 			});
-			XUbertesters.LogError ("BaseViewModel: TakePicture-End");
 			return image;
 		}
 
 		public async Task<MediaFile> GetPictureFromDevice ()
 		{
 			MediaFile image = null;
-			XUbertesters.LogInfo ("BaseViewModel: GetPictureFromDevice-Start");
 			XUbertesters.HideMenu ();
 			await MediaPicker.PickPhotoAsync ().ContinueWith (t => {
 				if (t.IsCanceled || t.IsFaulted) {
-					XUbertesters.LogError (String.Format ("BaseViewModel: GetPictureFromDevice cancelled or faulted: {0}", t.Exception));
 				} else {
-					XUbertesters.LogError ("BaseViewModel: GetPictureFromDevice ok");
 					image = t.Result;
 				}
 			});
-			XUbertesters.LogError ("BaseViewModel: GetPictureFromDevice-End");
 			return image;
 		}
 	}
