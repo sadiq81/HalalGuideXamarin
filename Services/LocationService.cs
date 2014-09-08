@@ -56,7 +56,6 @@ namespace HalalGuide.Services
 			string lastUpdated = _PreferencesService.GetString (Constants.LocationLastUpdated);
 
 			SelectQuery<Location> locationQuery = new SelectQuery<Location> ()
-				.Equal (Location.CreationStatusIdentifier, CreationStatus.Approved.ToString ())
 				.GreatherThanOrEqual (Entity.UpdatedIdentifier, lastUpdated)
 				.NotNull (Entity.UpdatedIdentifier)
 				.SetSortOrder (Entity.UpdatedIdentifier);
@@ -75,7 +74,7 @@ namespace HalalGuide.Services
 
 		public List<Location> GetLastTenLocations ()
 		{
-			return _SQLiteConnection.Table<Location> ().OrderBy (l => l.LastUpdated).Take (10).ToList ();
+			return _SQLiteConnection.Table<Location> ().Where (l => l.CreationStatus == CreationStatus.Approved).OrderBy (l => l.LastUpdated).Take (10).ToList ();
 		}
 
 		public List<Location> GetByQuery (string query)

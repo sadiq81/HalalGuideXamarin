@@ -2,179 +2,24 @@
 
 using System;
 
-using MonoTouch.Foundation;
-using MonoTouch.UIKit;
 using HalalGuide.ViewModels;
 using SimpleDBPersistence.Service;
-using HalalGuide.Util;
-using System.Globalization;
-using HalalGuide.iOS.CollectionView;
-using HalalGuide.Domain;
 
 namespace HalalGuide.iOS.ViewController
 {
-	public partial class SingleDiningViewController : UITableViewController
+	public partial class SingleDiningViewController : KeyboardSupportedUIViewController
 	{
-		NSString cellId = new NSString ("PictureCell");
-		private const string ReviewCell = "ReviewCell";
-
-		private const int ProfilePictureTag = 100;
-		private const int Star1ImageTag = 101;
-		private const int Star2ImageTag = 102;
-		private const int Star3ImageTag = 103;
-		private const int Star4ImageTag = 104;
-		private const int Star5ImageTag = 105;
-
-		private const int NameLabelTag = 201;
-		private const int ReviewLabelTag = 202;
-
-		public SingleDiningViewModel ViewModel = ServiceContainer.Resolve<SingleDiningViewModel> ();
+		private readonly SingleDiningViewModel SingleDiningViewModel = ServiceContainer.Resolve<SingleDiningViewModel> ();
 
 		public SingleDiningViewController (IntPtr handle) : base (handle)
 		{
-
 		}
 
-		public override void DidReceiveMemoryWarning ()
+		public override void ViewDidLoad ()
 		{
+			base.ViewDidLoad ();
+			NavigationItem.Title = SingleDiningViewModel.SelectedLocation.Name;
 		}
-
-		public override void ViewWillAppear (bool animated)
-		{
-			base.ViewWillAppear (animated);
-			ViewModel.RefreshCache ();
-		}
-
-		public async override void  ViewDidLoad ()
-		{
-			SetupInfoView ();
-			SetupCollectionView ();
-
-			await ViewModel.RefreshDataForLocation ();
-		}
-
-		private void SetupEventListeners ()
-		{
-			ViewModel.RefreshedPicturesCompletedEvent += (sender, e) => InvokeOnMainThread (delegate {
-				PictureCollectionView.ReloadData ();
-			});
-
-			ViewModel.RefreshedReviewCompletedEvent += (sender, e) => InvokeOnMainThread (delegate {
-				TableView.ReloadSections (new NSIndexSet (2), UITableViewRowAnimation.Fade);
-			});
-
-			ViewModel.LocationChangedEvent += (sender, e) => DistanceLabel.Text = BaseViewModel.SelectedLocation.Distance.ToString (Constants.NumberFormat, CultureInfo.CurrentCulture);
-		}
-
-		private void SetupInfoView ()
-		{
-			NameLabel.Text = BaseViewModel.SelectedLocation.Name;
-			RoadLabel.Text = string.Format ("{0} {1}", BaseViewModel.SelectedLocation.AddressRoad, BaseViewModel.SelectedLocation.AddressRoadNumber);
-			CityLabel.Text = string.Format ("{0} {1}", BaseViewModel.SelectedLocation.AddressPostalCode, BaseViewModel.SelectedLocation.AddressCity);
-			CategoryLabel.Text = BaseViewModel.SelectedLocation.Categories;
-
-			PorkImage.Image = UIImage.FromBundle (Images.Pig + BaseViewModel.SelectedLocation.Pork);
-			PorkLabel.TextColor = BaseViewModel.SelectedLocation.Pork ? UIColor.Red : UIColor.Green;
-			AlcoholImage.Image = UIImage.FromBundle (Images.Alcohol + BaseViewModel.SelectedLocation.Alcohol);
-			AlcoholLabel.TextColor = BaseViewModel.SelectedLocation.Alcohol ? UIColor.Red : UIColor.Green;
-			HalalImage.Image = UIImage.FromBundle (Images.NonHalal + BaseViewModel.SelectedLocation.NonHalal);
-			HalalLabel.TextColor = BaseViewModel.SelectedLocation.NonHalal ? UIColor.Red : UIColor.Green;
-
-			DistanceLabel.Text = BaseViewModel.SelectedLocation.Distance.ToString (Constants.NumberFormat, CultureInfo.CurrentCulture);
-
-			double rating = ViewModel.AverageReviewScore ();
-			Star1Image.Image = rating >= 1 ? UIImage.FromBundle (Images.StarSelected) : UIImage.FromBundle (Images.Star);
-			Star2Image.Image = rating >= 2 ? UIImage.FromBundle (Images.StarSelected) : UIImage.FromBundle (Images.Star);
-			Star3Image.Image = rating >= 3 ? UIImage.FromBundle (Images.StarSelected) : UIImage.FromBundle (Images.Star);
-			Star4Image.Image = rating >= 4 ? UIImage.FromBundle (Images.StarSelected) : UIImage.FromBundle (Images.Star);
-			Star5Image.Image = rating >= 5 ? UIImage.FromBundle (Images.StarSelected) : UIImage.FromBundle (Images.Star);
-		}
-
-		private void SetupCollectionView ()
-		{
-
-			PictureCollectionView.RegisterClassForCell (typeof(LocationPictureImageCell), cellId);
-			PictureCollectionView.BackgroundColor = UIColor.White;
-			PictureCollectionView.CollectionViewLayout = new LineLayout ();
-			AutomaticallyAdjustsScrollViewInsets = false;
-
-		}
-
-		#region CollectionView
-
-		[Export ("collectionView:cellForItemAtIndexPath:")]
-		public  UICollectionViewCell GetCell (UICollectionView collectionView, NSIndexPath indexPath)
-		{
-			Console.WriteLine ("Creating cell: " + indexPath.DebugDescription);
-			var cell = (LocationPictureImageCell)collectionView.DequeueReusableCell (cellId, indexPath);
-
-			LocationPicture lp = ViewModel.GetLocationPictureAtRow (indexPath.Row);
-			cell.Configure (lp);
-
-			return cell;
-		}
-
-		[Export ("collectionView:numberOfItemsInSection:")]
-		public  int GetItemsCount (UICollectionView collectionView, int section)
-		{
-			return ViewModel.PicturesItems ();
-		}
-
-		[Export ("numberOfSectionsInCollectionView:")]
-		public virtual int NumberOfSections (UICollectionView collectionView)
-		{
-			return 1;
-		}
-
-		[Export ("collectionView:shouldHighlightItemAtIndexPath:")]
-		public virtual bool ShouldHighlightItem (UICollectionView collectionView, NSIndexPath indexPath)
-		{
-			return false;
-		}
-
-		#endregion
-
-		#region TableView
-
-		public override int RowsInSection (UITableView tableview, int section)
-		{
-			if (section == 0 || section == 1) {
-				return base.RowsInSection (tableview, section);
-			} else {
-				return 0;//ViewModel.ReviewsInSection ();
-			}
-		}
-
-		public  override UITableViewCell GetCell (UITableView tableView, NSIndexPath indexPath)
-		{
-			if (indexPath.Section == 0 || indexPath.Section == 1) {
-				return base.GetCell (tableView, indexPath);
-			} else {
-
-				ReviewCell cell = (ReviewCell)tableView.DequeueReusableCell (ReviewCell);
-				if (cell == null) {
-					cell = new ReviewCell (UITableViewCellStyle.Default, ReviewCell);
-				}
-
-				Review r = ViewModel.GetReviewAtRow (indexPath.Row);
-
-				cell.Configure (r);
-
-				return cell;
-			}
-		}
-
-		public override  void RowSelected (UITableView tableView, NSIndexPath indexPath)
-		{
-			tableView.DeselectRow (indexPath, true); // normal iOS behaviour is to remove the blue highlight
-		}
-
-		[Export ("positionForBar:")]
-		public  UIBarPosition GetPositionForBar (IUIBarPositioning barPositioning)
-		{
-			return UIBarPosition.TopAttached;
-		}
-
-		#endregion
 	}
 }
+

@@ -1,20 +1,9 @@
-﻿using HalalGuide.DAO;
-using HalalGuide.Domain;
+﻿using HalalGuide.Domain;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using SimpleDBPersistence.SimpleDB.Model.Parameters;
-using Xamarin.Geolocation;
-using HalalGuide.Util;
 using HalalGuide.Domain.Enum;
 using System.Linq;
-using System.Globalization;
 using System;
-using XUbertestersSDK;
-using System.IO;
-using S3Storage.Response;
-using S3Storage.AWSException;
-using HalalGuide.Services;
-using SimpleDBPersistence.Service;
 
 namespace HalalGuide.ViewModels
 {
@@ -117,6 +106,11 @@ namespace HalalGuide.ViewModels
 		public async Task<string> GetProfilePicture (string id)
 		{
 			return await _ImageService.GetPathForFacebookPicture (id);
+		}
+
+		public async Task<CreateEntityResult> AddLocationPicture (byte[] data)
+		{
+			return await _ImageService.UploadLocationPicture (SelectedLocation, data);
 		}
 	}
 }

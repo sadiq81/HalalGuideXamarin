@@ -1,6 +1,5 @@
 ﻿using SimpleDBPersistence.SimpleDB.Model;
 using HalalGuide.Domain.Enum;
-using System.Globalization;
 using SQLite;
 
 namespace HalalGuide.Domain
@@ -107,7 +106,7 @@ namespace HalalGuide.Domain
 		[SimpleDBFieldAttribute (LanguageIdentifier)]
 		public Language Language { get; set; }
 
-		public const string CreationStatusIdentifier = "CreationStatusIdentifier";
+		public const string CreationStatusIdentifier = "CreationStatus";
 
 		[Column (CreationStatusIdentifier)] 
 		[SimpleDBFieldAttribute (CreationStatusIdentifier)]

@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace HalalGuide.Util
+﻿namespace HalalGuide.iOS.Util
 {
 	public class Segue
 	{
@@ -13,6 +11,10 @@ namespace HalalGuide.Util
 		public  const string LoginViewControllerSegue = "LoginViewControllerSegue";
 		public  const string DismissSeque = "DismissSeque";
 		public  const string UnwindToMultipleDiningViewController = "UnwindToMultipleDiningViewController";
+
+		public  const string FilterDiningEmbedded = "FilterDiningEmbedded";
+		public  const string AddDiningEmbedded = "AddDiningEmbedded";
+		public  const string SingleDiningEmbedded = "SingleDiningEmbedded";
 	}
 }
 

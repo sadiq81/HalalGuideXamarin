@@ -1,5 +1,4 @@
-﻿using System;
-using SimpleDBPersistence.DAO;
+﻿using SimpleDBPersistence.DAO;
 using System.Threading.Tasks;
 using XUbertestersSDK;
 using System.Collections.Generic;

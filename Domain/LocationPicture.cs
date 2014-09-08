@@ -1,12 +1,15 @@
 ﻿using SimpleDBPersistence.SimpleDB.Model;
 using SQLite;
+using HalalGuide.Domain.Enum;
 
 namespace HalalGuide.Domain
 {
-	[Table ("LocationPicture")] 
-	[SimpleDBDomain ("LocationPicture")]
+	[Table (TableIdentifier)] 
+	[SimpleDBDomain (TableIdentifier)]
 	public class LocationPicture : DBEntity
 	{
+		public const string TableIdentifier = "LocationPicture";
+
 		public const string LocationIdIdentifier = "LocationId";
 
 		[Column (LocationIdIdentifier)] 

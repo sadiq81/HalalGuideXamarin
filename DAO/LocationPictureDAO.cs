@@ -1,7 +1,4 @@
-﻿using SimpleDBPersistence.DAO;
-using HalalGuide.Domain;
-using System.Threading.Tasks;
-using XUbertestersSDK;
+﻿using HalalGuide.Domain;
 
 namespace HalalGuide.DAO
 {

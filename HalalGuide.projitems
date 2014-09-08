@@ -59,5 +59,10 @@
     <Compile Include="$(MSBuildThisFileDirectory)Domain\Enum\CreationStatus.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\FacebookService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Util\DatabaseWrapper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DAO\S3ProfilePictureDAO.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DAO\S3ReviewDAO.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DAO\S3LocationPictureDAO.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DAO\S3BaseDAO.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Util\ImageResize.cs" />
   </ItemGroup>
 </Project>

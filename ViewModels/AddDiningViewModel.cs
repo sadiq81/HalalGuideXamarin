@@ -2,13 +2,9 @@
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Collections.Generic;
-using Xamarin.Media;
 using HalalGuide.Domain;
 using HalalGuide.Domain.Enum;
-using S3Storage.AWSException;
-using HalalGuide.Util;
 using HalalGuide.Domain.Dawa;
-using XUbertestersSDK;
 using System.Linq;
 using System.Globalization;
 
@@ -16,7 +12,7 @@ namespace HalalGuide.ViewModels
 {
 	public class AddDiningViewModel : BaseViewModel
 	{
-		private MediaFile Image { get; set; }
+
 
 		private Dictionary<string, Address> StreetNumbersMap { get; set; }
 
@@ -99,13 +95,9 @@ namespace HalalGuide.ViewModels
 			StreetNumbersMap = temp;
 		}
 
-		public bool IsCameraAvailable ()
-		{
-			return MediaPicker.IsCameraAvailable;
 
-		}
 
-		public async Task<CreateEntityResult> CreateNewLocation (string name, string road, string roadNumber, string postalCode, string city, string telephone, string homePage, bool pork, bool alcohol, bool nonHalal, List<DiningCategory> categoriesChoosen)
+		public async Task<CreateEntityResult> CreateNewLocation (string name, string road, string roadNumber, string postalCode, string city, string telephone, string homePage, bool pork, bool alcohol, bool nonHalal, List<DiningCategory> categoriesChoosen, byte[] data)
 		{
 			name = name.Trim ();
 			road = road.Trim ();
@@ -137,63 +129,28 @@ namespace HalalGuide.ViewModels
 				             alcohol, 
 				             pork,
 				             0,
-				             CreationStatus.AwaitingApproval);
+				             CreationStatus.Approved);
 
 			l.Id = _KeyChain.GetFaceBookAccount ().Username + "-" + DateTime.UtcNow.Ticks;
 
 			CreateEntityResult result = await _LocationService.SaveLocation (l);
 
 			if (result == CreateEntityResult.OK) {
-
-				result = await _ImageService.UploadLocationPicture (l, Image != null ? StreamUtil.ReadToEnd (Image.GetStream ()) : null);
+			
+				result = await _ImageService.UploadLocationPicture (l, data);
 
 				if (result != CreateEntityResult.OK) {
 					await _LocationService.DeleteLocation (l);
 				}
 			} 
 
+			SelectedLocation = l;
 			return result;
 		}
 
-		public async Task<MediaFile> TakePicture (string path, string fileName)
-		{
-			XUbertesters.LogInfo (String.Format ("AddDiningViewModel: TakePicture-Start with args path: {0} filename: {1}", path, fileName));
 
-			XUbertesters.HideMenu ();
-			Image = null;
-			await MediaPicker.TakePhotoAsync (new StoreCameraMediaOptions {
-				Name = fileName,
-				Directory = path
-			}).ContinueWith (t => {
-				if (t.IsCanceled || t.IsFaulted) {
-					XUbertesters.LogError (String.Format ("AddDiningViewModel: TakePicture cancelled or faulted: {0}", t.Exception));
-					return;
-				} else {
-					XUbertesters.LogError ("AddDiningViewModel: TakePicture ok");
-					Image = t.Result;
-				}
-			});
-			XUbertesters.LogError ("AddDiningViewModel: TakePicture-End");
-			return Image;
-		}
 
-		public async Task<MediaFile> GetPictureFromDevice ()
-		{
-			XUbertesters.LogInfo ("AddDiningViewModel: GetPictureFromDevice-Start");
-			XUbertesters.HideMenu ();
-			Image = null;
-			await MediaPicker.PickPhotoAsync ().ContinueWith (t => {
-				if (t.IsCanceled || t.IsFaulted) {
-					XUbertesters.LogError (String.Format ("AddDiningViewModel: GetPictureFromDevice cancelled or faulted: {0}", t.Exception));
-					return;
-				} else {
-					XUbertesters.LogError ("AddDiningViewModel: GetPictureFromDevice ok");
-					Image = t.Result;
-				}
-			});
-			XUbertesters.LogError ("AddDiningViewModel: GetPictureFromDevice-End");
-			return Image;
-		}
+
 	}
 }
 

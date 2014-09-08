@@ -7,14 +7,9 @@ using MonoTouch.UIKit;
 using System.Collections.Generic;
 using MonoTouch.ObjCRuntime;
 using System.Linq;
-using System.Globalization;
 using System.Drawing;
-using MonoTouch.CoreImage;
-using MonoTouch.CoreText;
-using S3Storage.Response;
-using System.Dynamic;
 
-namespace HalalGuide.iOS
+namespace HalalGuide.iOS.Textfield
 {
 	public partial class AutoCompleteUITextField : UITextField
 	{
@@ -73,6 +68,8 @@ namespace HalalGuide.iOS
 			AutocompleteString = "";
 
 			IgnoreCase = true;
+
+			AutoCompleteValues = new List<string> ();
 
 			NSNotificationCenter.DefaultCenter.AddObserver (this, new Selector ("UITextFieldTextDidChangeNotification"), TextFieldTextDidChangeNotification, this);
              

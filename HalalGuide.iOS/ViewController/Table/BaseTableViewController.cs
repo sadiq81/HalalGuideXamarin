@@ -1,19 +1,14 @@
-﻿using System;
-using MonoTouch.UIKit;
-using HalalGuide.ViewModels;
-using XUbertestersSDK;
-using SimpleDBPersistence.Service;
+﻿using MonoTouch.UIKit;
 using MonoTouch.Foundation;
-using HalalGuide.Util;
+using XUbertestersSDK;
+using HalalGuide.ViewModels;
+using SimpleDBPersistence.Service;
+using HalalGuide.iOS.Util;
 
-namespace HalalGuide.iOS.ViewController
+namespace HalalGuide.iOS.ViewController.Table
 {
 	public class BaseTableViewController : UITableViewController
 	{
-		public BaseTableViewController ()
-		{
-		}
-
 		protected LoginViewModel LoginViewModel = ServiceContainer.Resolve<LoginViewModel> ();
 
 		private UIViewController LoginViewController { get; set; }
@@ -29,7 +24,7 @@ namespace HalalGuide.iOS.ViewController
 		public override bool ShouldPerformSegue (string segueIdentifier, NSObject sender)
 		{
 			XUbertesters.LogInfo (string.Format ("BaseViewController: ShouldPerformSegue-Start {0}", segueIdentifier));
-			if (segueIdentifier != null && segueIdentifier.Equals (Segue.AddNewDiningViewControllerSegue)) {
+			if (segueIdentifier != null && (segueIdentifier.Equals (Segue.AddNewDiningViewControllerSegue) || segueIdentifier.Equals (Segue.AddReviewViewControllerSegue))) {
 
 				if (LoginViewModel.IsAuthenticated ()) {
 					XUbertesters.LogInfo ("BaseViewController: ShouldPerformSegue-End");

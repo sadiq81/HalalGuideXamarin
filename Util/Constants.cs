@@ -18,6 +18,8 @@ namespace HalalGuide.Util
 		public static readonly string LocationPictureLastUpdated = "LocationPictureLastUpdated";
 
 		public static readonly string DateFormat = "o";
+
+		public static readonly int MaxDistanceLimit = 20;
 	}
 }
 

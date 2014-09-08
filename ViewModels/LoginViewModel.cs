@@ -4,7 +4,6 @@ using XUbertestersSDK;
 using HalalGuide.Util;
 using Newtonsoft.Json.Linq;
 using HalalGuide.Domain.Enum;
-using System.Runtime.Remoting.Messaging;
 using System.Net;
 
 namespace HalalGuide.ViewModels

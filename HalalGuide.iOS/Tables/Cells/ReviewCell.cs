@@ -9,25 +9,11 @@ using HalalGuide.Util;
 using HalalGuide.ViewModels;
 using SimpleDBPersistence.Service;
 
-namespace HalalGuide.iOS
+namespace HalalGuide.iOS.Tables.Cells
 {
 	public partial class ReviewCell : UITableViewCell
 	{
-		public UIImageView ProfilePicture { get; internal set; }
-
-		public UIImageView Star1Image { get; internal set; }
-
-		public UIImageView Star2Image{ get; internal set; }
-
-		public UIImageView Star3Image{ get; internal set; }
-
-		public UIImageView Star4Image{ get; internal set; }
-
-		public UIImageView Star5Image{ get; internal set; }
-
-		public UILabel Review{ get; internal set; }
-
-		public UILabel Submitter{ get; internal set; }
+		public static string Identifier = "ReviewCell";
 
 		private Review _Review { get; set; }
 
@@ -35,15 +21,9 @@ namespace HalalGuide.iOS
 
 		public ReviewCell (IntPtr handle) : base (handle)
 		{
-			Setup ();
 		}
 
 		public ReviewCell (UITableViewCellStyle style, string reuseIdentifier) : base (style, reuseIdentifier)
-		{
-			Setup ();
-		}
-
-		private void Setup ()
 		{
 			ProfilePicture = new UIImageView (new RectangleF (20, 12, 25, 25));
 
@@ -52,11 +32,10 @@ namespace HalalGuide.iOS
 			Star3Image = new UIImageView (new RectangleF (236, 12, 20, 20));
 			Star4Image = new UIImageView (new RectangleF (258, 12, 20, 20));
 			Star5Image = new UIImageView (new RectangleF (280, 12, 20, 20));
-
-			AddSubviews (Star1Image, Star2Image, Star3Image, Star4Image, Star5Image);
+			AddSubviews (ProfilePicture, Star1Image, Star2Image, Star3Image, Star4Image, Star5Image);
 
 			Submitter = new UILabel (new RectangleF (53, 12, 131, 25)) {
-				TextAlignment = UITextAlignment.Right
+				Font = UIFont.SystemFontOfSize (10)
 			};
 			Review = new UILabel (new RectangleF (20, 40, 280, 42)) {
 				Lines = 2,
@@ -64,6 +43,7 @@ namespace HalalGuide.iOS
 
 			};
 			AddSubviews (Submitter, Review);
+
 		}
 
 		public void Configure (Review review)

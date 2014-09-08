@@ -2,7 +2,7 @@
 
 namespace HalalGuide.Util
 {
-	public class StreamUtil
+	public static class StreamUtil
 	{
 		public static byte[] ReadToEnd (System.IO.Stream stream)
 		{

@@ -1,5 +1,4 @@
-﻿using SimpleDBPersistence.DAO;
-using HalalGuide.Domain;
+﻿using HalalGuide.Domain;
 
 namespace HalalGuide.DAO
 {

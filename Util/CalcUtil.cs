@@ -1,5 +1,4 @@
 ﻿using System;
-using HalalGuide.Domain;
 using Xamarin.Geolocation;
 
 namespace HalalGuide.Util

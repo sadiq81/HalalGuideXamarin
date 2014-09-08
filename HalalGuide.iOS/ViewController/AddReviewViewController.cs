@@ -10,6 +10,8 @@ using SimpleDBPersistence.Service;
 using XUbertestersSDK;
 using HalalGuide.Util;
 using HalalGuide.Domain.Enum;
+using System.Security.Cryptography.X509Certificates;
+using System.Resources;
 
 namespace HalalGuide.iOS.ViewController
 {
@@ -50,7 +52,7 @@ namespace HalalGuide.iOS.ViewController
 		partial void Regreet (UIBarButtonItem sender)
 		{
 			XUbertesters.LogInfo ("ReviewController: Regreet-Start");
-			PresentingViewController.PresentingViewController.DismissViewController (true, null);
+			DismissViewController (true, null);
 			XUbertesters.LogInfo ("ReviewController: Regreet-End");
 
 		}
@@ -59,9 +61,11 @@ namespace HalalGuide.iOS.ViewController
 		{
 			XUbertesters.LogInfo ("ReviewController: Save-Start");
 
+			ResignFirstResponder ();
+
 			InvokeOnMainThread (ActivityIndicator.StartAnimating);
 
-			CreateEntityResult result = await ViewModel.CreateNewReview (BaseViewModel.SelectedLocation, Rating, Review.Text);
+			CreateEntityResult result = await ViewModel.CreateNewReview (ViewModel.SelectedLocation, Rating, Review.Text);
 
 			ActivityIndicator.StopAnimating ();
 
@@ -95,7 +99,11 @@ namespace HalalGuide.iOS.ViewController
 		[Export ("alertView:clickedButtonAtIndex:")]
 		public virtual void Clicked (UIAlertView alertview, int buttonIndex)
 		{
-			PresentingViewController.PresentingViewController.DismissViewController (true, null);
+			if (PresentingViewController.PresentingViewController != null) {
+				PresentingViewController.PresentingViewController.DismissViewController (true, null);
+			} else {
+				PresentingViewController.DismissViewController (true, null);
+			}
 		}
 
 		[Export ("positionForBar:")]

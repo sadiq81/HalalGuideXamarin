@@ -4,27 +4,22 @@ using SimpleDBPersistence.Service;
 using System.Collections.Generic;
 using HalalGuide.Domain;
 using System.IO;
-using S3Storage.Response;
-using S3Storage.S3;
 using HalalGuide.Util;
 using S3Storage.AWSException;
 using XUbertestersSDK;
 using SimpleDBPersistence.SimpleDB.Model.Parameters;
 using HalalGuide.DAO;
 using System.Linq;
-using System.ComponentModel;
-using System.Runtime.Remoting.Messaging;
 using HalalGuide.Domain.Enum;
-using Xamarin.Media;
 using SimpleDBPersistence.Domain;
 
 namespace HalalGuide.Services
 {
 	public  class ImageService
 	{
-		private   S3ClientCore _S3 = ServiceContainer.Resolve<S3ClientCore> ();
-
 		private LocationPictureDAO _LocationPictureDAO = ServiceContainer.Resolve<LocationPictureDAO> ();
+		private S3LocationPictureDAO _S3LocationPictureDAO = ServiceContainer.Resolve<S3LocationPictureDAO> ();
+		private S3ProfilePictureDAO _S3ProfilePictureDAO = ServiceContainer.Resolve<S3ProfilePictureDAO> ();
 
 		private  DatabaseWrapper _SQLiteConnection = ServiceContainer.Resolve<DatabaseWrapper> ();
 
@@ -32,25 +27,31 @@ namespace HalalGuide.Services
 
 		private  PreferencesService _PreferencesService = ServiceContainer.Resolve<PreferencesService> ();
 
+
+		#region ProfilePicture
+
 		public async Task<CreateEntityResult> UploadLocationPicture (Location location, byte[] data)
 		{
 			if (data == null) {
 				return CreateEntityResult.OK;
 			}
 
-			string objectName = location.Submitter + "-" + DateTime.UtcNow.Ticks + ".jpeg";
+			data = ImageResize.MaxResizeImage (data, 320, 320);
+
+			string objectName = location.Submitter + "-" + DateTime.UtcNow.Ticks + ".jpg";
 
 			LocationPicture picture = new LocationPicture () {
 				Id = objectName,
 				LocationId = location.Id,
-				CreationStatus = CreationStatus.AwaitingApproval
+				CreationStatus = CreationStatus.Approved
 			};
 
 			try {
 				//TODO Error handling if upload dont succed
-				await _S3.PutObject (Constants.S3Bucket, location.Id + "/" + objectName, data);
+				await _S3LocationPictureDAO.StoreLocationPicture (picture, data);
 
 				string path = _FileService.GetPathForLocationPicture (picture);
+
 				_FileService.StoreFile (data, path);
 
 				await _LocationPictureDAO.SaveOrReplace (picture);
@@ -63,7 +64,7 @@ namespace HalalGuide.Services
 			} catch (SimpleDBPersistence.SimpleDB.Model.AWSException.AWSErrorException e) {
 
 				XUbertesters.LogError ("ImageService: CouldNotCreateEntityInSimpleDB: " + e + " Entity: " + picture);
-				_S3.DeleteObject (Constants.S3Bucket, objectName).RunSynchronously ();
+				_S3LocationPictureDAO.DeleteLocationPicture (picture).RunSynchronously ();
 				return CreateEntityResult.CouldNotCreateEntityInSimpleDB;
 			}
 			return CreateEntityResult.OK;
@@ -72,7 +73,7 @@ namespace HalalGuide.Services
 		public async Task<CreateEntityResult> UploadProfilePicture (FacebookUser user, byte[] data)
 		{
 			try {
-				await _S3.PutObject (Constants.S3Bucket, Constants.Facebook + "/" + user.Id + ".jpg", data);
+				await _S3ProfilePictureDAO.StoreProfilePicture (user, data);
 			} catch (AWSErrorException e) {
 				XUbertesters.LogInfo (String.Format ("ImageService: Could not  upload picture: {0}", e));
 				return CreateEntityResult.CouldNotUploadImageToS3;
@@ -80,21 +81,40 @@ namespace HalalGuide.Services
 			return CreateEntityResult.OK;
 		}
 
+		public async Task<string> GetPathForFacebookPicture (string userId)
+		{
+			string filepath = _FileService.GetPathForUserPicture (userId);
+			//Is picture stored locally?
+			if (File.Exists (filepath)) {
+				return filepath;
+			} else {
+				try {
+					Stream image = await _S3ProfilePictureDAO.RetrieveProfilePicture (userId);
+					_FileService.StoreFile (image, filepath);
+					return filepath;
+				} catch (AWSErrorException ex) {
+					XUbertesters.LogError (string.Format ("ImageService: Error downloading image: {0} due to: {1}", userId, ex));
+					return null;
+				} catch (Exception ex) {
+					XUbertesters.LogError (string.Format ("ImageService: Error downloading image: {0} due to: {1}", userId, ex));
+					return null;
+				}
+			}
+		}
+
+
+		#endregion
+
+		#region LocationPicture
+
 		public List<LocationPicture> GetImagesForLocation (Location selectedLocation)
 		{
 			return _SQLiteConnection.Table<LocationPicture> ().Where (pic => pic.LocationId == selectedLocation.Id).ToList ();
 		}
 
-
-
 		public async Task<string> GetFirstImagePathForLocation (Location location)
 		{
-			LocationPicture picture = null;
-			try {
-				picture = _SQLiteConnection.Table<LocationPicture> ().Where (pic => pic.LocationId == location.Id).FirstOrDefault ();
-			} catch (Exception e) {
-				int i = 0;
-			}
+			LocationPicture picture = _SQLiteConnection.Query<LocationPicture> (string.Format ("SELECT * FROM {0} WHERE {1} = {2}", LocationPicture.TableIdentifier, LocationPicture.LocationIdIdentifier, location.Id)).FirstOrDefault ();
 
 			if (picture == null) {
 				//Test online for pictures
@@ -118,13 +138,13 @@ namespace HalalGuide.Services
 
 		public async Task<string> GetPicturePath (LocationPicture lp)
 		{
-			string filepath = _FileService.GetPathForLocationPicture (lp);
+			string filepath = _FileService.GetPathForLocationPicture (lp); 
 			//Is picture stored locally?
 			if (File.Exists (filepath)) {
 				return filepath;
 			} else {
 				try {
-					Stream image = await GetImageFromServer (lp);
+					Stream image = await _S3LocationPictureDAO.RetrieveLocationPicture (lp);
 					_FileService.StoreFile (image, filepath);
 					return filepath;
 				} catch (AWSErrorException ex) {
@@ -158,42 +178,7 @@ namespace HalalGuide.Services
 			return list;
 		}
 
-		public async Task<string> GetPathForFacebookPicture (string user)
-		{
-			string filepath = _FileService.GetPathForUserPicture (user);
-			//Is picture stored locally?
-			if (File.Exists (filepath)) {
-				return filepath;
-			} else {
-				try {
-					Stream image = await GetProfileImageFromServer (user);
-					_FileService.StoreFile (image, filepath);
-					return filepath;
-				} catch (AWSErrorException ex) {
-					XUbertesters.LogError (string.Format ("ImageService: Error downloading image: {0} due to: {1}", user, ex));
-					return null;
-				} catch (Exception ex) {
-					XUbertesters.LogError (string.Format ("ImageService: Error downloading image: {0} due to: {1}", user, ex));
-					return null;
-				}
-			}
-		}
-
-		//TODO Create S3 DAOs
-		private async Task<Stream> GetImageFromServer (LocationPicture lp)
-		{
-			GetObjectResult result = await _S3.GetObject (Constants.S3Bucket, lp.LocationId + "/" + lp.Id + ".jpeg");
-			return result.Stream;
-		}
-
-
-		//TODO Create S3 DAOs
-		private async Task<Stream> GetProfileImageFromServer (string user)
-		{
-			GetObjectResult result = await _S3.GetObject (Constants.S3Bucket, "Facebook/" + user + ".jpeg");
-			return result.Stream;
-		}
-
+		#endregion
 	}
 }
 

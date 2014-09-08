@@ -1,9 +1,12 @@
 ﻿using MonoTouch.UIKit;
+using System;
 
 namespace HalalGuide.iOS
 {
 	public class Application
 	{
+
+
 		// This is the main entry point of the application.
 		static void Main (string[] args)
 		{
@@ -25,6 +28,9 @@ namespace HalalGuide.iOS
 			SimpleDBPersistence.Service.ServiceContainer.Register <HalalGuide.DAO.ReviewDAO> (() => new HalalGuide.DAO.ReviewDAO ());
 			SimpleDBPersistence.Service.ServiceContainer.Register <HalalGuide.DAO.FacebookUserDAO> (() => new HalalGuide.DAO.FacebookUserDAO ());
 
+			SimpleDBPersistence.Service.ServiceContainer.Register <HalalGuide.DAO.S3ReviewDAO> (() => new HalalGuide.DAO.S3ReviewDAO ());
+			SimpleDBPersistence.Service.ServiceContainer.Register <HalalGuide.DAO.S3LocationPictureDAO> (() => new HalalGuide.DAO.S3LocationPictureDAO ());
+			SimpleDBPersistence.Service.ServiceContainer.Register <HalalGuide.DAO.S3ProfilePictureDAO> (() => new HalalGuide.DAO.S3ProfilePictureDAO ());
 
 			SimpleDBPersistence.Service.ServiceContainer.Register <SimpleDBPersistence.Service.ISHA256Service> (() => new HalalGuide.Services.SHA256Service ());
 			S3Storage.Service.ServiceContainer.Register <S3Storage.Service.ISHA256Service> (() => new HalalGuide.Services.SHA256Service ());
@@ -46,6 +52,23 @@ namespace HalalGuide.iOS
 			SimpleDBPersistence.Service.ServiceContainer.Register<HalalGuide.ViewModels.AddReviewViewModel> (() => new HalalGuide.ViewModels.AddReviewViewModel ());
 			SimpleDBPersistence.Service.ServiceContainer.Register<HalalGuide.ViewModels.SingleDiningViewModel> (() => new HalalGuide.ViewModels.SingleDiningViewModel ()); 
 
+			HalalGuide.Util.DatabaseWrapper _SQLiteConnection = SimpleDBPersistence.Service.ServiceContainer.Resolve<HalalGuide.Util.DatabaseWrapper> ();
+			HalalGuide.Services.PreferencesService _PreferencesService = SimpleDBPersistence.Service.ServiceContainer.Resolve<HalalGuide.Services.PreferencesService> ();
+
+			if (_PreferencesService.GetString (HalalGuide.Util.Constants.HasBeenLaunched) != null) {
+
+				//TODO Start downloading all items from database;
+			} else {
+
+				_PreferencesService.StoreString (HalalGuide.Util.Constants.HasBeenLaunched, "true");
+				_PreferencesService.StoreString (HalalGuide.Util.Constants.LocationLastUpdated, DateTime.MinValue.ToString (HalalGuide.Util.Constants.DateFormat));
+				_PreferencesService.StoreString (HalalGuide.Util.Constants.ReviewLastUpdated, DateTime.MinValue.ToString (HalalGuide.Util.Constants.DateFormat));
+
+				_SQLiteConnection.CreateTable<HalalGuide.Domain.Location> ();
+				_SQLiteConnection.CreateTable<HalalGuide.Domain.LocationPicture> ();
+				_SQLiteConnection.CreateTable<HalalGuide.Domain.Review> ();
+				_SQLiteConnection.CreateTable<HalalGuide.Domain.FacebookUser> ();
+			}
 
 			UIApplication.Main (args, null, "AppDelegate");
 

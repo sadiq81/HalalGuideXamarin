@@ -4,25 +4,28 @@ using MonoTouch.UIKit;
 using HalalGuide.ViewModels;
 using XUbertestersSDK;
 using SimpleDBPersistence.Service;
-using HalalGuide.Util;
 using HalalGuide.Domain;
+using HalalGuide.iOS.Util;
 using HalalGuide.iOS.Tables.Cells;
 
 namespace HalalGuide.iOS.ViewController
 {
-	public partial class LandingViewController : BaseViewController
+	public partial class LandingViewController : KeyboardSupportedUIViewController
 	{
 		public LandingViewController (IntPtr handle) : base (handle)
 		{
 		}
 
 		public LandingViewModel ViewModel = ServiceContainer.Resolve<LandingViewModel> ();
-
+		public SingleDiningViewModel SingleDiningViewModel = ServiceContainer.Resolve<SingleDiningViewModel> ();
+ 
 		private UITableViewController TableViewController = new UITableViewController ();
 		private UIRefreshControl RefreshControl = new UIRefreshControl ();
 
 		public override void  ViewDidLoad ()
 		{
+			NavigationController.NavigationBar.Translucent = false;
+
 			XUbertesters.LogInfo ("LandingPageController: ViewDidLoad-Start");
 			base.ViewDidLoad ();
 
@@ -48,6 +51,7 @@ namespace HalalGuide.iOS.ViewController
 			RefreshControl.ValueChanged += async (sender, e) => {
 				RefreshControl.BeginRefreshing ();
 				await ViewModel.RefreshLocations ();
+				LatestUpdatedTableView.ReloadData ();
 				RefreshControl.EndRefreshing ();
 			};
 		}
@@ -73,7 +77,7 @@ namespace HalalGuide.iOS.ViewController
 		{
 			if (Segue.SingleDiningViewControllerSegue.Equals (segue.Identifier)) {
 				NSIndexPath indexPath = LatestUpdatedTableView.IndexPathForCell ((UITableViewCell)sender);
-				BaseViewModel.SelectedLocation = ViewModel.GetLocationAtRow (indexPath.Item);
+				SingleDiningViewModel.SelectedLocation = ViewModel.GetLocationAtRow (indexPath.Item);
 			}
 		}
 

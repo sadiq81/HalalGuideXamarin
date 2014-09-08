@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Globalization;
-using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using Xamarin.Geolocation;
 using System.Collections.Generic;
 using HalalGuide.Domain.Dawa;
-using System.Runtime.InteropServices;
 using System.Net.Http;
 using System.Linq;
 using XUbertestersSDK;

@@ -4,25 +4,28 @@ using System;
 
 using MonoTouch.Foundation;
 using MonoTouch.UIKit;
-using HalalGuide.ViewModels;
 using XUbertestersSDK;
 using System.Drawing;
-using HalalGuide.Util;
 using HalalGuide.Domain;
 using SimpleDBPersistence.Service;
+using HalalGuide.ViewModels;
+using HalalGuide.iOS.Util;
+using HalalGuide.iOS.Tables.Cells;
 
 namespace HalalGuide.iOS.ViewController
 {
-	public partial class MultipleDiningViewController : BaseViewController
+	public partial class MultipleDiningViewController : KeyboardSupportedUIViewController, IUISearchBarDelegate
 	{
 		private const string cellIdentifier = "Dining";
+		private const string SearchCellIdentifier = "SearchCell";
 
 		public MultipleDiningViewModel ViewModel = ServiceContainer.Resolve<MultipleDiningViewModel> ();
+		public SingleDiningViewModel SingleDiningViewModel = ServiceContainer.Resolve<SingleDiningViewModel> ();
 
 		private UITableViewController TableViewController = new UITableViewController ();
 		private UIRefreshControl RefreshControl = new UIRefreshControl ();
 
-		UISearchBar SearchBar;
+		private UISearchBar SearchBar;
 
 		public MultipleDiningViewController (IntPtr handle) : base (handle)
 		{
@@ -36,9 +39,27 @@ namespace HalalGuide.iOS.ViewController
 
 			SetupTableView ();
 
+			SetupSearchBar ();
+
 			SetupEventListeners ();
 
 			XUbertesters.LogInfo ("DiningPageController: ViewDidLoad-End");
+		}
+
+		public override void ViewDidAppear (bool animated)
+		{
+			base.ViewDidAppear (animated);
+			DiningTableView.SetContentOffset (new PointF (0, SearchBar.Frame.Size.Height), true);
+		}
+
+		public override void PrepareForSegue (UIStoryboardSegue segue, NSObject sender)
+		{
+			base.PrepareForSegue (segue, sender);
+
+			if (Segue.SingleDiningViewControllerSegue.Equals (segue.Identifier)) {
+				NSIndexPath indexPath = DiningTableView.IndexPathForCell ((UITableViewCell)sender);
+				SingleDiningViewModel.SelectedLocation = ViewModel.GetLocationAtRow (indexPath.Item);
+			}
 		}
 
 		#region Setup
@@ -54,64 +75,78 @@ namespace HalalGuide.iOS.ViewController
 			RefreshControl.ValueChanged += async (sender, e) => {
 				RefreshControl.BeginRefreshing ();
 				await ViewModel.RefreshLocations ();
+				DiningTableView.ReloadData ();
 				RefreshControl.EndRefreshing ();
 
 				UIView.Animate (
 					0.2,
 					() => {
-						TableViewController.TableView.ContentInset = new UIEdgeInsets (0, 0, 0, 0);
+						DiningTableView.SetContentOffset (new PointF (0, SearchBar.Frame.Size.Height), true);
 					}
 				);
 			};
-
-			TableViewController.TableView.AddSubview (SearchBar = new UISearchBar (new RectangleF (0, -44, DiningTableView.Frame.Width, 44)) {
-				BackgroundColor = UIColor.Clear
-			});
 		}
 
 		private void SetupEventListeners ()
 		{
 			ViewModel.RefreshLocationsCompletedEvent += (sender, e) => InvokeOnMainThread (() => {
+				DiningTableView.SetContentOffset (new PointF (0, SearchBar.Frame.Size.Height), false);
 				TableViewController.TableView.ReloadSections (new NSIndexSet (0), UITableViewRowAnimation.Top);
 			});
 
-
+			ViewModel.FilteredLocations += (sender, e) => InvokeOnMainThread (() => {
+				TableViewController.TableView.ReloadSections (new NSIndexSet (0), UITableViewRowAnimation.Top);
+			});
 		}
+
+
 
 		#endregion
 
+		#region SearchBar
 
-
-		public override void PrepareForSegue (UIStoryboardSegue segue, NSObject sender)
+		private void SetupSearchBar ()
 		{
-			if (Segue.SingleDiningViewControllerSegue.Equals (segue.Identifier)) {
-				NSIndexPath indexPath = DiningTableView.IndexPathForCell ((UITableViewCell)sender);
-				BaseViewModel.SelectedLocation = ViewModel.GetLocationAtRow (indexPath.Item);
+			DiningTableView.TableHeaderView = SearchBar = new UISearchBar (new RectangleF (0, 0, DiningTableView.Frame.Width, 44)) {
+				BackgroundColor = UIColor.Clear
+			};
+
+			SearchBar.ShowsCancelButton = true;
+			SearchBar.WeakDelegate = this;
+
+		}
+
+		[Export ("searchBar:textDidChange:")]
+		public void TextChanged (UISearchBar searchBar, string searchText)
+		{
+			bool cacheChanged = ViewModel.SearchTextChanged (searchText);
+			if (cacheChanged) {
+				DiningTableView.ReloadData ();
 			}
 		}
 
-		[Export ("scrollViewDidEndDragging:willDecelerate:")]
-		public  void DraggingEnded (UIScrollView scrollView, bool willDecelerate)
+
+		[Export ("searchBarSearchButtonClicked:")]
+		public void SearchButtonClicked (UISearchBar searchBar)
 		{
-			if (willDecelerate) {
-				SearchBar.ResignFirstResponder ();
+			bool cacheChanged = ViewModel.SearchTextChanged (searchBar.Text);
+			if (cacheChanged) {
+				DiningTableView.ReloadData ();
 			}
-			if (scrollView.ContentOffset.Y < 0) {
-				UIView.Animate (
-					0.2,
-					() => {
-						TableViewController.TableView.ContentInset = new UIEdgeInsets (44, 0, 0, 0);
-					}
-				);
-			} else {
-				UIView.Animate (
-					0.2,
-					() => {
-						TableViewController.TableView.ContentInset = new UIEdgeInsets (0, 0, 0, 0);
-					}
-				);
-			}
+			searchBar.ResignFirstResponder ();
 		}
+
+		[Export ("searchBarCancelButtonClicked:")]
+		public void CancelButtonClicked (UISearchBar searchBar)
+		{
+			searchBar.ResignFirstResponder ();
+			searchBar.Text = ("");
+			ViewModel.SearchTextChanged ("");
+			DiningTableView.ReloadData ();
+			DiningTableView.SetContentOffset (new PointF (0, SearchBar.Frame.Size.Height), true);
+		}
+
+		#endregion
 
 		#region TableView
 
@@ -124,12 +159,10 @@ namespace HalalGuide.iOS.ViewController
 		[Export ("tableView:cellForRowAtIndexPath:")]
 		public  UITableViewCell GetCell (UITableView tableView, NSIndexPath indexPath)
 		{
+
 			UITableViewCell cell = tableView.DequeueReusableCell (cellIdentifier);
-
 			Location l = ViewModel.GetLocationAtRow (indexPath.Item);
-
 			((DiningCell)cell).ConfigureLocation (l);
-
 			return cell;
 		}
 
@@ -141,13 +174,7 @@ namespace HalalGuide.iOS.ViewController
 
 		#endregion
 
-		[Action ("UnwindToMultipleDiningViewController:")]
-		public void UnwindToMultipleDiningViewController (UIStoryboardSegue segue)
-		{
-			InvokeOnMainThread (() => {
-				TableViewController.TableView.ReloadSections (new NSIndexSet (0), UITableViewRowAnimation.Fade);
-			});
-		}
+
 
 	}
 }

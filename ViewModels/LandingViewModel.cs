@@ -1,8 +1,5 @@
 ﻿using System.Collections.Generic;
 using HalalGuide.Domain;
-using System.Linq;
-using HalalGuide.Domain.Enum;
-using System;
 
 namespace HalalGuide.ViewModels
 {
@@ -17,7 +14,7 @@ namespace HalalGuide.ViewModels
 
 		public override void RefreshCache ()
 		{
-			Cache = CalculateDistances (_LocationService.GetLastTenLocations (), true);
+			Cache = CalculateDistances (_LocationService.GetLastTenLocations (), false);
 		}
 
 		public int Rows ()

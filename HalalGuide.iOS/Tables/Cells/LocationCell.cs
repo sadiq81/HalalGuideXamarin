@@ -3,7 +3,6 @@ using MonoTouch.UIKit;
 using HalalGuide.Domain;
 using HalalGuide.Util;
 using System.Threading.Tasks;
-using MonoTouch.Foundation;
 using HalalGuide.ViewModels;
 using SimpleDBPersistence.Service;
 using System.Globalization;
@@ -46,6 +45,7 @@ namespace HalalGuide.iOS.Tables.Cells
 			UIImageView category = (UIImageView)ViewWithTag (CategoryImageTag);
 			category.Image = UIImage.FromBundle (l.LocationType.ToString ());
 
+			//TODO cache paths
 			Task.Factory.StartNew (() => 
 				ViewModel.GetFirstImagePathForLocation (l).
 				ContinueWith (t => {

@@ -191,6 +191,7 @@
     <BundleResource Include="Resources\NonHalalFalse.png" />
     <BundleResource Include="Resources\NonHalalTrue.png" />
     <BundleResource Include="Resources\PigFalse.png" />
+    <BundleResource Include="Resources\Camera.png" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Info.plist" />
@@ -251,7 +252,6 @@
     </Compile>
     <Compile Include="ViewController\KeyboardSupportedUIViewController.cs" />
     <Compile Include="ViewController\BaseViewController.cs" />
-    <Compile Include="Views\CategorySelectionView.cs" />
     <Compile Include="CollectionView\LocationPictureImageCell.cs" />
     <Compile Include="ViewController\FilterMultipleDiningViewController.cs" />
     <Compile Include="ViewController\FilterMultipleDiningViewController.designer.cs">
@@ -261,12 +261,24 @@
     <Compile Include="Tables\Cells\CategoryCell.designer.cs">
       <DependentUpon>..\..\CategoryCell.cs</DependentUpon>
     </Compile>
-    <Compile Include="ViewController\BaseTableViewController.cs" />
-    <Compile Include="ViewController\KeyboardSupportedTableViewController.cs" />
     <Compile Include="ViewController\AddNewDiningViewController.cs" />
     <Compile Include="ViewController\AddNewDiningViewController.designer.cs">
       <DependentUpon>AddNewDiningViewController.cs</DependentUpon>
     </Compile>
+    <Compile Include="ViewController\Table\FilterMultipleDiningTableViewController.cs" />
+    <Compile Include="ViewController\Table\FilterMultipleDiningTableViewController.designer.cs">
+      <DependentUpon>FilterMultipleDiningTableViewController.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ViewController\Table\SingleDiningTableViewController.cs" />
+    <Compile Include="ViewController\Table\SingleDiningTableViewController.designer.cs">
+      <DependentUpon>SingleDiningTableViewController.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ViewController\Table\AddNewDiningTableViewController.cs" />
+    <Compile Include="ViewController\Table\AddNewDiningTableViewController.designer.cs">
+      <DependentUpon>AddNewDiningTableViewController.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ViewController\Table\KeyboardSupportedUIViewController.cs" />
+    <Compile Include="ViewController\Table\BaseTableViewController.cs" />
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="MainStoryboard.storyboard" />
@@ -294,7 +306,7 @@
     <Folder Include="CollectionView\" />
     <Folder Include="Util\" />
     <Folder Include="ViewController\" />
-    <Folder Include="Views\" />
+    <Folder Include="ViewController\Table\" />
   </ItemGroup>
   <ItemGroup>
     <XamarinComponentReference Include="xamarin.mobile">

@@ -1,19 +1,7 @@
 ﻿using System;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using System.Collections.Generic;
-using Xamarin.Media;
-using SimpleDBPersistence.Service;
 using HalalGuide.Domain;
 using HalalGuide.Domain.Enum;
-using HalalGuide.DAO;
-using S3Storage.AWSException;
-using System.Security.Cryptography;
-using HalalGuide.Util;
-using HalalGuide.Domain.Dawa;
-using XUbertestersSDK;
-using System.IO;
-using System.Text;
 
 namespace HalalGuide.ViewModels
 {
@@ -32,12 +20,13 @@ namespace HalalGuide.ViewModels
 		{
 
 			Review review = new Review () {
-				Id = _KeyChain.GetFaceBookAccount ().Username + "-" + DateTime.Now.Ticks,
+				Id = _KeyChain.GetFaceBookAccount ().Username + "-" + DateTime.Now.Ticks + ".txt",
 				LocationId = location.Id,
 				Rating = rating,
+				CreationStatus = CreationStatus.Approved
 			};
 
-			CreateEntityResult result = await _ReviewService.SaveReview (review, Encoding.UTF8.GetBytes (reviewText));
+			CreateEntityResult result = await _ReviewService.SaveReview (review, reviewText);
 
 			return result;
 		}

@@ -1,5 +1,4 @@
-﻿using System;
-using HalalGuide.Util;
+﻿using HalalGuide.Util;
 using Xamarin.Auth;
 using SimpleDBPersistence.Service;
 using System.Collections.Generic;
@@ -16,7 +15,6 @@ namespace HalalGuide.Services
 		{
 			List<Account> accounts = Store.FindAccountsForService (Constants.Facebook).ToList ();
 			if (accounts.Count > 0) {
-				//Store.Delete (accounts [0], Constants.Facebook);
 				Facebook = accounts [0];				
 			}
 		}

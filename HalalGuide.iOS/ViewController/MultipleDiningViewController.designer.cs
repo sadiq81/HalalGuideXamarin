@@ -5,7 +5,6 @@
 // Manual changes to this file may not be handled correctly.
 //
 using MonoTouch.Foundation;
-using System.CodeDom.Compiler;
 
 namespace HalalGuide.iOS.ViewController
 {
@@ -14,7 +13,7 @@ namespace HalalGuide.iOS.ViewController
 	{
 		[Outlet]
 		MonoTouch.UIKit.UITableView DiningTableView { get; set; }
-		
+
 		void ReleaseDesignerOutlets ()
 		{
 			if (DiningTableView != null) {

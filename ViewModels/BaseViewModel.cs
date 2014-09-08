@@ -4,24 +4,10 @@ using SimpleDBPersistence.Service;
 using HalalGuide.Services;
 using System.Threading.Tasks;
 using HalalGuide.Util;
-using S3Storage.S3;
 using XUbertestersSDK;
-using System.IO;
 using System.Collections.Generic;
 using HalalGuide.Domain;
-using SimpleDBPersistence.SimpleDB.Model.Parameters;
-using HalalGuide.DAO;
 using Xamarin.Media;
-using S3Storage.Response;
-using S3Storage.AWSException;
-using System.Globalization;
-using System.Linq;
-using HalalGuide.Domain.Enum;
-using SimpleDBPersistence.Domain;
-using MonoTouch.CoreText;
-using MonoTouch.CoreImage;
-using MonoTouch.Foundation;
-using System.Runtime.InteropServices;
 
 namespace HalalGuide.ViewModels
 {
@@ -45,13 +31,13 @@ namespace HalalGuide.ViewModels
 
 		protected   FacebookService _FacebookService = ServiceContainer.Resolve<FacebookService> ();
 
+		public Location SelectedLocation{ get; set; }
+
 		//------------------------------------------------------------------------
 
 		protected static  MediaPicker MediaPicker = ServiceContainer.Resolve<MediaPicker> ();
 
 		protected static Position Position { get; set; }
-
-		public static Location SelectedLocation { get; set; }
 
 		protected readonly TaskScheduler UiScheduler = TaskScheduler.FromCurrentSynchronizationContext ();
 
@@ -247,6 +233,49 @@ namespace HalalGuide.ViewModels
 				RefreshCache ();
 				RefreshLocationsCompletedEvent (this, EventArgs.Empty);
 			}
+		}
+
+		public bool IsCameraAvailable ()
+		{
+			return MediaPicker.IsCameraAvailable;
+		}
+
+		public async Task<MediaFile> TakePicture (string path, string fileName)
+		{
+			MediaFile image = null;
+			XUbertesters.LogInfo (String.Format ("BaseViewModel: TakePicture-Start with args path: {0} filename: {1}", path, fileName));
+
+			XUbertesters.HideMenu ();
+			await MediaPicker.TakePhotoAsync (new StoreCameraMediaOptions {
+				Name = fileName,
+				Directory = path
+			}).ContinueWith (t => {
+				if (t.IsCanceled || t.IsFaulted) {
+					XUbertesters.LogError (String.Format ("BaseViewModel: TakePicture cancelled or faulted: {0}", t.Exception));
+				} else {
+					XUbertesters.LogError ("BaseViewModel: TakePicture ok");
+					image = t.Result;
+				}
+			});
+			XUbertesters.LogError ("BaseViewModel: TakePicture-End");
+			return image;
+		}
+
+		public async Task<MediaFile> GetPictureFromDevice ()
+		{
+			MediaFile image = null;
+			XUbertesters.LogInfo ("BaseViewModel: GetPictureFromDevice-Start");
+			XUbertesters.HideMenu ();
+			await MediaPicker.PickPhotoAsync ().ContinueWith (t => {
+				if (t.IsCanceled || t.IsFaulted) {
+					XUbertesters.LogError (String.Format ("BaseViewModel: GetPictureFromDevice cancelled or faulted: {0}", t.Exception));
+				} else {
+					XUbertesters.LogError ("BaseViewModel: GetPictureFromDevice ok");
+					image = t.Result;
+				}
+			});
+			XUbertesters.LogError ("BaseViewModel: GetPictureFromDevice-End");
+			return image;
 		}
 	}
 }

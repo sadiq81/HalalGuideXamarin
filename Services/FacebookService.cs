@@ -3,16 +3,10 @@ using HalalGuide.DAO;
 using SimpleDBPersistence.Service;
 using System.Threading.Tasks;
 using HalalGuide.Domain;
-using System.Runtime.CompilerServices;
-using SimpleDBPersistence.SimpleDB.Model.Parameters;
-using SimpleDBPersistence.Domain;
 using HalalGuide.Domain.Enum;
 using SimpleDBPersistence.SimpleDB.Model.AWSException;
 using XUbertestersSDK;
 using HalalGuide.Util;
-using System.Linq.Expressions;
-using System.Deployment.Internal;
-using System.Threading;
 
 namespace HalalGuide.Services
 {

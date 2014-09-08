@@ -5,7 +5,6 @@
 // Manual changes to this file may not be handled correctly.
 //
 using MonoTouch.Foundation;
-using System.CodeDom.Compiler;
 
 namespace HalalGuide.iOS.ViewController
 {
@@ -41,7 +40,7 @@ namespace HalalGuide.iOS.ViewController
 
 		[Action ("StarPressed:")]
 		partial void StarPressed (MonoTouch.UIKit.UIButton sender);
-		
+
 		void ReleaseDesignerOutlets ()
 		{
 			if (ActivityIndicator != null) {

@@ -21,6 +21,7 @@ namespace HalalGuide.Util
 		public static readonly string Star = "Star";
 		public static readonly string StarSelected = "StarSelected";
 		public static readonly string Urdu = "Urdu";
+		public static readonly string Camera = "Camera";
 	}
 }
 

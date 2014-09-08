@@ -5,7 +5,7 @@ using MonoTouch.UIKit;
 
 namespace HalalGuide.iOS.ViewController
 {
-	public partial class KeyboardSupportedUIViewController : BaseViewController, IUITextFieldDelegate
+	public partial class KeyboardSupportedUIViewController : BaseViewController, IUITextFieldDelegate, IUIGestureRecognizerDelegate
 	{
 		private float animatedDistance;
 		const float KEYBOARD_ANIMATION_DURATION = 0.3f;
@@ -22,34 +22,122 @@ namespace HalalGuide.iOS.ViewController
 		{
 		}
 
-		public override void DidReceiveMemoryWarning ()
-		{
-			// Releases the view if it doesn't have a superview.
-			base.DidReceiveMemoryWarning ();
-			
-			// Release any cached data, images, etc that aren't in use.
-		}
+		private UITextField CurrentUITextField { get; set; }
+
+		private UITextView CurrentUITextView { get; set; }
+
+		private UITapGestureRecognizer Tap { get; set; }
 
 		public override void ViewDidLoad ()
 		{
 			base.ViewDidLoad ();
+			SetupTouchRecognizer ();
+		}
 
-			foreach (UIView view in this.View.Subviews) {
-				if (view is UITextField) {
-					((UITextField)view).WeakDelegate = this;
+		public void SetupTouchRecognizer ()
+		{
+			Tap = new UITapGestureRecognizer (() => {
+				if (Tap.State == UIGestureRecognizerState.Ended) {
+					ResignKeyboard ();
 				}
-				if (view is UITextView) {
-					((UITextView)view).WeakDelegate = this;
+			});
+			Tap.WeakDelegate = this;
+			Tap.CancelsTouchesInView = false;
+			View.AddGestureRecognizer (Tap);
+		}
+
+		[Export ("gestureRecognizer:shouldReceiveTouch:")]
+		public bool ShouldReceiveTouch (UIGestureRecognizer recognizer, UITouch touch)
+		{
+
+			if (touch.View is UIButton || touch.View is UIBarButtonItem || touch.View is UISwitch) {
+				return false;
+			} else {
+				return true;
+			}
+		}
+
+
+		protected void ResignKeyboard ()
+		{
+			if (CurrentUITextField != null) {
+				CurrentUITextField.ResignFirstResponder ();
+			}
+
+			if (CurrentUITextView != null) {
+				CurrentUITextView.ResignFirstResponder ();
+			}
+		}
+
+		public override void ViewDidAppear (bool animated)
+		{
+			base.ViewDidAppear (animated);
+			SetTextFieldDelegate (View);
+		}
+
+		private void SetTextFieldDelegate (UIView searchView)
+		{
+			foreach (UIView view in searchView.Subviews) {
+
+				if (!(view is UITextField) && !(view is UITextField)) {
+					SetTextFieldDelegate (view);
+				} else {
+					if (view is UITextField) {
+						((UITextField)view).WeakDelegate = this;
+					}
+					if (view is UITextView) {
+						((UITextView)view).WeakDelegate = this;
+					}
 				}
 			}
+		}
+
+		[Export ("textViewDidBeginEditing:")]
+		public void EditingStarted (UITextView textView)
+		{
+			CurrentUITextView = textView;
+
+			MoveViewForTextFieldInput (textView);
+		}
+
+		[Export ("textViewDidEndEditing:")]
+		public void EditingEnded (UITextView textView)
+		{
+			MoveViewBackAfterTextFieldEditing (textView);
+		}
+
+		[Export ("textViewShouldEndEditing:")]
+		public bool ShouldEndEditing (MonoTouch.UIKit.UITextView textView)
+		{
+			textView.ResignFirstResponder ();
+			return true;
 		}
 
 		[MonoTouch.Foundation.Export ("textFieldDidBeginEditing:")]
 		public  void EditingStarted (UITextField textField)
 		{
+			CurrentUITextField = textField;
 
+			MoveViewForTextFieldInput (textField);
 
-			RectangleF textFieldRect = this.View.Window.ConvertRectFromView (textField.Bounds, textField);
+		}
+
+		[MonoTouch.Foundation.Export ("textFieldDidEndEditing:")]
+		public  void EditingEnded (UITextField textField)
+		{
+			MoveViewBackAfterTextFieldEditing (textField);
+		}
+
+		[MonoTouch.Foundation.Export ("textFieldShouldReturn:")]
+		public virtual bool ShouldReturn (UITextField textField)
+		{
+			textField.ResignFirstResponder ();
+			return true;
+		}
+
+		private void MoveViewForTextFieldInput (UIView view)
+		{
+			RectangleF textFieldRect = this.View.Window.ConvertRectFromView (view.Bounds, view);
 			RectangleF viewRect = this.View.Window.ConvertRectFromView (this.View.Bounds, this.View);
 			float midline = (float)(textFieldRect.Y + 0.5 * textFieldRect.Size.Height);
 			float numerator = midline - viewRect.Y - MINIMUM_SCROLL_FRACTION * viewRect.Size.Height;
@@ -79,8 +167,7 @@ namespace HalalGuide.iOS.ViewController
 			UIView.CommitAnimations (); 
 		}
 
-		[MonoTouch.Foundation.Export ("textFieldDidEndEditing:")]
-		public  void EditingEnded (UITextField textField)
+		private void MoveViewBackAfterTextFieldEditing (UIView view)
 		{
 			RectangleF viewFrame = this.View.Frame;
 			viewFrame.Y += animatedDistance;
@@ -91,22 +178,12 @@ namespace HalalGuide.iOS.ViewController
 			UIView.CommitAnimations (); 
 		}
 
-		[MonoTouch.Foundation.Export ("textFieldShouldReturn:")]
-		public  bool ShouldReturn (UITextField textField)
-		{
-			textField.ResignFirstResponder ();
-			return true;
-		}
-
 		public override void TouchesEnded (NSSet touches, UIEvent evt)
 		{
 			base.TouchesEnded (touches, evt);
-			foreach (UIView view in this.View.Subviews) {
-				if (view is UITextField || view is UITextView) {
-					view.ResignFirstResponder ();
-				}
-			}
+			ResignKeyboard ();
 		}
 	}
+
 }
 

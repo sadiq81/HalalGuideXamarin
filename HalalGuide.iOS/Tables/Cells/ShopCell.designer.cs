@@ -5,9 +5,8 @@
 // Manual changes to this file may not be handled correctly.
 //
 using MonoTouch.Foundation;
-using System.CodeDom.Compiler;
 
-namespace HalalGuide.iOS
+namespace HalalGuide.iOS.Tables.Cells
 {
 	[Register ("ShopCell")]
 	partial class ShopCell

@@ -1,6 +1,4 @@
-﻿using System;
-using SimpleDBPersistence.Domain;
-using SimpleDBPersistence.SimpleDB.Model;
+﻿using SimpleDBPersistence.SimpleDB.Model;
 using SQLite;
 
 namespace HalalGuide.Domain

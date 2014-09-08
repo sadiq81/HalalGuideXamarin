@@ -2,10 +2,6 @@
 using MonoTouch.UIKit;
 using XUbertestersSDK;
 using System;
-using SimpleDBPersistence.Service;
-using HalalGuide.Util;
-using HalalGuide.Services;
-using HalalGuide.Domain;
 
 namespace HalalGuide.iOS
 {
@@ -16,8 +12,7 @@ namespace HalalGuide.iOS
 	{
 		// class-level declarations
 
-		DatabaseWrapper _SQLiteConnection = ServiceContainer.Resolve<DatabaseWrapper> ();
-		PreferencesService _PreferencesService = ServiceContainer.Resolve<PreferencesService> ();
+
 
 		public override UIWindow Window {
 			get;
@@ -32,19 +27,7 @@ namespace HalalGuide.iOS
 				XUbertesters.SendCrash (e);
 			};
 
-			if (_PreferencesService.GetString (Constants.HasBeenLaunched) != null) {
-				//TODO Start downloading all items from database;
-			} else {
 
-				_PreferencesService.StoreString (Constants.HasBeenLaunched, "true");
-				_PreferencesService.StoreString (Constants.LocationLastUpdated, DateTime.MinValue.ToString (Constants.DateFormat));
-				_PreferencesService.StoreString (Constants.ReviewLastUpdated, DateTime.MinValue.ToString (Constants.DateFormat));
-
-				_SQLiteConnection.CreateTable<Location> ();
-				_SQLiteConnection.CreateTable<LocationPicture> ();
-				_SQLiteConnection.CreateTable<Review> ();
-				_SQLiteConnection.CreateTable<FacebookUser> ();
-			}
 
 			return true;
 		}

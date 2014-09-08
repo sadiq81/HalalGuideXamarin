@@ -1,6 +1,6 @@
 ﻿using SimpleDBPersistence.SimpleDB.Model;
-using HalalGuide.Domain.Enum;
 using SQLite;
+using HalalGuide.Domain.Enum;
 
 namespace HalalGuide.Domain
 {

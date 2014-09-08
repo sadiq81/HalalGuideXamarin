@@ -36,7 +36,7 @@ namespace HalalGuide.Services
 		{
 			string path;
 			#if __IOS__
-			path = Path.Combine (Environment.GetFolderPath (Environment.SpecialFolder.MyDocuments), "..", "Library/Caches/Facebook/" + user + ".jpeg");
+			path = Path.Combine (Environment.GetFolderPath (Environment.SpecialFolder.MyDocuments), "..", "Library/Caches/Facebook/" + user + ".jpg");
 			#elif __ANDROID__
 			path= "";
 			#else
@@ -49,7 +49,7 @@ namespace HalalGuide.Services
 		{
 			string path;
 			#if __IOS__
-			path = Path.Combine (Environment.GetFolderPath (Environment.SpecialFolder.MyDocuments), "..", "Library/Caches/" + picture.LocationId + "/" + picture.Id + ".jpeg");
+			path = Path.Combine (Environment.GetFolderPath (Environment.SpecialFolder.MyDocuments), "..", "Library/Caches/" + picture.LocationId + "/" + picture.Id);
 			#elif __ANDROID__
 			path= "";
 			#else
@@ -62,7 +62,7 @@ namespace HalalGuide.Services
 		{
 			string path;
 			#if __IOS__
-			path = Path.Combine (Environment.GetFolderPath (Environment.SpecialFolder.MyDocuments), "..", "Library/Caches/" + review.LocationId + "/" + review.Id + ".jpeg");
+			path = Path.Combine (Environment.GetFolderPath (Environment.SpecialFolder.MyDocuments), "..", "Library/Caches/" + review.LocationId + "/" + review.Id);
 			#elif __ANDROID__
 			path= "";
 			#else

@@ -1,4 +1,4 @@
-﻿using System;
+﻿
 using HalalGuide.Domain;
 
 namespace HalalGuide.iOS.Tables.Cells

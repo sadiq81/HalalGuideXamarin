@@ -4,11 +4,24 @@
     <Pads>
       <Pad Id="ProjectPad">
         <State expanded="True">
-          <Node name="HalalGuide.iOS" expanded="True" selected="True">
+          <Node name="HalalGuide.Core" expanded="True">
+            <Node name="ViewModels" expanded="True" />
+          </Node>
+          <Node name="HalalGuide.iOS" expanded="True">
+            <Node name="CollectionView" expanded="True" />
             <Node name="Tables" expanded="True">
-              <Node name="Cells" expanded="True" />
+              <Node name="Cells" expanded="True">
+                <Node name="CollectionViewCell.cs" expanded="True" />
+                <Node name="ReviewCell.cs" expanded="True" />
+              </Node>
             </Node>
-            <Node name="ViewController" expanded="True" />
+            <Node name="Util" expanded="True" />
+            <Node name="ViewController" expanded="True">
+              <Node name="AddNewDiningViewController.cs" expanded="True" />
+              <Node name="FilterMultipleDiningViewController.cs" expanded="True" />
+              <Node name="SingleDiningViewController.cs" expanded="True" />
+            </Node>
+            <Node name="SingleDiningTableViewController.cs" selected="True" />
           </Node>
         </State>
       </Pad>
@@ -20,16 +33,19 @@
       <Breakpoint file="/Users/Privat/HalalGuide/Components/googlemapsios-1.8.1/samples/GoogleMapsAdvSample/GoogleMapsAdvSample/Samples/Map Demos/BasicMapViewController.cs" line="19" column="34" />
       <Breakpoint file="/Users/Privat/AWSSimpleDBPersistence/SimpleDBPersistence/SimpleDB/Marshalling/Response/BaseUnMarshaller.cs" line="41" column="1" />
       <Breakpoint file="/Users/Privat/S3Storage/Service/ServiceContainer.cs" line="26" column="1" />
-      <Breakpoint file="/Users/Privat/HalalGuide/HalalGuide.iOS/AppDelegate.cs" line="103" column="1" />
+      <Breakpoint file="/Users/Privat/HalalGuide/HalalGuide.iOS/AppDelegate.cs" line="90" column="1" />
       <Breakpoint file="/Users/Privat/HalalGuide/HalalGuide.iOS/TestViewController.cs" line="41" column="5" />
       <Breakpoint file="/Users/Privat/HalalGuide/HalalGuide.iOS/Seque/DismissSeque.cs" line="14" column="1" />
-      <Breakpoint file="/Users/Privat/HalalGuide/ViewModels/SingleDiningViewModel.cs" line="105" column="1" />
-      <Breakpoint file="/Users/Privat/HalalGuide/ViewModels/LoginViewModel.cs" line="77" column="1" />
-      <Breakpoint file="/Users/Privat/HalalGuide/HalalGuide.iOS/ViewController/BaseViewController.cs" line="34" column="1" />
-      <Breakpoint file="/Users/Privat/HalalGuide/ViewModels/BaseViewModel.cs" line="248" column="1" />
+      <Breakpoint file="/Users/Privat/HalalGuide/HalalGuide.iOS/AppDelegate.cs" line="31" column="1" />
+      <Breakpoint file="/Users/Privat/HalalGuide/HalalGuide.iOS/CollectionView/LocationPictureImageCell.cs" line="46" column="1" />
+      <Breakpoint file="/Users/Privat/HalalGuide/HalalGuide.iOS/Tables/Cells/CollectionViewCell.designer.cs" line="14" column="5" />
+      <Breakpoint file="/Users/Privat/HalalGuide/HalalGuide.iOS/Tables/Cells/CollectionViewCell.designer.cs" line="11" column="1" />
     </BreakpointStore>
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <DisabledProjects>
+    <String>HalalGuide.Droid/HalalGuide.Droid.csproj</String>
+  </DisabledProjects>
   <MonoDevelop.Ide.ItemProperties.HalalGuide.iOS>
     <IPhoneTestFlightSettings_27CDebug ApiToken="4dc604a74af8d2cce2e0a5973a82b8a0_MTUwNzkxMTIwMTMtMTItMTEgMTM6NDQ6NDYuMTQ3NTcw" TeamToken="b0e3aec642863a0401541c94581faf4f_MzQzOTY3MjAxNC0wMi0yNCAxMjowMDo0MS43ODI0Nzc" ReleaseNotes="Init" NotifyTeamMembers="False" ReplaceBinaries="False" DistributionLists="" UploadDSYMs="False" />
     <MonoDevelop.MacDev.AppleDevelopmentTeam DeveloperId="R49NYV2375" TeamId="2Z296RX4K9" />

@@ -5,12 +5,13 @@ using HalalGuide.Domain;
 using HalalGuide.ViewModels;
 using SimpleDBPersistence.Service;
 using System.Threading.Tasks;
-using MonoTouch.CoreImage;
 
 namespace HalalGuide.iOS.CollectionView
 {
 	public class LocationPictureImageCell: UICollectionViewCell
 	{
+		public static NSString Indentifier = new NSString ("PictureCell");
+
 		public SingleDiningViewModel ViewModel = ServiceContainer.Resolve<SingleDiningViewModel> ();
 
 		private LocationPicture LocationPicture { get; set; }
