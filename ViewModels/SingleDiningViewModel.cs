@@ -4,6 +4,9 @@ using System.Threading.Tasks;
 using HalalGuide.Domain.Enum;
 using System.Linq;
 using System;
+using HalalGuide.Util;
+using System.Text;
+using System.Security.Cryptography;
 
 namespace HalalGuide.ViewModels
 {
@@ -30,6 +33,20 @@ namespace HalalGuide.ViewModels
 			if (SelectedLocation != null) {
 				Pictures = _ImageService.GetImagesForLocation (SelectedLocation);
 				Reviews = _ReviewService.GetReviewsForLocation (SelectedLocation);
+			}
+		}
+
+		public string Categories ()
+		{
+			if (SelectedLocation != null && SelectedLocation.Categories != null) {
+				StringBuilder translated = new StringBuilder ();
+				string[] categories = SelectedLocation.Categories.Split (new []{ ',' }, StringSplitOptions.RemoveEmptyEntries);
+				foreach (string cat in categories) {
+					translated.Append (string.Format ("{0}, ", Localization.GetLocalizedValue (cat.Trim ())));
+				}
+				return translated.ToString ().RemoveCharFromEnd (2);
+			} else {
+				return "";
 			}
 		}
 

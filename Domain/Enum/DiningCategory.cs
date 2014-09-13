@@ -39,15 +39,15 @@ namespace HalalGuide.Domain.Enum
 		public static DiningCategory Argentine = new DiningCategory ("argentine");
 		public static DiningCategory Asien = new DiningCategory ("asian");
 
-		public static DiningCategory Belgien = new DiningCategory ("belgian");
-		public static DiningCategory Brasilien = new DiningCategory ("brasilian");
+		public static DiningCategory Belgian = new DiningCategory ("belgian");
+		public static DiningCategory Brasilian = new DiningCategory ("brasilian");
 		public static DiningCategory British = new DiningCategory ("british");
 		public static DiningCategory Buffet = new DiningCategory ("buffet");
 		public static DiningCategory Burger = new DiningCategory ("burger");
 		public static DiningCategory Bakery = new DiningCategory ("bakery");
 		public static DiningCategory Bagel = new DiningCategory ("bagel");
 		public static DiningCategory BubbleTea = new DiningCategory ("bubble.tea");
-		public static DiningCategory Bucther = new DiningCategory ("butcher");
+		public static DiningCategory Butcher = new DiningCategory ("butcher");
 
 		public static DiningCategory Cafe = new DiningCategory ("cafe");
 		public static DiningCategory Caribian = new DiningCategory ("caribian");
@@ -105,7 +105,7 @@ namespace HalalGuide.Domain.Enum
 
 		public static DiningCategory Seafood = new DiningCategory ("seafood");
 		public static DiningCategory Salat = new DiningCategory ("salat");
-		public static DiningCategory Sandwhich = new DiningCategory ("sandwich");
+		public static DiningCategory Sandwich = new DiningCategory ("sandwich");
 		public static DiningCategory Spanish = new DiningCategory ("spanish");
 		public static DiningCategory Steak = new DiningCategory ("steak");
 		public static DiningCategory Soup = new DiningCategory ("soup");
@@ -123,12 +123,12 @@ namespace HalalGuide.Domain.Enum
 		public static DiningCategory Wok = new DiningCategory ("wok");
 
 		public static List<DiningCategory> Categories = new List<DiningCategory> () {
-			Afghan, African, American, Argentine, Asien, Belgien, Brasilien, British, Buffet,
-			Burger, Bakery, Bagel, BubbleTea, Bucther, Cafe, Caribian, Cupcake, Candy, Chinese, Danish,
+			Afghan, African, American, Argentine, Asien, Belgian, Brasilian, British, Buffet,
+			Burger, Bakery, Bagel, BubbleTea, Butcher, Cafe, Caribian, Cupcake, Candy, Chinese, Danish,
 			Dessert, Fish, Fruit, Fastfood, French, German, Grill, Greek,
 			Icecream, Juice, Kiosk, Indian, Indonesian, Irish, Italien, Iranian, Japanese, Kebab, Korean,
 			Kosher, Libanese, Mediterranean, Malyasian, Marocan, Mexican, Nordic, Nepalise, Pastery,
-			Pakistani, Persian, Pizza, Portugese, Russian, Seafood, Salat, Sandwhich, Spanish, Steak, Soup,
+			Pakistani, Persian, Pizza, Portugese, Russian, Seafood, Salat, Sandwich, Spanish, Steak, Soup,
 			Sushi, Tapas, Thai, Tibetan, Tyrkish, Vegan, Vietnamese, Wok
 		};
 

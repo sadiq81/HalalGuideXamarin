@@ -4,6 +4,7 @@ using XUbertestersSDK;
 using HalalGuide.ViewModels;
 using SimpleDBPersistence.Service;
 using HalalGuide.iOS.Util;
+using HalalGuide.Util;
 
 namespace HalalGuide.iOS.ViewController.Table
 {
@@ -20,6 +21,38 @@ namespace HalalGuide.iOS.ViewController.Table
 		public BaseTableViewController (string nibName, NSBundle bundle) : base (nibName, bundle)
 		{
 		}
+
+		public override void ViewDidLoad ()
+		{
+			base.ViewDidLoad ();
+			View.TranslateLabelsAndPlaceholders ();
+			TranslateNavigationItem ();
+		}
+
+		public void TranslateNavigationItem ()
+		{
+
+			if (NavigationItem != null) {
+				UIBarButtonItem left = NavigationItem.LeftBarButtonItem;
+				if (left != null && left.Title != null) {
+					string text = left.Title;
+					string translation = Localization.GetLocalizedValue (text) ?? text;
+					left.Title = translation;
+				}
+				UIBarButtonItem right = NavigationItem.RightBarButtonItem;
+				if (right != null && right.Title != null) {
+					string text = right.Title;
+					string translation = Localization.GetLocalizedValue (text) ?? text;
+					right.Title = translation;
+				}
+				if (NavigationItem.Title != null) {
+					string text = NavigationItem.Title;
+					string translation = Localization.GetLocalizedValue (text) ?? text;
+					NavigationItem.Title = translation;
+				}
+			}
+		}
+
 
 		public override bool ShouldPerformSegue (string segueIdentifier, NSObject sender)
 		{

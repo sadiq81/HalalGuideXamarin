@@ -64,5 +64,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)DAO\S3LocationPictureDAO.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DAO\S3BaseDAO.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Util\ImageResize.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Util\Localization.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Util\Translations.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Util\Feedback.cs" />
   </ItemGroup>
 </Project>

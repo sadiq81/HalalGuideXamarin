@@ -118,27 +118,28 @@ namespace HalalGuide.iOS.ViewController.Table
 			ResignKeyboard ();
 
 			if (String.IsNullOrEmpty (Name.Text)) {
-				new UIAlertView ("Fejl", "Navn skal udfyldes", null, "Ok").Show ();
+				;
+				new UIAlertView (Localization.GetLocalizedValue (Feedback.Error), Localization.GetLocalizedValue (Feedback.NameEmpty), null, Localization.GetLocalizedValue (Feedback.Ok)).Show ();
 				return;
 			}
 
 			if (String.IsNullOrEmpty (Road.Text)) {
-				new UIAlertView ("Fejl", "Vej skal udfyldes", null, "Ok").Show ();
+				new UIAlertView (Localization.GetLocalizedValue (Feedback.Error), Localization.GetLocalizedValue (Feedback.RoadEmpty), null, Localization.GetLocalizedValue (Feedback.Ok)).Show ();
 				return;
 			}
 
 			if (String.IsNullOrEmpty (RoadNumber.Text)) {
-				new UIAlertView ("Fejl", "Vejnummer skal udfyldes", null, "Ok").Show ();
+				new UIAlertView (Localization.GetLocalizedValue (Feedback.Error), Localization.GetLocalizedValue (Feedback.RoadNumberEmpty), null, Localization.GetLocalizedValue (Feedback.Ok)).Show ();
 				return;
 			}
 
 			if (String.IsNullOrEmpty (PostalCode.Text)) {
-				new UIAlertView ("Fejl", "Postnummer skal udfyldes", null, "Ok").Show ();
+				new UIAlertView (Localization.GetLocalizedValue (Feedback.Error), Localization.GetLocalizedValue (Feedback.PostalCodeEmpty), null, Localization.GetLocalizedValue (Feedback.Ok)).Show ();
 				return;
 			}
 
 			if (String.IsNullOrEmpty (City.Text)) {
-				new UIAlertView ("Fejl", "By skal udfyldes", null, "Ok").Show ();
+				new UIAlertView (Localization.GetLocalizedValue (Feedback.Error), Localization.GetLocalizedValue (Feedback.CityEmpty), null, Localization.GetLocalizedValue (Feedback.Ok)).Show ();
 				return;
 			}
 
@@ -160,9 +161,18 @@ namespace HalalGuide.iOS.ViewController.Table
 			ActivityIndicator.StopAnimating ();
 
 			if (result == CreateEntityResult.OK) {
-				new UIAlertView ("Succes", "Dit forslag er sent til godkendelse", null, "Ok", new string[]{ "Tilføj anmeldelse" }){ WeakDelegate = this }.Show ();
+				new UIAlertView (Localization.GetLocalizedValue (Feedback.Succes), 
+					Localization.GetLocalizedValue (Feedback.Suggestion_Waiting_Approval), 
+					null, 
+					Localization.GetLocalizedValue (Feedback.Ok), 
+					new string[]{ Localization.GetLocalizedValue (Feedback.AddReview) }){ WeakDelegate = this }.Show ();
+
 			} else {
-				new UIAlertView ("Fejl", result.ToString (), null, "Ok", null).Show ();
+				new UIAlertView (Localization.GetLocalizedValue (Feedback.Error), 
+					Localization.GetLocalizedValue (result.ToString ()), 
+					null, 
+					Localization.GetLocalizedValue (Feedback.Ok), 
+					null).Show ();
 			}
 
 		}
@@ -219,7 +229,12 @@ namespace HalalGuide.iOS.ViewController.Table
 			XUbertesters.LogInfo ("AddNewDiningController: PickImage-Start");
 			if (ViewModel.IsCameraAvailable () || UIDevice.CurrentDevice.Model.Contains ("Simulator")) {
 
-				UIActionSheet actionSheet = new UIActionSheet ("Tilføj billede", null, "Fortryd", null, "Tag med kamera", "Væg fra kamerarulle");
+				UIActionSheet actionSheet = new UIActionSheet (Localization.GetLocalizedValue (Feedback.AddPicture), 
+					                            null,  
+					                            Localization.GetLocalizedValue (Feedback.Regreet), 
+					                            null, 
+					                            Localization.GetLocalizedValue (Feedback.UseCamera), 
+					                            Localization.GetLocalizedValue (Feedback.UseCameraRoll));
 				actionSheet.Clicked += async delegate(object a, UIButtonEventArgs b) {
 					switch (b.ButtonIndex) {
 					case 0:
@@ -253,8 +268,10 @@ namespace HalalGuide.iOS.ViewController.Table
 
 			} else {
 				XUbertesters.LogWarn ("AddNewDiningController: noCameraFound");
-				UIAlertView noCameraFound = new UIAlertView ("Fejl", "Intet kamera tilgægeligt", null, "Luk");
-				noCameraFound.Show ();
+				new UIAlertView (Localization.GetLocalizedValue (Feedback.Error), 
+					Localization.GetLocalizedValue (Feedback.CameraNotAvaileble), 
+					null, 
+					Localization.GetLocalizedValue (Feedback.Close)).Show ();
 			}
 		}
 
@@ -272,7 +289,7 @@ namespace HalalGuide.iOS.ViewController.Table
 		{
 			ResignKeyboard ();
 
-			sender.SetTitle (isExpanded ? "Vælg" : "Luk", UIControlState.Normal);
+			sender.SetTitle (isExpanded ? Localization.GetLocalizedValue (Feedback.Choose) : Localization.GetLocalizedValue (Feedback.Close), UIControlState.Normal);
 
 			if (isExpanded) {
 
@@ -325,7 +342,7 @@ namespace HalalGuide.iOS.ViewController.Table
 					cell = new CategoryCell (UITableViewCellStyle.Default, CategoryCell.Identifier);
 				}
 
-				cell.TextLabel.Text = "\t" + DiningCategory.Categories [indexPath.Row].Title;
+				cell.TextLabel.Text = "\t" + Localization.GetLocalizedValue (DiningCategory.Categories [indexPath.Row].Title);
 
 				bool selected = CategoriesChoosen.Contains (DiningCategory.Categories [indexPath.Row]);
 				cell.Accessory = selected ? UITableViewCellAccessory.Checkmark : UITableViewCellAccessory.None;

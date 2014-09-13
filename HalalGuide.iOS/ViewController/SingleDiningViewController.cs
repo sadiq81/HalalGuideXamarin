@@ -5,6 +5,7 @@ using System;
 using HalalGuide.ViewModels;
 using SimpleDBPersistence.Service;
 using MonoTouch.UIKit;
+using HalalGuide.iOS.Util;
 
 namespace HalalGuide.iOS.ViewController
 {
@@ -20,6 +21,8 @@ namespace HalalGuide.iOS.ViewController
 		{
 			base.ViewDidLoad ();
 			NavigationItem.Title = SingleDiningViewModel.SelectedLocation.Name;
+			View.TranslateLabelsAndPlaceholders ();
+			TranslateNavigationItem ();
 		}
 	}
 }

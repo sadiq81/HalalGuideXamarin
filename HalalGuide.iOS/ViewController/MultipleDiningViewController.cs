@@ -73,7 +73,6 @@ namespace HalalGuide.iOS.ViewController
 			RefreshControl.ValueChanged += async (sender, e) => {
 				RefreshControl.BeginRefreshing ();
 				await ViewModel.RefreshLocations ();
-				DiningTableView.ReloadData ();
 				RefreshControl.EndRefreshing ();
 
 				UIView.Animate (
@@ -93,7 +92,7 @@ namespace HalalGuide.iOS.ViewController
 			});
 
 			ViewModel.FilteredLocations += (sender, e) => InvokeOnMainThread (() => {
-				TableViewController.TableView.ReloadSections (new NSIndexSet (0), UITableViewRowAnimation.Top);
+				TableViewController.TableView.ReloadSections (new NSIndexSet (0), UITableViewRowAnimation.Fade);
 			});
 		}
 

@@ -16,6 +16,22 @@ namespace HalalGuide.Util
 			return char.ToUpper (s [0]) + s.Substring (1).ToLower ();
 		}
 
+		public static string RemoveLastChar (this string s)
+		{
+			if (string.IsNullOrEmpty (s)) {
+				return string.Empty;
+			}
+			return s.Remove (s.Length - 1);
+		}
+
+		public static string RemoveCharFromEnd (this string s, int numberOfChars)
+		{
+			if (string.IsNullOrEmpty (s)) {
+				return string.Empty;
+			}
+			return s.Remove (s.Length - numberOfChars);
+		}
+
 		public static string Compress (string s)
 		{
 			var bytes = Encoding.Unicode.GetBytes (s);

@@ -77,7 +77,7 @@ namespace HalalGuide.Services
 
 		public List<Location> GetLastTenLocations ()
 		{
-			return _SQLiteConnection.Table<Location> ().Where (l => l.CreationStatus == CreationStatus.Approved).OrderBy (l => l.LastUpdated).Take (10).ToList ();
+			return _SQLiteConnection.Table<Location> ().Where (l => l.CreationStatus == CreationStatus.Approved).OrderByDescending (l => l.LastUpdated).Take (10).ToList ();
 		}
 
 		public List<Location> GetByQuery (string query)

@@ -3,6 +3,7 @@
 using System;
 using MonoTouch.Foundation;
 using HalalGuide.iOS.ViewController;
+using HalalGuide.iOS.Util;
 
 namespace HalalGuide.iOS.ViewController
 {
@@ -16,6 +17,13 @@ namespace HalalGuide.iOS.ViewController
 		partial void Done (NSObject sender)
 		{
 			DismissViewController (true, null);
+		}
+
+		public override void ViewDidLoad ()
+		{
+			base.ViewDidLoad ();
+			View.TranslateLabelsAndPlaceholders ();
+			TranslateNavigationItem ();
 		}
 
 	}

@@ -56,7 +56,7 @@ namespace HalalGuide.iOS.ViewController.Table
 			if (MultipleDiningViewModel.DistanceFilter < Constants.MaxDistanceLimit) {
 				DistanceLabel.Text = MultipleDiningViewModel.DistanceFilter + " km";
 			} else {
-				DistanceLabel.Text = "Ubegrænset";
+				DistanceLabel.Text = Localization.GetLocalizedValue (Feedback.Unlimited);
 			}
 
 			PorkSwitch.On = MultipleDiningViewModel.PorkFilter;
@@ -88,7 +88,7 @@ namespace HalalGuide.iOS.ViewController.Table
 			if (sender.Value < Constants.MaxDistanceLimit) {
 				DistanceLabel.Text = sender.Value + " km";
 			} else {
-				DistanceLabel.Text = "Ubegrænset";
+				DistanceLabel.Text = Localization.GetLocalizedValue (Feedback.Unlimited);
 			}
 		}
 
@@ -113,7 +113,7 @@ namespace HalalGuide.iOS.ViewController.Table
 
 		private void ShowHideCategories (NSObject sender)
 		{
-			((UIButton)sender).SetTitle (isExpanded ? "Vælg" : "Luk", UIControlState.Normal);
+			((UIButton)sender).SetTitle (isExpanded ? Localization.GetLocalizedValue (Feedback.Choose) : Localization.GetLocalizedValue (Feedback.Close), UIControlState.Normal);
 
 			if (isExpanded) {
 
@@ -166,7 +166,7 @@ namespace HalalGuide.iOS.ViewController.Table
 					cell = new CategoryCell (UITableViewCellStyle.Default, CategoryCell.Identifier);
 				}
 
-				cell.TextLabel.Text = "\t" + DiningCategory.Categories [indexPath.Row].Title;
+				cell.TextLabel.Text = "\t" + Localization.GetLocalizedValue (DiningCategory.Categories [indexPath.Row].Title);
 
 				bool selected = CategoriesChoosen.Contains (DiningCategory.Categories [indexPath.Row]);
 				cell.Accessory = selected ? UITableViewCellAccessory.Checkmark : UITableViewCellAccessory.None;

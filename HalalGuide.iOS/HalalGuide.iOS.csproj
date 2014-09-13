@@ -273,6 +273,9 @@
     <Compile Include="ViewController\Table\BaseTableViewController.cs" />
     <Compile Include="Util\AssociationPolicy.cs" />
     <Compile Include="ViewController\Table\KeyboardSupportedTableViewController.cs" />
+    <Compile Include="Util\UIViewExtensions.cs" />
+    <Compile Include="Textfield\BaseTextField.cs" />
+    <Compile Include="Tables\Cells\BaseTableViewCell.cs" />
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="MainStoryboard.storyboard" />
@@ -301,6 +304,7 @@
     <Folder Include="Util\" />
     <Folder Include="ViewController\" />
     <Folder Include="ViewController\Table\" />
+    <Folder Include="Language\" />
   </ItemGroup>
   <ItemGroup>
     <XamarinComponentReference Include="xamarin.mobile">
@@ -323,5 +327,9 @@
       <Version>1.0.8</Version>
       <Visible>False</Visible>
     </XamarinComponentReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Language\da.json" />
+    <Content Include="Language\en.json" />
   </ItemGroup>
 </Project>

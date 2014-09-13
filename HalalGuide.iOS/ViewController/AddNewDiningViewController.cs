@@ -18,6 +18,7 @@ namespace HalalGuide.iOS.ViewController
 		{
 		}
 
+
 		partial void Regret (NSObject sender)
 		{
 			DismissViewController (true, null);
@@ -35,6 +36,13 @@ namespace HalalGuide.iOS.ViewController
 			if (segue.Identifier.Equals (Segue.AddDiningEmbedded)) {
 				childViewController = (AddNewDiningTableViewController)segue.DestinationViewController;
 			}
+		}
+
+		public override void ViewDidLoad ()
+		{
+			base.ViewDidLoad ();
+			View.TranslateLabelsAndPlaceholders ();
+			TranslateNavigationItem ();
 		}
 
 		[Export ("positionForBar:")]

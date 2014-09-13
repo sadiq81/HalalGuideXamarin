@@ -11,7 +11,7 @@ using System.Drawing;
 
 namespace HalalGuide.iOS.Textfield
 {
-	public partial class AutoCompleteUITextField : UITextField
+	public partial class AutoCompleteUITextField : BaseTextField
 	{
 		//private readonly int kHTAutoCompleteButtonWidth = 30;
 

@@ -68,9 +68,9 @@ namespace HalalGuide.iOS.ViewController
 			ActivityIndicator.StopAnimating ();
 
 			if (result == CreateEntityResult.OK) {
-				new UIAlertView ("Ok", "Din anmeldelse er sent til godkendelse", null, "Ok", null){ WeakDelegate = this }.Show ();
+				new UIAlertView (Localization.GetLocalizedValue (Feedback.Ok), Localization.GetLocalizedValue (Feedback.ReviewSendToReview), null, Localization.GetLocalizedValue (Feedback.Ok), null){ WeakDelegate = this }.Show ();
 			} else {
-				new UIAlertView ("Fejl", result.ToString (), null, "Ok", null).Show ();
+				new UIAlertView (Localization.GetLocalizedValue (Feedback.Error), Localization.GetLocalizedValue (result.ToString ()), null, Localization.GetLocalizedValue (Feedback.Ok), null).Show ();
 			}
 
 		}

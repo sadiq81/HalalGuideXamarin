@@ -11,7 +11,7 @@ using SimpleDBPersistence.Service;
 
 namespace HalalGuide.iOS.Tables.Cells
 {
-	public partial class ReviewCell : UITableViewCell
+	public partial class ReviewCell : BaseTableViewCell
 	{
 		public static string Identifier = "ReviewCell";
 

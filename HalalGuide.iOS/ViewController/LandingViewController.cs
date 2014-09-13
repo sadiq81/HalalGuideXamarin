@@ -51,7 +51,6 @@ namespace HalalGuide.iOS.ViewController
 			RefreshControl.ValueChanged += async (sender, e) => {
 				RefreshControl.BeginRefreshing ();
 				await ViewModel.RefreshLocations ();
-				LatestUpdatedTableView.ReloadData ();
 				RefreshControl.EndRefreshing ();
 			};
 		}
@@ -69,7 +68,6 @@ namespace HalalGuide.iOS.ViewController
 			});
 			
 		}
-
 
 		#endregion
 

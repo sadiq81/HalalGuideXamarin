@@ -6,10 +6,11 @@ using System.Threading.Tasks;
 using HalalGuide.ViewModels;
 using SimpleDBPersistence.Service;
 using System.Globalization;
+using HalalGuide.iOS.Util;
 
 namespace HalalGuide.iOS.Tables.Cells
 {
-	public class LocationCell: UITableViewCell,ILocationCell
+	public class LocationCell: BaseTableViewCell,ILocationCell
 	{
 		//Common
 		protected static readonly int CategoryImageTag = 101;
@@ -36,6 +37,12 @@ namespace HalalGuide.iOS.Tables.Cells
 
 		public LocationCell (IntPtr handle) : base (handle)
 		{
+		}
+
+		public override void LayoutSubviews ()
+		{
+			base.LayoutSubviews ();
+			this.TranslateLabelsAndPlaceholders ();
 		}
 
 		public virtual void ConfigureLocation (Location l)

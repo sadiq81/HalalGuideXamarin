@@ -1,4 +1,4 @@
-﻿using MonoTouch.Foundation;
+using MonoTouch.Foundation;
 using MonoTouch.UIKit;
 using XUbertestersSDK;
 using System;
@@ -56,4 +56,3 @@ namespace HalalGuide.iOS
 		}
 	}
 }
-

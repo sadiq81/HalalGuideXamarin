@@ -75,7 +75,7 @@ namespace HalalGuide.iOS.ViewController.Table
 			Name.Text = ViewModel.SelectedLocation.Name;
 			Address.Text = string.Format ("{0} {1}", ViewModel.SelectedLocation.AddressRoad, ViewModel.SelectedLocation.AddressRoadNumber);
 			City.Text = string.Format ("{0} {1}", ViewModel.SelectedLocation.AddressPostalCode, ViewModel.SelectedLocation.AddressCity);
-			Category.Text = ViewModel.SelectedLocation.Categories;
+			Category.Text = ViewModel.Categories ();
 
 			PorkImage.Image = UIImage.FromBundle (Images.Pig + ViewModel.SelectedLocation.Pork);
 			PorkLabel.TextColor = ViewModel.SelectedLocation.Pork ? UIColor.Red : UIColor.Green;
@@ -124,7 +124,7 @@ namespace HalalGuide.iOS.ViewController.Table
 					XUbertesters.LogInfo ("SingleDiningViewController: PickImage-Start");
 					if (ViewModel.IsCameraAvailable () || UIDevice.CurrentDevice.Model.Contains ("Simulator")) {
 
-						UIActionSheet actionSheet = new UIActionSheet ("Tilføj billede", null, "Fortryd", null, "Tag med kamera", "Væg fra kamerarulle");
+						UIActionSheet actionSheet = new UIActionSheet (Localization.GetLocalizedValue (Feedback.AddPicture), null, Localization.GetLocalizedValue (Feedback.Regreet), null, Localization.GetLocalizedValue (Feedback.UseCamera), Localization.GetLocalizedValue (Feedback.UseCameraRoll));
 						actionSheet.Clicked += async delegate(object a, UIButtonEventArgs b) {
 
 							MediaFile file = null;
@@ -143,12 +143,12 @@ namespace HalalGuide.iOS.ViewController.Table
 								CreateEntityResult result = await ViewModel.AddLocationPicture (StreamUtil.ReadToEnd (file.GetStream ()));
 
 								if (result == CreateEntityResult.OK) {
-									new UIAlertView ("Ok", "Dit billede er sendt til godkendelse", null, "Luk").Show ();
+									new UIAlertView (Localization.GetLocalizedValue (Feedback.Ok), Localization.GetLocalizedValue (Feedback.ImageSendToReview), null, Localization.GetLocalizedValue (Feedback.Close)).Show ();
 									InvokeOnMainThread (() => {
 										ViewModel.RefreshDataForLocation ();
 									});
 								} else {
-									new UIAlertView ("Fejl", result.ToString (), null, "Luk").Show ();
+									new UIAlertView (Localization.GetLocalizedValue (Feedback.Error), Localization.GetLocalizedValue (result.ToString ()), null, Localization.GetLocalizedValue (Feedback.Close)).Show ();
 								}
 
 							}
@@ -157,7 +157,7 @@ namespace HalalGuide.iOS.ViewController.Table
 
 					} else {
 						XUbertesters.LogWarn ("SingleDiningViewController: noCameraFound");
-						UIAlertView noCameraFound = new UIAlertView ("Fejl", "Intet kamera tilgægeligt", null, "Luk");
+						UIAlertView noCameraFound = new UIAlertView (Localization.GetLocalizedValue (Feedback.Error), Localization.GetLocalizedValue (Feedback.CameraNotAvaileble), null, Localization.GetLocalizedValue (Feedback.Close));
 						noCameraFound.Show ();
 					}
 					XUbertesters.LogInfo ("SingleDiningViewController: PickImage-End");
@@ -172,7 +172,8 @@ namespace HalalGuide.iOS.ViewController.Table
 
 					UITapGestureRecognizer tap = new UITapGestureRecognizer (() => {
 						Expand = new UIImageView (cell.ImageView.Image);
-						Expand.ContentMode = UIViewContentMode.ScaleAspectFill;
+						Expand.ContentMode = UIViewContentMode.ScaleAspectFit;
+						Expand.BackgroundColor = UIColor.Black;
 						Expand.Frame = View.ConvertRectFromView (cell.ImageView.Frame, cell.ImageView.Superview);
 						Expand.UserInteractionEnabled = true;
 						Expand.ClipsToBounds = true;
