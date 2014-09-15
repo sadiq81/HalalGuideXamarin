@@ -15,6 +15,7 @@ using HalalGuide.Domain;
 using HalalGuide.ViewModels;
 using HalalGuide.iOS.Tables.Cells;
 using HalalGuide.iOS.Util;
+using MonoTouch.MessageUI;
 
 namespace HalalGuide.iOS.ViewController.Table
 {
@@ -23,7 +24,7 @@ namespace HalalGuide.iOS.ViewController.Table
 		private readonly SingleDiningViewModel ViewModel = ServiceContainer.Resolve<SingleDiningViewModel> ();
 		private readonly AddReviewViewModel AddReviewViewModel = ServiceContainer.Resolve<AddReviewViewModel> ();
 		private UIImageView Expand;
-
+		MFMailComposeViewController MailController;
 
 		public SingleDiningTableViewController (IntPtr handle) : base (handle)
 		{
@@ -40,6 +41,7 @@ namespace HalalGuide.iOS.ViewController.Table
 			SetupTableView ();
 			SetupUIValues ();
 			SetupCollectionView ();
+			SetupEventListeners ();
 
 			await ViewModel.RefreshDataForLocation ();
 		}
@@ -62,6 +64,19 @@ namespace HalalGuide.iOS.ViewController.Table
 
 			ViewModel.LocationChangedEvent += (sender, e) => {
 				Km.Text = ViewModel.SelectedLocation.Distance.ToString (Constants.NumberFormat, CultureInfo.CurrentCulture);
+			};
+
+			Report.TouchUpInside += (sender, e) => {
+				MailController = new MFMailComposeViewController ();
+				MailController.SetToRecipients (new string[]{ "tommy@eazyit.dk" });
+				MailController.SetSubject (Localization.GetLocalizedValue (Feedback.Error) + " - " + Location.TableIdentifier + ": " + ViewModel.SelectedLocation.Id);
+				MailController.SetMessageBody (Localization.GetLocalizedValue (Feedback.ErrorTemplate), false);
+
+				MailController.Finished += (  s, args) => {
+					args.Controller.DismissViewController (true, null);
+					MailController = null;
+				};
+				PresentViewController (MailController, true, null);
 			};
 		}
 
@@ -228,7 +243,7 @@ namespace HalalGuide.iOS.ViewController.Table
 
 		public override int RowsInSection (UITableView tableview, int section)
 		{
-			if (section == 3) {
+			if (section == 4) {
 				return ViewModel.ReviewsInSection ();
 			} else {
 				return	base.RowsInSection (tableview, section);
@@ -238,7 +253,7 @@ namespace HalalGuide.iOS.ViewController.Table
 		public override UITableViewCell GetCell (UITableView tableView, NSIndexPath indexPath)
 		{
 
-			if (indexPath.Section != 3) {
+			if (indexPath.Section != 4) {
 				return base.GetCell (tableView, indexPath);
 			} else {
 				var cell = tableView.DequeueReusableCell (ReviewCell.Identifier);
@@ -261,7 +276,7 @@ namespace HalalGuide.iOS.ViewController.Table
 
 		public override float GetHeightForRow (MonoTouch.UIKit.UITableView tableView, NSIndexPath indexPath)
 		{
-			if (indexPath.Section != 3) {
+			if (indexPath.Section != 4) {
 				return base.GetHeightForRow (tableView, indexPath);
 			} else {
 				return 88;
@@ -270,7 +285,7 @@ namespace HalalGuide.iOS.ViewController.Table
 
 		public override int IndentationLevel (MonoTouch.UIKit.UITableView tableView, MonoTouch.Foundation.NSIndexPath indexPath)
 		{
-			if (indexPath.Section != 3) {
+			if (indexPath.Section != 4) {
 				return base.IndentationLevel (tableView, indexPath);
 			} else {
 				return 0;

@@ -1,4 +1,6 @@
 ﻿{
+"error_template" : "There is incorrect information: EXPLAIN HERE!",
+	"report_incorrect" : "Report errors",
 "unlimited" : "Unlimited",
 "image_send_to_review"  :"Your image has been send to review",
 "review_send_to_review" : "Your Review has been send to review",
@@ -36,7 +38,7 @@
 "choose" : "Choose",
 "regret" :"Cancel",
 "save" : "Save",
-"add" : "Tilføj",
+"add" : "Add",
 "take_pictures_instructions" : "Take a picture of the front",
 "name" : "Name",
 "road" : "Road",

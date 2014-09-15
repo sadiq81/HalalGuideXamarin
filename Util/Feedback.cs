@@ -5,6 +5,7 @@ namespace HalalGuide.Util
 	public static class Feedback
 	{
 		public static readonly string Error = "error";
+		public static readonly string ErrorTemplate = "error_template";
 		public static readonly string Ok = "OK";
 		public static readonly string NameEmpty = "name_empty";
 		public static readonly string RoadEmpty = "road_empty";

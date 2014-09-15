@@ -1,4 +1,6 @@
 ﻿{
+"error_template" : "Der er følgende forkerte oplysninger: UDDYB HER!",
+	"report_incorrect" : "Indberet fejl",
 "unlimited" : "Ubegrænset",
 "image_send_to_review"  :"Dit billede er sendt til godkendelse",
 "review_send_to_review" : "Din anmeldelse er sendt til godkendelse",

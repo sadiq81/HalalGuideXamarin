@@ -5,6 +5,7 @@
 // Manual changes to this file may not be handled correctly.
 //
 using MonoTouch.Foundation;
+using System.CodeDom.Compiler;
 
 namespace HalalGuide.iOS.ViewController.Table
 {
@@ -48,6 +49,9 @@ namespace HalalGuide.iOS.ViewController.Table
 		MonoTouch.UIKit.UILabel PorkLabel { get; set; }
 
 		[Outlet]
+		MonoTouch.UIKit.UIButton Report { get; set; }
+
+		[Outlet]
 		MonoTouch.UIKit.UIImageView Star1 { get; set; }
 
 		[Outlet]
@@ -61,7 +65,7 @@ namespace HalalGuide.iOS.ViewController.Table
 
 		[Outlet]
 		MonoTouch.UIKit.UIImageView Star5 { get; set; }
-
+		
 		void ReleaseDesignerOutlets ()
 		{
 			if (Address != null) {
@@ -147,6 +151,11 @@ namespace HalalGuide.iOS.ViewController.Table
 			if (Star5 != null) {
 				Star5.Dispose ();
 				Star5 = null;
+			}
+
+			if (Report != null) {
+				Report.Dispose ();
+				Report = null;
 			}
 		}
 	}
