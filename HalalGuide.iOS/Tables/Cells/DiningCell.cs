@@ -17,22 +17,22 @@ namespace HalalGuide.iOS.Tables.Cells
 			base.ConfigureLocation (l);
 
 			UIImageView firstImage = (UIImageView)ViewWithTag (PigImageTag);
-			firstImage.Image = UIImage.FromBundle (Images.Pig + l.Pork);
+			firstImage.Image = UIImage.FromBundle (Images.Pig + l.pork);
 
 			UIImageView secondImage = (UIImageView)ViewWithTag (AlcoholImageTag);
-			secondImage.Image = UIImage.FromBundle (Images.Alcohol + l.Alcohol);
+			secondImage.Image = UIImage.FromBundle (Images.Alcohol + l.alcohol);
 
 			UIImageView thirdImage = (UIImageView)ViewWithTag (HalalImageTag);
-			thirdImage.Image = UIImage.FromBundle (Images.NonHalal + l.NonHalal);
+			thirdImage.Image = UIImage.FromBundle (Images.NonHalal + l.nonHalal);
 
 			UILabel firstLabel = (UILabel)ViewWithTag (PigLabelTag);
-			firstLabel.TextColor = l.Pork ? UIColor.Red : UIColor.Green;
+			firstLabel.TextColor = l.pork ? UIColor.Red : UIColor.Green;
 
 			UILabel secondLabel = (UILabel)ViewWithTag (AlcoholLabelTag);
-			secondLabel.TextColor = l.Alcohol ? UIColor.Red : UIColor.Green;
+			secondLabel.TextColor = l.alcohol ? UIColor.Red : UIColor.Green;
 
 			UILabel thirdLabel = (UILabel)ViewWithTag (HalalLabelTag);
-			thirdLabel.TextColor = l.NonHalal ? UIColor.Red : UIColor.Green;
+			thirdLabel.TextColor = l.nonHalal ? UIColor.Red : UIColor.Green;
 
 
 		}

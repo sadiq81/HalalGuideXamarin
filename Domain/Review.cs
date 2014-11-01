@@ -1,51 +1,25 @@
-﻿using SimpleDBPersistence.SimpleDB.Model;
-using SQLite;
-using HalalGuide.Domain.Enum;
+﻿using SQLite;
+using HalalGuide.Domain.Enums;
+using Newtonsoft.Json;
 
 namespace HalalGuide.Domain
 {
-	[Table ("Review")] 
-	[SimpleDBDomain ("Review")]
-	public class Review : DBEntity
+	public class Review : BaseEntity
 	{
-		public const string LocationIdIdentifier = "LocationId";
+		[JsonProperty(PropertyName = "locationId")]
+		public string locationId { get; set; }
 
-		[Column (LocationIdIdentifier)] 
-		[SimpleDBFieldAttribute (LocationIdIdentifier)]
-		public string LocationId { get; set; }
+		[JsonProperty(PropertyName = "rating")]
+		public int rating { get; set; }
 
-		public const string RatingIdIdentifier = "Rating";
+		[JsonProperty(PropertyName = "review")]
+		public string review{ get; set; }
 
-		[Column (RatingIdIdentifier)] 
-		[SimpleDBFieldAttribute (RatingIdIdentifier)]
-		public int Rating { get; set; }
+		[JsonProperty(PropertyName = "submitterId")]
+		public string submitterId { get; set; }
 
-		public const string CreationStatusIdentifier = "CreationStatus";
-
-		[Column (CreationStatusIdentifier)] 
-		[SimpleDBFieldAttribute (CreationStatusIdentifier)]
-		public CreationStatus CreationStatus { get; set; }
-
-		public string Submitter { 
-			get {
-				if (Id != null) {
-					return Id.Split (new []{ '-' }, 2) [0];
-				} else {
-					return "";
-				}
-			} 
-		}
-
-		public Review ()
-		{
-		}
-
-		public override string ToString ()
-		{
-			return string.Format ("[Review: LocationId={0}, Rating={1}, Submitter={2}]", LocationId, Rating, Submitter);
-		}
-		
-		
+		[JsonProperty(PropertyName = "creationStatus")]
+		public CreationStatus creationStatus { get; set; }
 	}
 }
 

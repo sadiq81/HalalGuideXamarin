@@ -1,5 +1,5 @@
 ﻿
-namespace HalalGuide.Domain.Enum
+namespace HalalGuide.Domain.Enums
 {
 	public enum Language
 	{

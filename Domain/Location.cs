@@ -1,153 +1,104 @@
-﻿using SimpleDBPersistence.SimpleDB.Model;
-using HalalGuide.Domain.Enum;
+﻿using HalalGuide.Domain.Enums;
 using SQLite;
+using Newtonsoft.Json;
+using System.Collections.Generic;
+using MonoTouch.AddressBook;
+using Newtonsoft.Json.Converters;
+using HalalGuide.Util.Converter;
 
 namespace HalalGuide.Domain
 {
-	[Table (TableIdentifier)] 
-	[SimpleDBDomain (TableIdentifier)]
-	public class Location : DBEntity
+	public class Location : BaseEntity
 	{
+		[JsonProperty (PropertyName = "name")]
+		public string name { get; set; }
 
-		public const string TableIdentifier = "Location";
+		[JsonProperty (PropertyName = "addressRoad")]
+		public string addressRoad { get; set; }
 
-		public const string NameIdentifier = "Name";
+		[JsonProperty (PropertyName = "addressRoadNumber")]
+		public string addressRoadNumber { get; set; }
 
-		[Column (NameIdentifier)] 
-		[SimpleDBFieldAttribute (NameIdentifier)]
-		public string Name { get; set; }
+		[JsonProperty (PropertyName = "addressPostalCode")]
+		public string addressPostalCode { get; set; }
 
-		public const string AddressRoadIdentifier = "AddressRoad";
+		[JsonProperty (PropertyName = "addressCity")]
+		public string addressCity { get; set; }
 
-		[Column (AddressRoadIdentifier)] 
-		[SimpleDBFieldAttribute (AddressRoadIdentifier)]
-		public string AddressRoad { get; set; }
+		[JsonProperty (PropertyName = "latitude")]
+		public double latitude { get; set; }
 
-		public const string AddressRoadNumberIdentifier = "AddressRoadNumber";
+		[JsonProperty (PropertyName = "longtitude")]
+		public double longtitude { get; set; }
 
-		[Column (AddressRoadNumberIdentifier)] 
-		[SimpleDBFieldAttribute (AddressRoadNumberIdentifier)]
-		public string AddressRoadNumber { get; set; }
+		[JsonProperty (PropertyName = "telephone")]
+		public string telephone { get; set; }
 
-		public const string AddressPostalCodeIdentifier = "AddressPostalCode";
+		[JsonProperty (PropertyName = "homePage")]
+		public string homePage { get; set; }
 
-		[Column (AddressPostalCodeIdentifier)] 
-		[SimpleDBFieldAttribute (AddressPostalCodeIdentifier)]
-		public string AddressPostalCode { get; set; }
 
-		public const string AddressCityIdentifier = "AddressCity";
+		[JsonProperty (PropertyName = "locationType")]
+		public LocationType locationType  { get; set; }
 
-		[Column (AddressCityIdentifier)] 
-		[SimpleDBFieldAttribute (AddressCityIdentifier)]
-		public string AddressCity { get; set; }
+		[JsonIgnoreAttribute]
+		[IgnoreAttribute]
+		public List<DiningCategory> categories  { get; set; }
 
-		public const string LatitudeIdentifier = "Latitude";
-
-		[Column (LatitudeIdentifier)] 
-		[SimpleDBFieldAttribute (LatitudeIdentifier)]
-		public double Latitude { get; set; }
-
-		public const string LongtitudeIdentifier = "Longtitude";
-
-		[Column (LongtitudeIdentifier)] 
-		[SimpleDBFieldAttribute (LongtitudeIdentifier)]
-		public double Longtitude { get; set; }
-
-		public const string TelephoneIdentifier = "Telephone";
-
-		[Column (TelephoneIdentifier)] 
-		[SimpleDBFieldAttribute (TelephoneIdentifier)]
-		public string Telephone { get; set; }
-
-		public const string HomePageIdentifier = "HomePage";
-
-		[Column (HomePageIdentifier)] 
-		[SimpleDBFieldAttribute (HomePageIdentifier)]
-		public string HomePage { get; set; }
-
-		public const string LocationTypeIdentifier = "LocationType";
-
-		[Column (LocationTypeIdentifier)] 
-		[SimpleDBFieldAttribute (LocationTypeIdentifier)]
-		public LocationType LocationType  { get; set; }
-
-		//Only for Dining
-		public const string DiningCategoryIdentifier = "DiningCategory";
-
-		[Column (DiningCategoryIdentifier)] 
-		[SimpleDBFieldAttribute (DiningCategoryIdentifier)]
-		public string Categories  { get; set; }
-
-		//Only for Dining
-		public const string NonHalalIdentifier = "NonHalal";
-
-		[Column (NonHalalIdentifier)] 
-		[SimpleDBFieldAttribute (NonHalalIdentifier)]
-		public bool NonHalal { get; set; }
-
-		//Only for Dining
-		public const string AlcoholIdentifier = "Alcohol";
-
-		[Column (AlcoholIdentifier)] 
-		[SimpleDBFieldAttribute (AlcoholIdentifier)]
-		public bool Alcohol { get; set; }
-
-		//Only for Dining
-		public const string PorkIdentifier = "Pork";
-
-		[Column (PorkIdentifier)] 
-		[SimpleDBFieldAttribute (PorkIdentifier)]
-		public bool Pork { get; set; }
-
-		//Only for Mosque
-		public const string LanguageIdentifier = "Language";
-
-		[Column (LanguageIdentifier)] 
-		[SimpleDBFieldAttribute (LanguageIdentifier)]
-		public Language Language { get; set; }
-
-		public const string CreationStatusIdentifier = "CreationStatus";
-
-		[Column (CreationStatusIdentifier)] 
-		[SimpleDBFieldAttribute (CreationStatusIdentifier)]
-		public CreationStatus CreationStatus { get; set; }
-
-		[Ignore]
-		public string Submitter { 
-			get {
-				if (Id != null) {
-					return Id.Split (new []{ '-' }, 2) [0];
-				} else {
-					return"";
-				}
-			} 
+		[JsonProperty (PropertyName = "categories")]
+		public string categoriesForDatabase {
+			get { 
+				return JsonConvert.SerializeObject (categories);
+			}
+			set {
+				categories = JsonConvert.DeserializeObject<List<DiningCategory>> (value);
+			}
 		}
 
-		[Ignore]
-		public double Distance { get; set; }
+		[JsonProperty (PropertyName = "nonHalal")]
+		public bool nonHalal { get; set; }
+
+		[JsonProperty (PropertyName = "alcohol")]
+		public bool alcohol { get; set; }
+
+		[JsonProperty (PropertyName = "pork")]
+		public bool pork { get; set; }
+
+		[JsonProperty (PropertyName = "language")]
+		public Language language { get; set; }
+
+		[JsonProperty (PropertyName = "creationStatus")]
+		public CreationStatus creationStatus { get; set; }
+
+		[JsonProperty (PropertyName = "submitterId")]
+		public string submitterId { get; set; }
+
+		[IgnoreAttribute]
+		[JsonIgnoreAttribute]
+		public double distance { get; set; }
 
 		public Location ()
 		{
 		}
 
-		public Location (string name, string addressRoad, string addressRoadNumber, string addressPostalCode, string addressCity, double latitude, double longtitude, string telephone, string homePage, LocationType locationType, string categories, bool nonHalal, bool alcohol, bool pork, Language language, CreationStatus creationStatus)
+		public Location (string name, string addressRoad, string addressRoadNumber, string addressPostalCode, string addressCity, double latitude, double longtitude, string telephone, string homePage, LocationType locationType, List<DiningCategory> categories, bool nonHalal, bool alcohol, bool pork, Language language, CreationStatus creationStatus)
 		{
-			this.Name = name;
-			this.AddressRoad = addressRoad;
-			this.AddressRoadNumber = addressRoadNumber;
-			this.AddressPostalCode = addressPostalCode;
-			this.AddressCity = addressCity;
-			this.Latitude = latitude;
-			this.Longtitude = longtitude;
-			this.Telephone = telephone;
-			this.HomePage = homePage;
-			this.LocationType = locationType;
-			this.Categories = categories;
-			this.NonHalal = nonHalal;
-			this.Alcohol = alcohol;
-			this.Pork = pork;
-			this.Language = language;
-			this.CreationStatus = creationStatus;
+			this.name = name;
+			this.addressRoad = addressRoad;
+			this.addressRoadNumber = addressRoadNumber;
+			this.addressPostalCode = addressPostalCode;
+			this.addressCity = addressCity;
+			this.latitude = latitude;
+			this.longtitude = longtitude;
+			this.telephone = telephone;
+			this.homePage = homePage;
+			this.locationType = locationType;
+			this.categories = categories;
+			this.nonHalal = nonHalal;
+			this.alcohol = alcohol;
+			this.pork = pork;
+			this.language = language;
+			this.creationStatus = creationStatus;
 		}
 
 		public override bool Equals (object obj)
@@ -159,24 +110,17 @@ namespace HalalGuide.Domain
 			if (obj.GetType () != typeof(Location))
 				return false;
 			Location other = (Location)obj;
-			return Id == other.Id;
+			return id == other.id;
 		}
 
 
 		public override int GetHashCode ()
 		{
 			unchecked {
-				return (Name != null ? Name.GetHashCode () : 0) ^ (AddressRoad != null ? AddressRoad.GetHashCode () : 0);
+				return (name != null ? name.GetHashCode () : 0) ^ (addressRoad != null ? addressRoad.GetHashCode () : 0);
 			}
 		}
 
-
-		public override string ToString ()
-		{
-			return string.Format ("[Location: Name={0}, AddressRoad={1}, AddressRoadNumber={2}, AddressPostalCode={3}, AddressCity={4}, Latitude={5}, Longtitude={6}, Telephone={7}, HomePage={8}, LocationType={9}, NonHalal={10}, Alcohol={11}, Pork={12}, Language={13}, LocationStatus={14}]", Name, AddressRoad, AddressRoadNumber, AddressPostalCode, AddressCity, Latitude, Longtitude, Telephone, HomePage, LocationType, NonHalal, Alcohol, Pork, Language, CreationStatus);
-		}
-		
-		
 	}
 }
 

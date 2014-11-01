@@ -4,9 +4,9 @@ using HalalGuide.Domain;
 using HalalGuide.Util;
 using System.Threading.Tasks;
 using HalalGuide.ViewModels;
-using SimpleDBPersistence.Service;
 using System.Globalization;
 using HalalGuide.iOS.Util;
+using HalalGuide.Services;
 
 namespace HalalGuide.iOS.Tables.Cells
 {
@@ -50,29 +50,21 @@ namespace HalalGuide.iOS.Tables.Cells
 			location = l;
 
 			UIImageView category = (UIImageView)ViewWithTag (CategoryImageTag);
-			category.Image = UIImage.FromBundle (l.LocationType.ToString ());
+			category.Image = UIImage.FromBundle (l.locationType.ToString ());
 
-			//TODO cache paths
-			Task.Factory.StartNew (() => 
-				ViewModel.GetFirstImagePathForLocation (l).
-				ContinueWith (t => {
-				if (t.Result != null && l == location) {
-					InvokeOnMainThread (delegate {
-						category.Image = UIImage.FromFile (t.Result);
-					});
-				}
-			}));
+
+			//TODO USE SDWEB image to load image
 
 			UILabel name = (UILabel)ViewWithTag (NameLabelTag);
-			name.Text = l.Name;
+			name.Text = l.name;
 
 			UILabel address1 = (UILabel)ViewWithTag (AddressLabelTag);
-			address1.Text = l.AddressRoad + " " + l.AddressRoadNumber;
+			address1.Text = l.addressRoad + " " + l.addressRoadNumber;
 			UILabel address2 = (UILabel)ViewWithTag (PostalCodeLabelTag);
-			address2.Text = l.AddressPostalCode + " " + l.AddressCity;
+			address2.Text = l.addressPostalCode + " " + l.addressCity;
 
 			UILabel km = (UILabel)ViewWithTag (KmTextTag);
-			km.Text = 0.Equals (l.Distance) ? "N/A" : l.Distance.ToString (Constants.NumberFormat, CultureInfo.CurrentUICulture);
+			km.Text = 0.Equals (l.distance) ? "N/A" : l.distance.ToString (Constants.NumberFormat, CultureInfo.CurrentUICulture);
 		}
 	}
 }

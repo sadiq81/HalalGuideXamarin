@@ -1,17 +1,15 @@
-﻿using SimpleDBPersistence.SimpleDB.Model;
-using SQLite;
+﻿using SQLite;
+using Newtonsoft.Json;
 
 namespace HalalGuide.Domain
 {
-	[Table ("FacebookUser")] 
-	[SimpleDBDomain ("FacebookUser")]
-	public class FacebookUser :DBEntity
+	public class FacebookUser : BaseEntity
 	{
-		public const string NameIdentifier = "Name";
+		[JsonProperty(PropertyName = "name")]
+		public string name { get; set; }
 
-		[Column (NameIdentifier)] 
-		[SimpleDBFieldAttribute ("Name")]
-		public string Name { get; set; }
+		[JsonProperty(PropertyName = "image")]
+		public string image { get; set; }
 
 		public FacebookUser ()
 		{

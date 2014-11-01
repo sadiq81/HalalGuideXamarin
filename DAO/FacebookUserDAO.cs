@@ -2,7 +2,7 @@
 
 namespace HalalGuide.DAO
 {
-	public class FacebookUserDAO : HalalGenericDAO<FacebookUser>
+	public class FacebookUserDAO : GenericDAO<FacebookUser>
 	{
 
 	}

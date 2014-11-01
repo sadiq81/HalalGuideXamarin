@@ -2,6 +2,8 @@
 using System.Text;
 using System.IO;
 using System.IO.Compression;
+using System.Linq.Expressions;
+using System.Linq;
 
 namespace HalalGuide.Util
 {
@@ -55,8 +57,6 @@ namespace HalalGuide.Util
 				return Encoding.Unicode.GetString (mso.ToArray ());
 			}
 		}
-
-
 	}
 }
 

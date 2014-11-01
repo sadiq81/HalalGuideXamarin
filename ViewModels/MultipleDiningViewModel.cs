@@ -1,19 +1,25 @@
 ﻿using HalalGuide.Domain;
 using System.Collections.Generic;
 using HalalGuide.Util;
-using HalalGuide.Domain.Enum;
+using HalalGuide.Domain.Enums;
 using System.Linq;
 using System;
 using System.Text;
 using System.Globalization;
+using System.Linq.Expressions;
+using MonoTouch.Foundation;
+using System.Threading;
+using Newtonsoft.Json.Serialization;
+using HalalGuide.iOS.Tables.Cells;
+using System.Threading.Tasks;
 
 namespace HalalGuide.ViewModels
 {
 	public sealed class MultipleDiningViewModel : BaseViewModel
 	{
-		private  List<Location> _cache { get; set; }
+		public event EventHandler filteredLocations = delegate { };
 
-		private  List<Location> Cache { get { return _cache; } set { _cache = value.OrderBy (loc => loc.Distance).ToList (); } }
+		private  List<Location> Cache { get; set ; }
 
 		public  List<DiningCategory> CategoryFilter { get; set; }
 
@@ -27,13 +33,6 @@ namespace HalalGuide.ViewModels
 
 		private string SearchText { get; set; }
 
-		public event EventHandler FilteredLocations = delegate {};
-
-		public void OnFilteredLocations (EventArgs arg)
-		{
-			FilteredLocations (this, arg);
-		}
-
 		public MultipleDiningViewModel () : base ()
 		{
 			DistanceFilter = 5;
@@ -42,28 +41,24 @@ namespace HalalGuide.ViewModels
 			AlcoholFilter = true;
 			HalalFilter = true;
 			SearchText = "";
+			Cache = new List<Location> ();
+		}
 
-			RefreshCache ();
+		public override void RefreshCache ()
+		{
+			List<Location> list = locationService.LocationsByQuery (GetQuery ());
+			Cache = CalculateDistances (list).OrderBy (loc => loc.distance).ToList ();
 		}
 
 		public bool SearchTextChanged (string searchText)
 		{
 			SearchText = searchText;
-			List<Location> temp = _LocationService.GetByQuery (GetQuery ());
+			List<Location> temp = locationService.LocationsByQuery (GetQuery ());
 			if (!temp.Except (Cache).Union (Cache.Except (temp)).Any ()) {
 				return false;
 			} else {
-				Cache = CalculateDistances (temp);
+				Cache = CalculateDistances (temp).OrderBy (loc => loc.distance).ToList ();
 				return true;
-			}
-		}
-
-		public override void RefreshCache ()
-		{
-			Cache = CalculateDistances (_LocationService.GetByQuery (GetQuery ()), true);
-			//Bounding box can contain locations farter than distance filter
-			if (DistanceFilter < Constants.MaxDistanceLimit) {
-				Cache.RemoveAll (loc => loc.Distance > DistanceFilter);
 			}
 		}
 
@@ -72,80 +67,52 @@ namespace HalalGuide.ViewModels
 			return Cache.Count;
 		}
 
-		public string GetQuery ()
+		public Expression<Func<Location, bool>> GetQuery ()
 		{
-			StringBuilder queryString = new StringBuilder ();
-
-			queryString.Append (string.Format ("SELECT * FROM {0} WHERE {1} = {2}", Location.TableIdentifier, Location.LocationTypeIdentifier, (int)LocationType.Dining));
+			Expression<Func<Location, bool>> predicate = loc => loc.locationType == LocationType.Dining &&
+			                                             loc.creationStatus == CreationStatus.Approved &&
+			                                             loc.deleted == false;
 
 			if (CategoryFilter != null && CategoryFilter.Count > 0) {
-
-				queryString.Append (string.Format (" AND ("));
-
-				foreach (DiningCategory cat in CategoryFilter) {
-					queryString.Append (string.Format (" {0} LIKE '%{1}%' OR", Location.DiningCategoryIdentifier, cat.Title));
-				}
-
-				queryString.Remove (queryString.Length - 2, 2);
-				queryString.Append (")");
+				predicate = predicate.AndAlso (loc => loc.categories.Intersect (CategoryFilter).Any ());
 			}
 
 			if (Position != null && DistanceFilter < Constants.MaxDistanceLimit) {
 
-				//                 {1}              {4}
-				//MaxPoint: 55.7511577903661 12.6660371446668 
-				//                 {0}              {3}                 
-				//Position: 55.7061392798125 12.5861374073266
-				//                 {2}              {5}
-				//MinPoint: 55.6611207692588 12.5062376699864
-
 				CalcUtil.BoundingBox box = CalcUtil.GetBoundingBox (Position, DistanceFilter);
 
-				Console.WriteLine ("Position: " + Position.Latitude + "," + Position.Longitude + "MaxPoint: " + box.MaxPoint.Latitude + "," + box.MaxPoint.Longitude + " MinPoint: " + box.MinPoint.Latitude + "," + box.MinPoint.Longitude);
-
-				queryString.Append (string.Format (" AND ({0} <= {1} AND {0} >= {2} AND {3} <= {4} AND {3} >= {5})", 
-					Location.LatitudeIdentifier, 
-					box.MaxPoint.Latitude.ToString (CultureInfo.InvariantCulture), 
-					box.MinPoint.Latitude.ToString (CultureInfo.InvariantCulture), 
-					Location.LongtitudeIdentifier.ToString (CultureInfo.InvariantCulture), 
-					box.MaxPoint.Longitude.ToString (CultureInfo.InvariantCulture), 
-					box.MinPoint.Longitude.ToString (CultureInfo.InvariantCulture)));
-
+				predicate = predicate.AndAlso (loc => loc.latitude <= box.MaxPoint.Latitude);
+				predicate = predicate.AndAlso (loc => loc.latitude >= box.MinPoint.Latitude);
+				predicate = predicate.AndAlso (loc => loc.longtitude <= box.MaxPoint.Longitude);
+				predicate = predicate.AndAlso (loc => loc.longtitude >= box.MinPoint.Longitude);
 			}
 
-			//SELECT * FROM Location WHERE LocationType = 2 AND (Latitude <= 55.7511480782793 AND Latitude >= 55.6611110572198 AND Longtitude <= 12.6659327543831 AND Longtitude >= 12.5061333195051)
-
 			if (PorkFilter == false) {
-
-				queryString.Append (string.Format (" AND {0} = {1}", Location.PorkIdentifier, Convert.ToInt32 (false)));
+				predicate = predicate.AndAlso (loc => loc.pork == PorkFilter);
 			}
 
 			if (AlcoholFilter == false) {
-
-				queryString.Append (string.Format (" AND {0} = {1}", Location.AlcoholIdentifier, Convert.ToInt32 (false)));
+				predicate = predicate.AndAlso (loc => loc.alcohol == AlcoholFilter);
 			}
 
 			if (HalalFilter == false) {
-
-				queryString.Append (string.Format (" AND {0} = {1}", Location.NonHalalIdentifier, Convert.ToInt32 (false)));
+				predicate = predicate.AndAlso (loc => loc.nonHalal == HalalFilter);
 			}
+
+
 
 			if (SearchText.Length > 0) {
 
-				queryString.Append (string.Format (" AND ( {1} LIKE '%{0}%' OR {2} LIKE '%{0}%' OR {3} LIKE '%{0}%' OR {4} LIKE '%{0}%' OR {5} LIKE '%{0}%' OR {6} LIKE '%{0}%')", 
-					SearchText, 
-					Location.NameIdentifier, 
-					Location.AddressRoadIdentifier, 
-					Location.AddressRoadNumberIdentifier, 
-					Location.AddressPostalCodeIdentifier, 
-					Location.AddressCityIdentifier,
-					Location.DiningCategoryIdentifier
-				));
+				predicate = predicate.AndAlso (loc => loc.name.Contains (SearchText) ||
+				loc.addressRoad.Contains (SearchText) ||
+				loc.addressRoadNumber.Contains (SearchText) ||
+				loc.addressPostalCode.Contains (SearchText) ||
+				loc.addressCity.Contains (SearchText) ||
+				loc.categoriesForDatabase.Contains (SearchText)
+				);
 			}
 
-			queryString.Append (string.Format (" AND {0} = {1}", Location.CreationStatusIdentifier, (int)CreationStatus.Approved));
-
-			return queryString.ToString ();
+			return predicate;
 		}
 
 		public Location GetLocationAtRow (int row)

@@ -1,6 +1,5 @@
 using MonoTouch.Foundation;
 using MonoTouch.UIKit;
-using XUbertestersSDK;
 using System;
 
 namespace HalalGuide.iOS
@@ -21,14 +20,6 @@ namespace HalalGuide.iOS
 
 		public override bool FinishedLaunching (UIApplication application, NSDictionary launchOptions)
 		{
-			XUbertesters.Initialize ();
-
-			AppDomain.CurrentDomain.UnhandledException += (object sender, UnhandledExceptionEventArgs e) => {
-				XUbertesters.SendCrash (e);
-			};
-
-
-
 			return true;
 		}
 		

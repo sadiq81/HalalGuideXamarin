@@ -1,5 +1,9 @@
 ﻿using System.Collections.Generic;
 using HalalGuide.Domain;
+using System;
+using System.Threading.Tasks;
+using HalalGuide.Util;
+using HalalGuide.Domain.Enums;
 
 namespace HalalGuide.ViewModels
 {
@@ -9,12 +13,17 @@ namespace HalalGuide.ViewModels
 
 		public LandingViewModel () : base ()
 		{
-			RefreshCache ();
 		}
 
 		public override void RefreshCache ()
 		{
-			Cache = CalculateDistances (_LocationService.GetLastTenLocations (), false);
+			Cache = locationService.GetLastTenLocations ();
+			CalculateDistances ();
+		}
+
+		public void CalculateDistances ()
+		{
+			Cache = CalculateDistances (Cache, false);
 		}
 
 		public int Rows ()
@@ -26,6 +35,8 @@ namespace HalalGuide.ViewModels
 		{
 			return  Cache [row];
 		}
+
+
 	}
 }
 

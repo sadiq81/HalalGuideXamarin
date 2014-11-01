@@ -2,11 +2,11 @@ using System;
 using MonoTouch.Foundation;
 using MonoTouch.UIKit;
 using HalalGuide.ViewModels;
-using XUbertestersSDK;
-using SimpleDBPersistence.Service;
 using HalalGuide.Domain;
 using HalalGuide.iOS.Util;
 using HalalGuide.iOS.Tables.Cells;
+using HalalGuide.Services;
+using MonoTouch.AVFoundation;
 
 namespace HalalGuide.iOS.ViewController
 {
@@ -22,7 +22,7 @@ namespace HalalGuide.iOS.ViewController
 		private UITableViewController TableViewController = new UITableViewController ();
 		private UIRefreshControl RefreshControl = new UIRefreshControl ();
 
-		public override void  ViewDidLoad ()
+		public async override void  ViewDidLoad ()
 		{
 			NavigationController.NavigationBar.Translucent = false;
 
@@ -32,21 +32,15 @@ namespace HalalGuide.iOS.ViewController
 
 			SetupEventListeners ();
 
-		}
-
-		public async override void ViewDidAppear (bool animated)
-		{
-			base.ViewDidAppear (animated);
 			await ViewModel.RefreshLocations ();
-			XUbertesters.LogInfo ("LandingPageController: ViewDidAppear");
 		}
-
 
 		#region Setup
 
 		private void SetupTableView ()
 		{
 			TableViewController.TableView = LatestUpdatedTableView;
+
 			TableViewController.RefreshControl = RefreshControl;
 			RefreshControl.ValueChanged += async (sender, e) => {
 				RefreshControl.BeginRefreshing ();
@@ -58,12 +52,13 @@ namespace HalalGuide.iOS.ViewController
 
 		private void SetupEventListeners ()
 		{
-			ViewModel.RefreshLocationsCompletedEvent += (sender, e) => InvokeOnMainThread (() => {
-				TableViewController.TableView.ReloadSections (new NSIndexSet (0), UITableViewRowAnimation.Top);
+
+			ViewModel.RefreshedLocations += (sender, e) => InvokeOnMainThread (() => {
+				TableViewController.TableView.ReloadData ();
 			});
 
 			ViewModel.LocationChangedEvent += (sender, e) => InvokeOnMainThread (() => {
-				ViewModel.RefreshCache ();
+				ViewModel.CalculateDistances ();
 				TableViewController.TableView.ReloadSections (new NSIndexSet (0), UITableViewRowAnimation.None);
 			});
 			
@@ -92,7 +87,7 @@ namespace HalalGuide.iOS.ViewController
 		{
 			Location l = ViewModel.GetLocationAtRow (indexPath.Item);
 
-			UITableViewCell cell = tableView.DequeueReusableCell (l.LocationType.ToString ());
+			UITableViewCell cell = tableView.DequeueReusableCell (l.locationType.ToString ());
 
 			((ILocationCell)cell).ConfigureLocation (l);
 

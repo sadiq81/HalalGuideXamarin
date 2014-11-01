@@ -2,7 +2,7 @@
 
 namespace HalalGuide.DAO
 {
-	public class LocationPictureDAO : HalalGenericDAO<LocationPicture>
+	public class LocationPictureDAO : GenericDAO<LocationPicture>
 	{
 
 	}

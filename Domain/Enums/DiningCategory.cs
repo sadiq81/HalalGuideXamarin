@@ -1,9 +1,14 @@
 ﻿using System.Collections.Generic;
+using System;
+using System.Linq;
+using Newtonsoft.Json;
 
-namespace HalalGuide.Domain.Enum
+namespace HalalGuide.Domain.Enums
 {
+	/*
 	public  class DiningCategory
 	{
+
 		public string Title { get; set; }
 
 		public DiningCategory (string title)
@@ -32,6 +37,7 @@ namespace HalalGuide.Domain.Enum
 		{
 			return Title.GetHashCode ();
 		}
+
 
 		public static DiningCategory Afghan = new DiningCategory ("afghan");
 		public static DiningCategory African = new DiningCategory ("african");
@@ -122,16 +128,6 @@ namespace HalalGuide.Domain.Enum
 
 		public static DiningCategory Wok = new DiningCategory ("wok");
 
-		public static List<DiningCategory> Categories = new List<DiningCategory> () {
-			Afghan, African, American, Argentine, Asien, Belgian, Brasilian, British, Buffet,
-			Burger, Bakery, Bagel, BubbleTea, Butcher, Cafe, Caribian, Cupcake, Candy, Chinese, Danish,
-			Dessert, Fish, Fruit, Fastfood, French, German, Grill, Greek,
-			Icecream, Juice, Kiosk, Indian, Indonesian, Irish, Italien, Iranian, Japanese, Kebab, Korean,
-			Kosher, Libanese, Mediterranean, Malyasian, Marocan, Mexican, Nordic, Nepalise, Pastery,
-			Pakistani, Persian, Pizza, Portugese, Russian, Seafood, Salat, Sandwich, Spanish, Steak, Soup,
-			Sushi, Tapas, Thai, Tibetan, Tyrkish, Vegan, Vietnamese, Wok
-		};
-
 		public static List<DiningCategory> GetCategoriesFromString (string categoryString)
 		{
 			List<DiningCategory> categories = new List<DiningCategory> ();
@@ -145,6 +141,119 @@ namespace HalalGuide.Domain.Enum
 			}
 			return categories;
 		}
-	}
-}
 
+
+
+		public static List<DiningCategory> Categories = new List<DiningCategory> () {
+			Afghan, African, American, Argentine, Asien, Belgian, Brasilian, British, Buffet,
+			Burger, Bakery, Bagel, BubbleTea, Butcher, Cafe, Caribian, Cupcake, Candy, Chinese, Danish,
+			Dessert, Fish, Fruit, Fastfood, French, German, Grill, Greek,
+			Icecream, Juice, Kiosk, Indian, Indonesian, Irish, Italien, Iranian, Japanese, Kebab, Korean,
+			Kosher, Libanese, Mediterranean, Malyasian, Marocan, Mexican, Nordic, Nepalise, Pastery,
+			Pakistani, Persian, Pizza, Portugese, Russian, Seafood, Salat, Sandwich, Spanish, Steak, Soup,
+			Sushi, Tapas, Thai, Tibetan, Tyrkish, Vegan, Vietnamese, Wok
+		};
+	}
+
+	*/
+
+
+	public enum DiningCategory
+	{
+		afghan,
+		african,
+		american,
+		argentine,
+		asien,
+		belgian,
+		brasilian,
+		british,
+		buffet,
+		burger,
+		bakery,
+		bagel,
+		bubbletea,
+		butcher,
+		cafe,
+		caribian,
+		cupcake,
+		candy,
+		chinese,
+		danish,
+		dessert,
+		fish,
+		fruit,
+		fastfood,
+		french,
+		german,
+		grill,
+		greek,
+		icecream,
+		juice,
+		kiosk,
+		indian,
+		indonesian,
+		irish,
+		italien,
+		iranian,
+		japanese,
+		kebab,
+		korean,
+		kosher,
+		libanese,
+		mediterranean,
+		malyasian,
+		marocan,
+		mexican,
+		nordic,
+		nepalise,
+		pastery,
+		pakistani,
+		persian,
+		pizza,
+		portugese,
+		russian,
+		seafood,
+		salat,
+		sandwich,
+		spanish,
+		steak,
+		soup,
+		sushi,
+		tapas,
+		thai,
+		tibetan,
+		tyrkish,
+		vegan,
+		vietnamese,
+		wok
+	}
+
+	//TODO make generic
+	public static class DiningCategoryExtensions
+	{
+		public static List<DiningCategory> CategoriesMatching (string partialCategory)
+		{
+			List<DiningCategory> matches = new List<DiningCategory> ();
+			foreach (string name in Enum.GetNames(typeof(DiningCategory))) {
+				if (name.Contains (partialCategory.ToLower ())) {
+					matches.Add ((DiningCategory)Enum.Parse (typeof(DiningCategory), name, true));
+				}
+			}
+			return matches;
+		}
+
+		public static DiningCategory CategoryAtIndex (int index)
+		{
+			return (DiningCategory)Enum.GetValues (typeof(DiningCategory)).GetValue (index);
+		}
+
+		public static List<DiningCategory> Categories ()
+		{
+			return new List<DiningCategory> (Enum.GetValues (typeof(DiningCategory)).OfType<DiningCategory> ());
+		}
+
+	}
+
+	
+}

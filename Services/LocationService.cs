@@ -1,88 +1,64 @@
 ﻿using System;
-using HalalGuide.Domain.Enum;
+using HalalGuide.Domain.Enums;
 using HalalGuide.Domain;
 using HalalGuide.DAO;
-using SimpleDBPersistence.Service;
-using XUbertestersSDK;
-using SimpleDBPersistence.SimpleDB.Model.AWSException;
-using SimpleDBPersistence.SimpleDB.Model.Parameters;
 using System.Collections.Generic;
 using HalalGuide.Util;
-using SimpleDBPersistence.Domain;
 using System.Threading.Tasks;
 using System.Linq;
+using System.Linq.Expressions;
+using System.Globalization;
 
 namespace HalalGuide.Services
 {
 	public class LocationService
 	{
-		private LocationDAO _LocationDAO = ServiceContainer.Resolve<LocationDAO> ();
+		private LocationDAO locationDAO { get { return ServiceContainer.Resolve<LocationDAO> (); } }
 
-		private  DatabaseWrapper _SQLiteConnection = ServiceContainer.Resolve<DatabaseWrapper> ();
+		private  DatabaseWrapper database { get { return ServiceContainer.Resolve<DatabaseWrapper> (); } }
 
-		private  PreferencesService _PreferencesService = ServiceContainer.Resolve<PreferencesService> ();
+		private  PreferencesService preferences { get { return ServiceContainer.Resolve<PreferencesService> (); } }
 
 		public LocationService ()
 		{
 		}
 
-		public async  Task<CreateEntityResult> SaveLocation (Location location)
+		public async  Task SaveLocation (Location location)
 		{
-			try {
-				await _LocationDAO.SaveOrReplace (location);
-				_SQLiteConnection.Insert (location);
-			} catch (AWSErrorException e) {
-				XUbertesters.LogError ("LocationService: CouldNotCreateEntityInSimpleDB: " + e + " Entity: " + location);
-				return CreateEntityResult.CouldNotCreateEntityInSimpleDB;
-			}
-			return CreateEntityResult.OK;
+			await locationDAO.SaveOrReplace (location);
 		}
 
-		public async  Task<CreateEntityResult> DeleteLocation (Location location)
+		public async Task RetrieveLatestLocations ()
 		{
-			try {
-				await _LocationDAO.Delete (location);
-				_SQLiteConnection.Delete (location);
-			} catch (AWSErrorException e) {
-				XUbertesters.LogError ("LocationService: CouldNotDeleteEntityInSimpleDB: " + e + " Entity: " + location);
-				return CreateEntityResult.CouldNotCreateEntityInSimpleDB;
-			}
-			return CreateEntityResult.OK;
+			string updatedTime = DateTime.UtcNow.ToString (Constants.DateFormat, CultureInfo.InvariantCulture);
+
+			string lastUpdatedString = preferences.GetString (Constants.LocationLastUpdated);
+
+			DateTime updatedLast = DateTime.ParseExact (lastUpdatedString, Constants.DateFormat, CultureInfo.InvariantCulture);
+
+			Console.WriteLine (updatedLast);
+
+			await locationDAO.Where (loc => loc.updatedAt > updatedLast);
+		
+			preferences.StoreString (Constants.LocationLastUpdated, updatedTime);
 		}
 
-		public async Task<List<Location>> RetrieveLatestLocations ()
+		public List<Location> RetrieveAllLocations ()
 		{
-			XUbertesters.LogInfo (string.Format ("LocationService-RetrieveLatestLocations"));
+			List<Location> locations = database.Table<Location> ().Where (l => l.deleted == false).ToList ();
+			return locations;
+		}
 
-			string updatedTime = DateTime.UtcNow.ToString (Constants.DateFormat);
-			string lastUpdated = _PreferencesService.GetString (Constants.LocationLastUpdated);
-
-			SelectQuery<Location> locationQuery = new SelectQuery<Location> ()
-				.GreatherThanOrEqual (Entity.UpdatedIdentifier, lastUpdated)
-				.NotNull (Entity.UpdatedIdentifier)
-				.SetSortOrder (Entity.UpdatedIdentifier);
-
-			List<Location> locations = await _LocationDAO.Select (locationQuery);
-
-			if (locations != null && locations.Count > 0) {
-				XUbertesters.LogInfo (string.Format ("LocationService-RetrieveLatestLocations: found: {0}", locations.Count));
-				locations.ForEach (_SQLiteConnection.InsertOrReplace);
-			}
-
-			_PreferencesService.StoreString (Constants.LocationLastUpdated, updatedTime);
-
+		public List<Location> LocationsByQuery (Expression<Func<Location, bool>> predicate)
+		{
+			List<Location> locations = database.Table<Location> ().Where (predicate).ToList ();
 			return locations;
 		}
 
 
 		public List<Location> GetLastTenLocations ()
 		{
-			return _SQLiteConnection.Table<Location> ().Where (l => l.CreationStatus == CreationStatus.Approved).OrderByDescending (l => l.LastUpdated).Take (10).ToList ();
-		}
-
-		public List<Location> GetByQuery (string query)
-		{
-			return _SQLiteConnection.Query<Location> (query);
+			return database.Table<Location> ().Where (l => l.creationStatus == CreationStatus.Approved && l.deleted == false).OrderByDescending (l => l.updatedAt).Take (10).ToList ();
 		}
 	}
 }

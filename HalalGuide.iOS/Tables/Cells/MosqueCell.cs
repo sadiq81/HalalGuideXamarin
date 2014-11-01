@@ -18,10 +18,10 @@ namespace HalalGuide.iOS.Tables.Cells
 		{
 			base.ConfigureLocation (l);
 			UIImageView firstImage = (UIImageView)ViewWithTag (LaguageImageTag);
-			firstImage.Image = UIImage.FromBundle (l.Language.ToString ());
+			firstImage.Image = UIImage.FromBundle (l.language.ToString ());
 
 			UILabel firstLabel = (UILabel)ViewWithTag (LanguageLabelTag);
-			firstLabel.Text = l.Language.ToString ().ToLower ().FirstToUpper ();
+			firstLabel.Text = l.language.ToString ().ToLower ().FirstToUpper ();
 
 		}
 	}

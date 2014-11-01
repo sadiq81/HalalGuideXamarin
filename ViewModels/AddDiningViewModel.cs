@@ -3,27 +3,24 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using HalalGuide.Domain;
-using HalalGuide.Domain.Enum;
+using HalalGuide.Domain.Enums;
 using HalalGuide.Domain.Dawa;
 using System.Linq;
 using System.Globalization;
+using Xamarin.Media;
+using HalalGuide.Services;
 
 namespace HalalGuide.ViewModels
 {
 	public class AddDiningViewModel : BaseViewModel
 	{
-
+		protected MediaPicker picker { get { return ServiceContainer.Resolve<MediaPicker> (); } }
 
 		private Dictionary<string, Address> StreetNumbersMap { get; set; }
 
 		public AddDiningViewModel () : base ()
 		{
 			StreetNumbersMap = new Dictionary<string, Address> ();
-		}
-
-		public override void RefreshCache ()
-		{
-			//DO Nothing
 		}
 
 		public List<string> StreetNames ()
@@ -56,7 +53,7 @@ namespace HalalGuide.ViewModels
 		public async Task<string> GetCityNameFromPostalCode (string postalcode)
 		{
 			if (postalcode != null && postalcode.Length == 4 && Regex.IsMatch (postalcode, @"^[0-9]+$")) {
-				var name = await _AddressService.GetNameOfPostDistrict (postalcode);
+				var name = await addressService.GetNameOfPostDistrict (postalcode);
 				return name;
 			} else {
 				return null;
@@ -65,7 +62,7 @@ namespace HalalGuide.ViewModels
 
 		public async Task<Adgangsadresse> DoesAddressExists (string roadName, string roadNumber, string postalCode)
 		{
-			return await _AddressService.DoesAddressExits (roadName, roadNumber, postalCode);
+			return await addressService.DoesAddressExits (roadName, roadNumber, postalCode);
 		}
 
 		//TODO Make sure position is known before calling this function
@@ -73,7 +70,7 @@ namespace HalalGuide.ViewModels
 		{
 			Dictionary<string, Address> temp = new Dictionary<string, Address> ();
 
-			List<Adgangsadresse> adresses = await _AddressService.AddressNearPosition (Position, 150);
+			List<Adgangsadresse> adresses = await addressService.AddressNearPosition (Position, 150);
 
 			if (adresses != null) {
 			
@@ -94,8 +91,6 @@ namespace HalalGuide.ViewModels
 
 			StreetNumbersMap = temp;
 		}
-
-
 
 		public async Task<CreateEntityResult> CreateNewLocation (string name, string road, string roadNumber, string postalCode, string city, string telephone, string homePage, bool pork, bool alcohol, bool nonHalal, List<DiningCategory> categoriesChoosen, byte[] data)
 		{
@@ -124,33 +119,55 @@ namespace HalalGuide.ViewModels
 				             telephone, 
 				             homePage,
 				             LocationType.Dining,
-				             String.Join (", ", categoriesChoosen.Select (s => s.Title)),
+				             categoriesChoosen,
 				             nonHalal, 
 				             alcohol, 
 				             pork,
 				             0,
 				             CreationStatus.Approved);
 
-			l.Id = _KeyChain.GetFaceBookAccount ().Username + "-" + DateTime.UtcNow.Ticks;
+			await locationService.SaveLocation (l);
 
-			CreateEntityResult result = await _LocationService.SaveLocation (l);
-
-			if (result == CreateEntityResult.OK) {
-			
-				result = await _ImageService.UploadLocationPicture (l, data);
-
-				if (result != CreateEntityResult.OK) {
-					await _LocationService.DeleteLocation (l);
-				}
-			} 
+			//TODO
+			//await uploadService.UploadFile (null,"test.jpg");
 
 			SelectedLocation = l;
-			return result;
+
+			return CreateEntityResult.OK;
 		}
 
+		public async Task<MediaFile> TakePicture (string path, string fileName)
+		{
+			MediaFile image = null;
 
+			await picker.TakePhotoAsync (new StoreCameraMediaOptions {
+				Name = fileName,
+				Directory = path
+			}).ContinueWith (t => {
+				if (t.IsCanceled || t.IsFaulted) {
+				} else {
+					image = t.Result;
+				}
+			});
+			return image;
+		}
 
+		public async Task<MediaFile> GetPictureFromDevice ()
+		{
+			MediaFile image = null;
+			await picker.PickPhotoAsync ().ContinueWith (t => {
+				if (t.IsCanceled || t.IsFaulted) {
+				} else {
+					image = t.Result;
+				}
+			});
+			return image;
+		}
 
+		public bool IsCameraAvailable ()
+		{
+			return picker.IsCameraAvailable;
+		}
 	}
 }
 

@@ -6,12 +6,9 @@ using MonoTouch.Foundation;
 using MonoTouch.UIKit;
 using HalalGuide.iOS.ViewController;
 using HalalGuide.ViewModels;
-using SimpleDBPersistence.Service;
-using XUbertestersSDK;
 using HalalGuide.Util;
-using HalalGuide.Domain.Enum;
-using System.Security.Cryptography.X509Certificates;
-using System.Resources;
+using HalalGuide.Domain.Enums;
+using HalalGuide.Services;
 
 namespace HalalGuide.iOS.ViewController
 {
@@ -29,7 +26,6 @@ namespace HalalGuide.iOS.ViewController
 
 		public override void ViewDidLoad ()
 		{
-			XUbertesters.LogInfo ("ReviewController: ViewDidLoad");
 			base.ViewDidLoad ();
 			SetupReviewTextField ();
 		}
@@ -50,28 +46,28 @@ namespace HalalGuide.iOS.ViewController
 
 		partial void Regreet (UIBarButtonItem sender)
 		{
-			XUbertesters.LogInfo ("ReviewController: Regreet");
-			DismissViewController (true, null);
 
 		}
 
 		async partial  void Save (UIBarButtonItem sender)
 		{
-			XUbertesters.LogInfo ("ReviewController: Save");
 
 			ResignFirstResponder ();
 
 			InvokeOnMainThread (ActivityIndicator.StartAnimating);
 
-			CreateEntityResult result = await ViewModel.CreateNewReview (ViewModel.SelectedLocation, Rating, Review.Text);
+			await ViewModel.CreateNewReview (ViewModel.SelectedLocation, Rating, Review.Text);
 
 			ActivityIndicator.StopAnimating ();
 
+			//TODO
+			/*
 			if (result == CreateEntityResult.OK) {
 				new UIAlertView (Localization.GetLocalizedValue (Feedback.Ok), Localization.GetLocalizedValue (Feedback.ReviewSendToReview), null, Localization.GetLocalizedValue (Feedback.Ok), null){ WeakDelegate = this }.Show ();
 			} else {
 				new UIAlertView (Localization.GetLocalizedValue (Feedback.Error), Localization.GetLocalizedValue (result.ToString ()), null, Localization.GetLocalizedValue (Feedback.Ok), null).Show ();
 			}
+			*/
 
 		}
 

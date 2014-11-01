@@ -4,18 +4,18 @@ using System;
 
 using MonoTouch.Foundation;
 using MonoTouch.UIKit;
-using HalalGuide.iOS.CollectionView;
 using HalalGuide.Util;
-using XUbertestersSDK;
 using Xamarin.Media;
-using HalalGuide.Domain.Enum;
-using SimpleDBPersistence.Service;
+using HalalGuide.Domain.Enums;
 using System.Globalization;
 using HalalGuide.Domain;
 using HalalGuide.ViewModels;
 using HalalGuide.iOS.Tables.Cells;
 using HalalGuide.iOS.Util;
 using MonoTouch.MessageUI;
+using Alliance.Carousel;
+using HalalGuide.iOS.Carousel;
+using HalalGuide.Services;
 
 namespace HalalGuide.iOS.ViewController.Table
 {
@@ -24,6 +24,7 @@ namespace HalalGuide.iOS.ViewController.Table
 		private readonly SingleDiningViewModel ViewModel = ServiceContainer.Resolve<SingleDiningViewModel> ();
 		private readonly AddReviewViewModel AddReviewViewModel = ServiceContainer.Resolve<AddReviewViewModel> ();
 		private UIImageView Expand;
+		private CarouselView carousel;
 		MFMailComposeViewController MailController;
 
 		public SingleDiningTableViewController (IntPtr handle) : base (handle)
@@ -33,7 +34,7 @@ namespace HalalGuide.iOS.ViewController.Table
 		public override void ViewWillAppear (bool animated)
 		{
 			base.ViewWillAppear (animated);
-			ViewModel.RefreshCache ();
+			//ViewModel.RefreshCache ();
 		}
 
 		public async override void  ViewDidLoad ()
@@ -43,33 +44,27 @@ namespace HalalGuide.iOS.ViewController.Table
 			SetupCollectionView ();
 			SetupEventListeners ();
 
-			await ViewModel.RefreshDataForLocation ();
-		}
-
-		public override void ViewDidAppear (bool animated)
-		{
-			base.ViewDidAppear (animated);
-			XUbertesters.LogInfo ("SingleDiningTableViewController: ViewDidAppear");
+			//await ViewModel.RefreshDataForLocation ();
 		}
 
 		private void SetupEventListeners ()
 		{
 			ViewModel.RefreshedPicturesCompletedEvent += (sender, e) => InvokeOnMainThread (delegate {
-				PictureCollectionView.ReloadData ();
+				TableView.ReloadSections (new NSIndexSet (2), UITableViewRowAnimation.Fade);
 			});
 
 			ViewModel.RefreshedReviewCompletedEvent += (sender, e) => InvokeOnMainThread (delegate {
-				TableView.ReloadSections (new NSIndexSet (3), UITableViewRowAnimation.Fade);
+				TableView.ReloadSections (new NSIndexSet (4), UITableViewRowAnimation.Fade);
 			});
 
 			ViewModel.LocationChangedEvent += (sender, e) => {
-				Km.Text = ViewModel.SelectedLocation.Distance.ToString (Constants.NumberFormat, CultureInfo.CurrentCulture);
+				Km.Text = ViewModel.SelectedLocation.distance.ToString (Constants.NumberFormat, CultureInfo.CurrentCulture);
 			};
 
 			Report.TouchUpInside += (sender, e) => {
 				MailController = new MFMailComposeViewController ();
 				MailController.SetToRecipients (new string[]{ "tommy@eazyit.dk" });
-				MailController.SetSubject (Localization.GetLocalizedValue (Feedback.Error) + " - " + Location.TableIdentifier + ": " + ViewModel.SelectedLocation.Id);
+				MailController.SetSubject (Localization.GetLocalizedValue (Feedback.Error) + " - " + ": " + ViewModel.SelectedLocation.id);
 				MailController.SetMessageBody (Localization.GetLocalizedValue (Feedback.ErrorTemplate), false);
 
 				MailController.Finished += (  s, args) => {
@@ -87,19 +82,19 @@ namespace HalalGuide.iOS.ViewController.Table
 
 		private void SetupUIValues ()
 		{
-			Name.Text = ViewModel.SelectedLocation.Name;
-			Address.Text = string.Format ("{0} {1}", ViewModel.SelectedLocation.AddressRoad, ViewModel.SelectedLocation.AddressRoadNumber);
-			City.Text = string.Format ("{0} {1}", ViewModel.SelectedLocation.AddressPostalCode, ViewModel.SelectedLocation.AddressCity);
-			Category.Text = ViewModel.Categories ();
+			Name.Text = ViewModel.SelectedLocation.name;
+			Address.Text = string.Format ("{0} {1}", ViewModel.SelectedLocation.addressRoad, ViewModel.SelectedLocation.addressRoadNumber);
+			City.Text = string.Format ("{0} {1}", ViewModel.SelectedLocation.addressPostalCode, ViewModel.SelectedLocation.addressCity);
+			Category.Text = ViewModel.SelectedLocation.categories.ToString ();
 
-			PorkImage.Image = UIImage.FromBundle (Images.Pig + ViewModel.SelectedLocation.Pork);
-			PorkLabel.TextColor = ViewModel.SelectedLocation.Pork ? UIColor.Red : UIColor.Green;
-			AlcoholImage.Image = UIImage.FromBundle (Images.Alcohol + ViewModel.SelectedLocation.Alcohol);
-			AlcoholLabel.TextColor = ViewModel.SelectedLocation.Alcohol ? UIColor.Red : UIColor.Green;
-			HalalImage.Image = UIImage.FromBundle (Images.NonHalal + ViewModel.SelectedLocation.NonHalal);
-			HalalLabel.TextColor = ViewModel.SelectedLocation.NonHalal ? UIColor.Red : UIColor.Green;
+			PorkImage.Image = UIImage.FromBundle (Images.Pig + ViewModel.SelectedLocation.pork);
+			PorkLabel.TextColor = ViewModel.SelectedLocation.pork ? UIColor.Red : UIColor.Green;
+			AlcoholImage.Image = UIImage.FromBundle (Images.Alcohol + ViewModel.SelectedLocation.alcohol);
+			AlcoholLabel.TextColor = ViewModel.SelectedLocation.alcohol ? UIColor.Red : UIColor.Green;
+			HalalImage.Image = UIImage.FromBundle (Images.NonHalal + ViewModel.SelectedLocation.nonHalal);
+			HalalLabel.TextColor = ViewModel.SelectedLocation.nonHalal ? UIColor.Red : UIColor.Green;
 
-			Km.Text = ViewModel.SelectedLocation.Distance.ToString (Constants.NumberFormat, CultureInfo.CurrentCulture);
+			Km.Text = ViewModel.SelectedLocation.distance.ToString (Constants.NumberFormat, CultureInfo.CurrentCulture);
 
 			double rating = ViewModel.AverageReviewScore ();
 			Star1.Image = rating >= 1 ? UIImage.FromBundle (Images.StarSelected) : UIImage.FromBundle (Images.Star);
@@ -111,10 +106,13 @@ namespace HalalGuide.iOS.ViewController.Table
 
 		private void SetupCollectionView ()
 		{
-			PictureCollectionView.RegisterClassForCell (typeof(LocationPictureImageCell), LocationPictureImageCell.Indentifier);
-			PictureCollectionView.BackgroundColor = UIColor.White;
-			PictureCollectionView.CollectionViewLayout = new LineLayout ();
-			AutomaticallyAdjustsScrollViewInsets = false;
+			carousel = new CarouselView (PictureContentView.Bounds);
+			carousel.DataSource = new SingleDiningImageDataSource ();
+			carousel.Delegate = new SingleDiningImageDelegate ();
+			carousel.CarouselType = CarouselType.CoverFlow2;
+			carousel.ConfigureView ();
+
+			PictureContentView.AddSubview (carousel);
 		}
 
 		public override void PrepareForSegue (UIStoryboardSegue segue, NSObject sender)
@@ -124,8 +122,11 @@ namespace HalalGuide.iOS.ViewController.Table
 			}
 		}
 
-		#region CollectionView
 
+
+		/*
+
+		 #region CollectionView
 		[Export ("collectionView:cellForItemAtIndexPath:")]
 		public  UICollectionViewCell GetCell (UICollectionView collectionView, NSIndexPath indexPath)
 		{
@@ -188,7 +189,7 @@ namespace HalalGuide.iOS.ViewController.Table
 					UITapGestureRecognizer tap = new UITapGestureRecognizer (() => {
 						Expand = new UIImageView (cell.ImageView.Image);
 						Expand.ContentMode = UIViewContentMode.ScaleAspectFit;
-						Expand.BackgroundColor = UIColor.Black;
+						Expand.BackgroundColor = UIColor.White.ColorWithAlpha(0.7f);
 						Expand.Frame = View.ConvertRectFromView (cell.ImageView.Frame, cell.ImageView.Superview);
 						Expand.UserInteractionEnabled = true;
 						Expand.ClipsToBounds = true;
@@ -238,13 +239,14 @@ namespace HalalGuide.iOS.ViewController.Table
 		}
 
 		#endregion
+		*/
 
 		#region TableView
 
 		public override int RowsInSection (UITableView tableview, int section)
 		{
 			if (section == 4) {
-				return ViewModel.ReviewsInSection ();
+				return ViewModel.Reviews.Count;
 			} else {
 				return	base.RowsInSection (tableview, section);
 			}
@@ -260,7 +262,7 @@ namespace HalalGuide.iOS.ViewController.Table
 				if (cell == null) {
 					cell = new ReviewCell (UITableViewCellStyle.Default, ReviewCell.Identifier);
 				}
-				Review r = ViewModel.GetReviewAtRow (indexPath.Row);
+				Review r = ViewModel.Reviews [indexPath.Row];
 
 				((ReviewCell)cell).Configure (r);
 

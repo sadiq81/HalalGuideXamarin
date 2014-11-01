@@ -7,15 +7,13 @@ using HalalGuide.Domain;
 using System.Threading.Tasks;
 using HalalGuide.Util;
 using HalalGuide.ViewModels;
-using SimpleDBPersistence.Service;
+using HalalGuide.Services;
 
 namespace HalalGuide.iOS.Tables.Cells
 {
 	public partial class ReviewCell : BaseTableViewCell
 	{
 		public static string Identifier = "ReviewCell";
-
-		private Review _Review { get; set; }
 
 		public SingleDiningViewModel ViewModel = ServiceContainer.Resolve<SingleDiningViewModel> ();
 
@@ -48,45 +46,18 @@ namespace HalalGuide.iOS.Tables.Cells
 
 		public void Configure (Review review)
 		{
-			_Review = review;
+			//TODO use SDWeb image to get image
+			//TODO name of submitter
 
+			Star1Image.Image = review.rating >= 1 ? UIImage.FromBundle (Images.StarSelected) : UIImage.FromBundle (Images.Star);
+			Star2Image.Image = review.rating >= 2 ? UIImage.FromBundle (Images.StarSelected) : UIImage.FromBundle (Images.Star);
+			Star3Image.Image = review.rating >= 3 ? UIImage.FromBundle (Images.StarSelected) : UIImage.FromBundle (Images.Star);
+			Star4Image.Image = review.rating >= 4 ? UIImage.FromBundle (Images.StarSelected) : UIImage.FromBundle (Images.Star);
+			Star5Image.Image = review.rating >= 5 ? UIImage.FromBundle (Images.StarSelected) : UIImage.FromBundle (Images.Star);
 
-			Task.Factory.StartNew (() => 
-				ViewModel.GetProfilePicture (review.Submitter).
-				ContinueWith (t => {
-				if (t.Result != null && review == _Review) {
-					InvokeOnMainThread (delegate {
-						ProfilePicture.Image = UIImage.FromFile (t.Result);
-					});
-				}
-			}));
-            
-
-			Task.Factory.StartNew (() => 
-				ViewModel.NameOfSubmitter (review.Submitter).
-				ContinueWith (t => {
-				if (t.Result != null && review == _Review) {
-					InvokeOnMainThread (delegate {
-						Submitter.Text = t.Result;
-					});
-				}
-			}));
-
-			Star1Image.Image = review.Rating >= 1 ? UIImage.FromBundle (Images.StarSelected) : UIImage.FromBundle (Images.Star);
-			Star2Image.Image = review.Rating >= 2 ? UIImage.FromBundle (Images.StarSelected) : UIImage.FromBundle (Images.Star);
-			Star3Image.Image = review.Rating >= 3 ? UIImage.FromBundle (Images.StarSelected) : UIImage.FromBundle (Images.Star);
-			Star4Image.Image = review.Rating >= 4 ? UIImage.FromBundle (Images.StarSelected) : UIImage.FromBundle (Images.Star);
-			Star5Image.Image = review.Rating >= 5 ? UIImage.FromBundle (Images.StarSelected) : UIImage.FromBundle (Images.Star);
-
-			Task.Factory.StartNew (() => 
-				ViewModel.GetReviewText (review).
-				ContinueWith (t => {
-				if (t.Result != null && review == _Review) {
-					InvokeOnMainThread (delegate {
-						Review.Text = t.Result;
-					});
-				}
-			}));
+			Review.Text = review.review;
+			;
+		
 		}
 		
 	}

@@ -5,15 +5,14 @@ using System;
 using MonoTouch.Foundation;
 using MonoTouch.UIKit;
 using HalalGuide.ViewModels;
-using SimpleDBPersistence.Service;
-using XUbertestersSDK;
-using HalalGuide.Domain.Enum;
+using HalalGuide.Domain.Enums;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Xamarin.Media;
 using HalalGuide.Util;
 using HalalGuide.iOS.Util;
 using HalalGuide.iOS.Tables.Cells;
+using HalalGuide.Services;
 
 namespace HalalGuide.iOS.ViewController.Table
 {
@@ -35,7 +34,6 @@ namespace HalalGuide.iOS.ViewController.Table
 		public override void ViewDidAppear (bool animated)
 		{
 			base.ViewDidAppear (animated);
-			XUbertesters.LogInfo ("AddNewDiningTableViewController: ViewDidAppear");
 		}
 
 		#region Setup
@@ -107,14 +105,11 @@ namespace HalalGuide.iOS.ViewController.Table
 
 		private void Regreet (UIBarButtonItem sender)
 		{
-			XUbertesters.LogInfo ("AddNewDiningController: Regreet");
 			DismissViewController (true, null);
 		}
 
 		public async Task Save (UIBarButtonItem sender)
 		{
-			XUbertesters.LogInfo ("AddNewDiningController: Save");
-
 			ResignKeyboard ();
 
 			if (String.IsNullOrEmpty (Name.Text)) {
@@ -226,7 +221,6 @@ namespace HalalGuide.iOS.ViewController.Table
 		{
 			ResignKeyboard ();
 
-			XUbertesters.LogInfo ("AddNewDiningController: PickImage-Start");
 			if (ViewModel.IsCameraAvailable () || UIDevice.CurrentDevice.Model.Contains ("Simulator")) {
 
 				UIActionSheet actionSheet = new UIActionSheet (Localization.GetLocalizedValue (Feedback.AddPicture), 
@@ -267,7 +261,6 @@ namespace HalalGuide.iOS.ViewController.Table
 				actionSheet.ShowInView (View);
 
 			} else {
-				XUbertesters.LogWarn ("AddNewDiningController: noCameraFound");
 				new UIAlertView (Localization.GetLocalizedValue (Feedback.Error), 
 					Localization.GetLocalizedValue (Feedback.CameraNotAvaileble), 
 					null, 
@@ -294,7 +287,7 @@ namespace HalalGuide.iOS.ViewController.Table
 			if (isExpanded) {
 
 				TableView.BeginUpdates ();
-				for (int i = 0; i < DiningCategory.Categories.Count; i++) {
+				for (int i = 0; i < DiningCategoryExtensions.Categories ().Count; i++) {
 					VisibleCategories.RemoveAt (0);
 					TableView.DeleteRows (new []{ NSIndexPath.FromRowSection (i, 2) }, UITableViewRowAnimation.Fade);
 				}
@@ -302,8 +295,8 @@ namespace HalalGuide.iOS.ViewController.Table
 
 			} else {
 				TableView.BeginUpdates ();
-				for (int i = 0; i < DiningCategory.Categories.Count; i++) {
-					VisibleCategories.Add (DiningCategory.Categories [i]);
+				for (int i = 0; i < DiningCategoryExtensions.Categories ().Count; i++) {
+					VisibleCategories.Add (DiningCategoryExtensions.CategoryAtIndex (i));
 					TableView.InsertRows (new []{ NSIndexPath.FromRowSection (i, 2) }, UITableViewRowAnimation.Fade);
 				}
 				TableView.EndUpdates ();
@@ -342,9 +335,9 @@ namespace HalalGuide.iOS.ViewController.Table
 					cell = new CategoryCell (UITableViewCellStyle.Default, CategoryCell.Identifier);
 				}
 
-				cell.TextLabel.Text = "\t" + Localization.GetLocalizedValue (DiningCategory.Categories [indexPath.Row].Title);
+				cell.TextLabel.Text = "\t" + Localization.GetLocalizedValue (DiningCategoryExtensions.CategoryAtIndex (indexPath.Row).ToString ());
 
-				bool selected = CategoriesChoosen.Contains (DiningCategory.Categories [indexPath.Row]);
+				bool selected = CategoriesChoosen.Contains (DiningCategoryExtensions.CategoryAtIndex (indexPath.Row));
 				cell.Accessory = selected ? UITableViewCellAccessory.Checkmark : UITableViewCellAccessory.None;
 
 				return cell;
@@ -373,13 +366,13 @@ namespace HalalGuide.iOS.ViewController.Table
 				return;
 			}
 
-			DiningCategory cat = DiningCategory.Categories [indexPath.Row];
+			DiningCategory cat = DiningCategoryExtensions.CategoryAtIndex (indexPath.Row);
 
 			if (CategoriesChoosen.Contains (cat)) {
-				CategoriesChoosen.Remove (DiningCategory.Categories [indexPath.Row]);
+				CategoriesChoosen.Remove (DiningCategoryExtensions.CategoryAtIndex (indexPath.Row));
 				cell.Accessory = UITableViewCellAccessory.None;
 			} else {
-				CategoriesChoosen.Add (DiningCategory.Categories [indexPath.Row]);
+				CategoriesChoosen.Add (DiningCategoryExtensions.CategoryAtIndex (indexPath.Row));
 				cell.Accessory = UITableViewCellAccessory.Checkmark;
 			}
 

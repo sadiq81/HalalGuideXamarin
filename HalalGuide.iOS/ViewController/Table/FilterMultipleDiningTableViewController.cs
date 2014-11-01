@@ -5,12 +5,11 @@ using System;
 using MonoTouch.Foundation;
 using MonoTouch.UIKit;
 using HalalGuide.ViewModels;
-using HalalGuide.Domain.Enum;
-using SimpleDBPersistence.Service;
+using HalalGuide.Domain.Enums;
 using System.Collections.Generic;
-using XUbertestersSDK;
 using HalalGuide.Util;
 using HalalGuide.iOS.Tables.Cells;
+using HalalGuide.Services;
 
 namespace HalalGuide.iOS.ViewController.Table
 {
@@ -43,7 +42,6 @@ namespace HalalGuide.iOS.ViewController.Table
 		public override void ViewDidAppear (bool animated)
 		{
 			base.ViewDidAppear (animated);
-			XUbertesters.LogInfo ("FilterMultipleDiningTableViewController: ViewDidAppear");
 		}
 
 
@@ -105,8 +103,8 @@ namespace HalalGuide.iOS.ViewController.Table
 			MultipleDiningViewModel.CategoryFilter = CategoriesChoosen;
 
 
-			MultipleDiningViewModel.RefreshCache ();
-			MultipleDiningViewModel.OnFilteredLocations (EventArgs.Empty);
+			//MultipleDiningViewModel.RefreshCache ();
+			//MultipleDiningViewModel.OnFilteredLocations (EventArgs.Empty);
 		}
 
 
@@ -118,7 +116,7 @@ namespace HalalGuide.iOS.ViewController.Table
 			if (isExpanded) {
 
 				TableView.BeginUpdates ();
-				for (int i = 0; i < DiningCategory.Categories.Count; i++) {
+				for (int i = 0; i < Enum.GetValues (typeof(DiningCategory)).GetLength (0); i++) {
 					VisibleCategories.RemoveAt (0);
 					TableView.DeleteRows (new []{ NSIndexPath.FromRowSection (i, 2) }, UITableViewRowAnimation.Fade);
 				}
@@ -126,8 +124,8 @@ namespace HalalGuide.iOS.ViewController.Table
 
 			} else {
 				TableView.BeginUpdates ();
-				for (int i = 0; i < DiningCategory.Categories.Count; i++) {
-					VisibleCategories.Add (DiningCategory.Categories [i]);
+				for (int i = 0; i < Enum.GetValues (typeof(DiningCategory)).GetLength (0); i++) {
+					VisibleCategories.Add ((DiningCategory)Enum.GetValues (typeof(DiningCategory)).GetValue (i));
 					TableView.InsertRows (new []{ NSIndexPath.FromRowSection (i, 2) }, UITableViewRowAnimation.Fade);
 				}
 				TableView.EndUpdates ();
@@ -166,9 +164,9 @@ namespace HalalGuide.iOS.ViewController.Table
 					cell = new CategoryCell (UITableViewCellStyle.Default, CategoryCell.Identifier);
 				}
 
-				cell.TextLabel.Text = "\t" + Localization.GetLocalizedValue (DiningCategory.Categories [indexPath.Row].Title);
+				cell.TextLabel.Text = "\t" + Localization.GetLocalizedValue (DiningCategoryExtensions.CategoryAtIndex (indexPath.Row).ToString ());
 
-				bool selected = CategoriesChoosen.Contains (DiningCategory.Categories [indexPath.Row]);
+				bool selected = CategoriesChoosen.Contains (DiningCategoryExtensions.CategoryAtIndex (indexPath.Row));
 				cell.Accessory = selected ? UITableViewCellAccessory.Checkmark : UITableViewCellAccessory.None;
 
 				return cell;
@@ -196,13 +194,13 @@ namespace HalalGuide.iOS.ViewController.Table
 				return;
 			}
 
-			DiningCategory cat = DiningCategory.Categories [indexPath.Row];
+			DiningCategory cat = DiningCategoryExtensions.CategoryAtIndex (indexPath.Row);
 
 			if (CategoriesChoosen.Contains (cat)) {
-				CategoriesChoosen.Remove (DiningCategory.Categories [indexPath.Row]);
+				CategoriesChoosen.Remove (DiningCategoryExtensions.CategoryAtIndex (indexPath.Row));
 				cell.Accessory = UITableViewCellAccessory.None;
 			} else {
-				CategoriesChoosen.Add (DiningCategory.Categories [indexPath.Row]);
+				CategoriesChoosen.Add (DiningCategoryExtensions.CategoryAtIndex (indexPath.Row));
 				cell.Accessory = UITableViewCellAccessory.Checkmark;
 			}
 

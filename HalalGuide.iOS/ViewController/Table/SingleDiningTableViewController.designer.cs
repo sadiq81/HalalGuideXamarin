@@ -40,7 +40,7 @@ namespace HalalGuide.iOS.ViewController.Table
 		MonoTouch.UIKit.UILabel Name { get; set; }
 
 		[Outlet]
-		MonoTouch.UIKit.UICollectionView PictureCollectionView { get; set; }
+		MonoTouch.UIKit.UIView PictureContentView { get; set; }
 
 		[Outlet]
 		MonoTouch.UIKit.UIImageView PorkImage { get; set; }
@@ -113,9 +113,9 @@ namespace HalalGuide.iOS.ViewController.Table
 				Name = null;
 			}
 
-			if (PictureCollectionView != null) {
-				PictureCollectionView.Dispose ();
-				PictureCollectionView = null;
+			if (PictureContentView != null) {
+				PictureContentView.Dispose ();
+				PictureContentView = null;
 			}
 
 			if (PorkImage != null) {
@@ -126,6 +126,11 @@ namespace HalalGuide.iOS.ViewController.Table
 			if (PorkLabel != null) {
 				PorkLabel.Dispose ();
 				PorkLabel = null;
+			}
+
+			if (Report != null) {
+				Report.Dispose ();
+				Report = null;
 			}
 
 			if (Star1 != null) {
@@ -151,11 +156,6 @@ namespace HalalGuide.iOS.ViewController.Table
 			if (Star5 != null) {
 				Star5.Dispose ();
 				Star5 = null;
-			}
-
-			if (Report != null) {
-				Report.Dispose ();
-				Report = null;
 			}
 		}
 	}

@@ -1,11 +1,11 @@
 ﻿using MonoTouch.UIKit;
 using MonoTouch.Foundation;
-using XUbertestersSDK;
 using HalalGuide.ViewModels;
-using SimpleDBPersistence.Service;
 using HalalGuide.iOS.Util;
 using HalalGuide.Util;
 using System.Drawing;
+using HalalGuide.Services;
+using MonoTouch.AudioToolbox;
 
 namespace HalalGuide.iOS.ViewController
 {
@@ -63,16 +63,13 @@ namespace HalalGuide.iOS.ViewController
 					return true;
 				} else {
 					LoginViewModel.LoginCompletedEvent += (model, e) => LoginViewController.DismissViewController (true, delegate {
-						if (e.IsAuthenticated) {
+						if (e.Value) {
 							PerformSegue (segueIdentifier, sender);
 						} else {
 							new UIAlertView ("Fejl", "Du blev ikke logget ind, prøv igen senere", null, "Ok", null).Show ();
 						}
 					});
-
-					var auth = LoginViewModel.Authenticate ();
-					PresentViewController (LoginViewController = auth.GetUI (), true, null);
-
+					LoginViewModel.Authenticate (this);
 					return false;
 				}
 			} else {

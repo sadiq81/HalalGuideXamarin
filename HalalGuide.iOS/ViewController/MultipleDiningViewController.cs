@@ -4,28 +4,27 @@ using System;
 
 using MonoTouch.Foundation;
 using MonoTouch.UIKit;
-using XUbertestersSDK;
 using System.Drawing;
 using HalalGuide.Domain;
-using SimpleDBPersistence.Service;
 using HalalGuide.ViewModels;
 using HalalGuide.iOS.Util;
 using HalalGuide.iOS.Tables.Cells;
+using HalalGuide.Services;
 
 namespace HalalGuide.iOS.ViewController
 {
 	public partial class MultipleDiningViewController : KeyboardSupportedUIViewController, IUISearchBarDelegate
 	{
 		private const string cellIdentifier = "Dining";
-		private const string SearchCellIdentifier = "SearchCell";
+		private const string searchCellIdentifier = "SearchCell";
 
-		public MultipleDiningViewModel ViewModel = ServiceContainer.Resolve<MultipleDiningViewModel> ();
-		public SingleDiningViewModel SingleDiningViewModel = ServiceContainer.Resolve<SingleDiningViewModel> ();
+		public MultipleDiningViewModel viewModel = ServiceContainer.Resolve<MultipleDiningViewModel> ();
+		public SingleDiningViewModel singleDiningViewModel = ServiceContainer.Resolve<SingleDiningViewModel> ();
 
-		private UITableViewController TableViewController = new UITableViewController ();
-		private UIRefreshControl RefreshControl = new UIRefreshControl ();
+		private UITableViewController tableViewController = new UITableViewController ();
+		private UIRefreshControl refreshControl = new UIRefreshControl ();
 
-		private UISearchBar SearchBar;
+		private UISearchBar searchBar;
 
 		public MultipleDiningViewController (IntPtr handle) : base (handle)
 		{
@@ -41,13 +40,14 @@ namespace HalalGuide.iOS.ViewController
 			SetupSearchBar ();
 
 			SetupEventListeners ();
+
+			viewModel.RefreshCache ();
 		}
 
 		public override void ViewDidAppear (bool animated)
 		{
 			base.ViewDidAppear (animated);
-			DiningTableView.SetContentOffset (new PointF (0, SearchBar.Frame.Size.Height), true);
-			XUbertesters.LogInfo ("MultipleDiningViewController: ViewDidAppear");
+			DiningTableView.SetContentOffset (new PointF (0, searchBar.Frame.Size.Height), true);
 		}
 
 		public override void PrepareForSegue (UIStoryboardSegue segue, NSObject sender)
@@ -56,7 +56,7 @@ namespace HalalGuide.iOS.ViewController
 
 			if (Segue.SingleDiningViewControllerSegue.Equals (segue.Identifier)) {
 				NSIndexPath indexPath = DiningTableView.IndexPathForCell ((UITableViewCell)sender);
-				SingleDiningViewModel.SelectedLocation = ViewModel.GetLocationAtRow (indexPath.Item);
+				singleDiningViewModel.SelectedLocation = viewModel.GetLocationAtRow (indexPath.Item);
 			}
 		}
 
@@ -67,18 +67,18 @@ namespace HalalGuide.iOS.ViewController
 		
 			DiningTableView.TableFooterView = new UIView ();
 
-			TableViewController.TableView = DiningTableView;
-			TableViewController.RefreshControl = RefreshControl;
+			tableViewController.TableView = DiningTableView;
+			tableViewController.RefreshControl = refreshControl;
 
-			RefreshControl.ValueChanged += async (sender, e) => {
-				RefreshControl.BeginRefreshing ();
-				await ViewModel.RefreshLocations ();
-				RefreshControl.EndRefreshing ();
+			refreshControl.ValueChanged += async (sender, e) => {
+				refreshControl.BeginRefreshing ();
+				await viewModel.RefreshLocations ();
+				refreshControl.EndRefreshing ();
 
 				UIView.Animate (
 					0.2,
 					() => {
-						DiningTableView.SetContentOffset (new PointF (0, SearchBar.Frame.Size.Height), true);
+						DiningTableView.SetContentOffset (new PointF (0, searchBar.Frame.Size.Height), true);
 					}
 				);
 			};
@@ -86,17 +86,17 @@ namespace HalalGuide.iOS.ViewController
 
 		private void SetupEventListeners ()
 		{
-			ViewModel.RefreshLocationsCompletedEvent += (sender, e) => InvokeOnMainThread (() => {
-				DiningTableView.SetContentOffset (new PointF (0, SearchBar.Frame.Size.Height), false);
-				TableViewController.TableView.ReloadSections (new NSIndexSet (0), UITableViewRowAnimation.Top);
+
+			viewModel.RefreshedLocations += (sender, e) => InvokeOnMainThread (() => {
+				DiningTableView.SetContentOffset (new PointF (0, searchBar.Frame.Size.Height), false);
+				tableViewController.TableView.ReloadData ();
 			});
 
-			ViewModel.FilteredLocations += (sender, e) => InvokeOnMainThread (() => {
-				TableViewController.TableView.ReloadSections (new NSIndexSet (0), UITableViewRowAnimation.Fade);
+			viewModel.filteredLocations += (sender, e) => InvokeOnMainThread (() => {
+				tableViewController.TableView.ReloadData ();
 			});
+
 		}
-
-
 
 		#endregion
 
@@ -104,19 +104,19 @@ namespace HalalGuide.iOS.ViewController
 
 		private void SetupSearchBar ()
 		{
-			DiningTableView.TableHeaderView = SearchBar = new UISearchBar (new RectangleF (0, 0, DiningTableView.Frame.Width, 44)) {
+			DiningTableView.TableHeaderView = searchBar = new UISearchBar (new RectangleF (0, 0, DiningTableView.Frame.Width, 44)) {
 				BackgroundColor = UIColor.Clear
 			};
 
-			SearchBar.ShowsCancelButton = true;
-			SearchBar.WeakDelegate = this;
+			searchBar.ShowsCancelButton = true;
+			searchBar.WeakDelegate = this;
 
 		}
 
 		[Export ("searchBar:textDidChange:")]
 		public void TextChanged (UISearchBar searchBar, string searchText)
 		{
-			bool cacheChanged = ViewModel.SearchTextChanged (searchText);
+			bool cacheChanged = viewModel.SearchTextChanged (searchText);
 			if (cacheChanged) {
 				DiningTableView.ReloadData ();
 			}
@@ -124,9 +124,9 @@ namespace HalalGuide.iOS.ViewController
 
 
 		[Export ("searchBarSearchButtonClicked:")]
-		public void SearchButtonClicked (UISearchBar searchBar)
+		public  void SearchButtonClicked (UISearchBar searchBar)
 		{
-			bool cacheChanged = ViewModel.SearchTextChanged (searchBar.Text);
+			bool cacheChanged = viewModel.SearchTextChanged (searchBar.Text);
 			if (cacheChanged) {
 				DiningTableView.ReloadData ();
 			}
@@ -138,9 +138,9 @@ namespace HalalGuide.iOS.ViewController
 		{
 			searchBar.ResignFirstResponder ();
 			searchBar.Text = ("");
-			ViewModel.SearchTextChanged ("");
+			viewModel.SearchTextChanged ("");
 			DiningTableView.ReloadData ();
-			DiningTableView.SetContentOffset (new PointF (0, SearchBar.Frame.Size.Height), true);
+			DiningTableView.SetContentOffset (new PointF (0, searchBar.Frame.Size.Height), true);
 		}
 
 		#endregion
@@ -150,7 +150,7 @@ namespace HalalGuide.iOS.ViewController
 		[Export ("tableView:numberOfRowsInSection:")]
 		public  int RowsInSection (UITableView tableview, int section)
 		{
-			return ViewModel.Rows ();
+			return viewModel.Rows ();
 		}
 
 		[Export ("tableView:cellForRowAtIndexPath:")]
@@ -158,7 +158,7 @@ namespace HalalGuide.iOS.ViewController
 		{
 
 			UITableViewCell cell = tableView.DequeueReusableCell (cellIdentifier);
-			Location l = ViewModel.GetLocationAtRow (indexPath.Item);
+			Location l = viewModel.GetLocationAtRow (indexPath.Item);
 			((DiningCell)cell).ConfigureLocation (l);
 			return cell;
 		}

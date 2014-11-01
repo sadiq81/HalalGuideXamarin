@@ -2,7 +2,7 @@
 
 namespace HalalGuide.DAO
 {
-	public class ReviewDAO : HalalGenericDAO<Review>
+	public class ReviewDAO : GenericDAO<Review>
 	{
 		public ReviewDAO ()
 		{

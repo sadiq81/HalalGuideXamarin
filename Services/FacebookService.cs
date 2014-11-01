@@ -1,62 +1,31 @@
 ﻿using System;
 using HalalGuide.DAO;
-using SimpleDBPersistence.Service;
 using System.Threading.Tasks;
 using HalalGuide.Domain;
-using HalalGuide.Domain.Enum;
-using SimpleDBPersistence.SimpleDB.Model.AWSException;
-using XUbertestersSDK;
+using HalalGuide.Domain.Enums;
 using HalalGuide.Util;
+using HalalGuide.Services;
 
 namespace HalalGuide.Services
 {
 	public class FacebookService
 	{
-		private   ImageService _ImageService = ServiceContainer.Resolve<ImageService> ();
+		private FacebookUserDAO userDAO { get { return ServiceContainer.Resolve<FacebookUserDAO> (); } }
 
-		private FacebookUserDAO UserDAO = ServiceContainer.Resolve<FacebookUserDAO> ();
+		private DatabaseWrapper database { get { return ServiceContainer.Resolve<DatabaseWrapper> (); } }
 
-		private  DatabaseWrapper DB = ServiceContainer.Resolve<DatabaseWrapper> ();
-
-		public async Task<String> GetFacebookUserName (String id)
+		public async Task<FacebookUser> GetFacebookUserName (String id)
 		{
-			FacebookUser user = DB.Table<FacebookUser> ().Where (fbu => fbu.Id == id).FirstOrDefault ();
-			if (user == null) {
-				user = await UserDAO.Get (id, true);
-				DB.InsertOrReplace (user);
-			}
-			return user.Name;
+			return await userDAO.Get (id);
 		}
 
-		public async Task<CreateEntityResult> SaveFacebookUser (string id, string name, byte[] image)
+		public async Task SaveFacebookUser (string id, string name, byte[] image)
 		{
-			XUbertesters.LogInfo (string.Format ("FacebookService-SaveFacebookUser: id: {0} name: {1}", id, name));
-
-			FacebookUser fu = new FacebookUser (){ Id = id, Name = name };
-
-			try {
-
-				Task<bool> saveUserTask = UserDAO.SaveOrReplace (fu);
-
-				if (await saveUserTask) {
-
-					CreateEntityResult imageResult = await _ImageService.UploadProfilePicture (fu, image);
-
-					if (imageResult != CreateEntityResult.OK) {
-
-						await UserDAO.Delete (fu);
-					}
-				}
-
-			} catch (AWSErrorException ex) {
-				XUbertesters.LogError ("FacebookService: CouldNotCreateEntityInSimpleDB: " + ex + " Entity: " + id);
-				return CreateEntityResult.CouldNotUploadImageToS3;
-			} catch (Exception e) {  //TODO remove try/catch
-				XUbertesters.LogError ("FacebookService: CouldNotCreateEntityInSimpleDB: " + e + " Entity: " + id);
-				return CreateEntityResult.CouldNotUploadImageToS3;
-			}
-			return CreateEntityResult.OK;
+			FacebookUser fu = new FacebookUser (){ id = id, name = name };
+			await userDAO.SaveOrReplace (fu);
+			//TODO upload profile picture
 		}
+
 
 	}
 }
