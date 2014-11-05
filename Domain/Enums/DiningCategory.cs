@@ -2,6 +2,8 @@
 using System;
 using System.Linq;
 using Newtonsoft.Json;
+using HalalGuide.Util;
+using System.Security.Cryptography.X509Certificates;
 
 namespace HalalGuide.Domain.Enums
 {
@@ -253,6 +255,30 @@ namespace HalalGuide.Domain.Enums
 			return new List<DiningCategory> (Enum.GetValues (typeof(DiningCategory)).OfType<DiningCategory> ());
 		}
 
+		public static string[] CategoriesToStringArray (this List<DiningCategory> categories)
+		{
+			List<string> list = new List<string> ();
+			foreach (var enumvalue in categories) {
+				int intvalue = (int)enumvalue;
+				string value = intvalue.ToString ();
+				list.Add (value);
+			}
+			return list.ToArray ();
+		}
+
+		public static string LocalisedCategoriesToString (this List<DiningCategory> categories)
+		{
+			string localised = "";
+			foreach (var enumvalue in categories) {
+				string value = Enum.GetName (typeof(DiningCategory), enumvalue);
+				string localValue = Localization.GetLocalizedValue (value);
+				localised += "," + localValue;
+			}
+			if (localised.Length > 0) {
+				localised = localised.Remove (0, 1);
+			}
+			return localised;
+		}
 	}
 
 	

@@ -9,14 +9,11 @@ using MonoTouch.Foundation;
 using MonoTouch.UIKit;
 using System.CodeDom.Compiler;
 
-namespace HalalGuide.iOS.ViewController
+namespace HalalGuide.iOS.Textfield
 {
-	[Register ("MultipleDiningViewController")]
-	partial class MultipleDiningViewController
+	[Register ("BaseTextField")]
+	partial class BaseTextField
 	{
-		[Outlet]
-		MonoTouch.UIKit.UITableView DiningTableView { get; set; }
-
 		void ReleaseDesignerOutlets ()
 		{
 		}

@@ -5,14 +5,12 @@ using System;
 using MonoTouch.Foundation;
 using MonoTouch.UIKit;
 using HalalGuide.Util;
-using Xamarin.Media;
 using HalalGuide.Domain.Enums;
 using System.Globalization;
 using HalalGuide.Domain;
 using HalalGuide.ViewModels;
 using HalalGuide.iOS.Tables.Cells;
 using HalalGuide.iOS.Util;
-using MonoTouch.MessageUI;
 using Alliance.Carousel;
 using HalalGuide.iOS.Carousel;
 using HalalGuide.Services;
@@ -25,83 +23,25 @@ namespace HalalGuide.iOS.ViewController.Table
 		private readonly AddReviewViewModel AddReviewViewModel = ServiceContainer.Resolve<AddReviewViewModel> ();
 		private UIImageView Expand;
 		private CarouselView carousel;
-		MFMailComposeViewController MailController;
 
 		public SingleDiningTableViewController (IntPtr handle) : base (handle)
 		{
 		}
 
-		public override void ViewWillAppear (bool animated)
+		public override void  ViewDidLoad ()
 		{
-			base.ViewWillAppear (animated);
-			//ViewModel.RefreshCache ();
-		}
+			ViewModel.RefreshCache ();
 
-		public async override void  ViewDidLoad ()
-		{
 			SetupTableView ();
 			SetupUIValues ();
 			SetupCollectionView ();
 			SetupEventListeners ();
-
-			//await ViewModel.RefreshDataForLocation ();
-		}
-
-		private void SetupEventListeners ()
-		{
-			ViewModel.RefreshedPicturesCompletedEvent += (sender, e) => InvokeOnMainThread (delegate {
-				TableView.ReloadSections (new NSIndexSet (2), UITableViewRowAnimation.Fade);
-			});
-
-			ViewModel.RefreshedReviewCompletedEvent += (sender, e) => InvokeOnMainThread (delegate {
-				TableView.ReloadSections (new NSIndexSet (4), UITableViewRowAnimation.Fade);
-			});
-
-			ViewModel.LocationChangedEvent += (sender, e) => {
-				Km.Text = ViewModel.SelectedLocation.distance.ToString (Constants.NumberFormat, CultureInfo.CurrentCulture);
-			};
-
-			Report.TouchUpInside += (sender, e) => {
-				MailController = new MFMailComposeViewController ();
-				MailController.SetToRecipients (new string[]{ "tommy@eazyit.dk" });
-				MailController.SetSubject (Localization.GetLocalizedValue (Feedback.Error) + " - " + ": " + ViewModel.SelectedLocation.id);
-				MailController.SetMessageBody (Localization.GetLocalizedValue (Feedback.ErrorTemplate), false);
-
-				MailController.Finished += (  s, args) => {
-					args.Controller.DismissViewController (true, null);
-					MailController = null;
-				};
-				PresentViewController (MailController, true, null);
-			};
+		
 		}
 
 		private void SetupTableView ()
 		{
 			TableView.TableFooterView = new UIView ();
-		}
-
-		private void SetupUIValues ()
-		{
-			Name.Text = ViewModel.SelectedLocation.name;
-			Address.Text = string.Format ("{0} {1}", ViewModel.SelectedLocation.addressRoad, ViewModel.SelectedLocation.addressRoadNumber);
-			City.Text = string.Format ("{0} {1}", ViewModel.SelectedLocation.addressPostalCode, ViewModel.SelectedLocation.addressCity);
-			Category.Text = ViewModel.SelectedLocation.categories.ToString ();
-
-			PorkImage.Image = UIImage.FromBundle (Images.Pig + ViewModel.SelectedLocation.pork);
-			PorkLabel.TextColor = ViewModel.SelectedLocation.pork ? UIColor.Red : UIColor.Green;
-			AlcoholImage.Image = UIImage.FromBundle (Images.Alcohol + ViewModel.SelectedLocation.alcohol);
-			AlcoholLabel.TextColor = ViewModel.SelectedLocation.alcohol ? UIColor.Red : UIColor.Green;
-			HalalImage.Image = UIImage.FromBundle (Images.NonHalal + ViewModel.SelectedLocation.nonHalal);
-			HalalLabel.TextColor = ViewModel.SelectedLocation.nonHalal ? UIColor.Red : UIColor.Green;
-
-			Km.Text = ViewModel.SelectedLocation.distance.ToString (Constants.NumberFormat, CultureInfo.CurrentCulture);
-
-			double rating = ViewModel.AverageReviewScore ();
-			Star1.Image = rating >= 1 ? UIImage.FromBundle (Images.StarSelected) : UIImage.FromBundle (Images.Star);
-			Star2.Image = rating >= 2 ? UIImage.FromBundle (Images.StarSelected) : UIImage.FromBundle (Images.Star);
-			Star3.Image = rating >= 3 ? UIImage.FromBundle (Images.StarSelected) : UIImage.FromBundle (Images.Star);
-			Star4.Image = rating >= 4 ? UIImage.FromBundle (Images.StarSelected) : UIImage.FromBundle (Images.Star);
-			Star5.Image = rating >= 5 ? UIImage.FromBundle (Images.StarSelected) : UIImage.FromBundle (Images.Star);
 		}
 
 		private void SetupCollectionView ()
@@ -115,14 +55,75 @@ namespace HalalGuide.iOS.ViewController.Table
 			PictureContentView.AddSubview (carousel);
 		}
 
-		public override void PrepareForSegue (UIStoryboardSegue segue, NSObject sender)
+		private void SetupUIValues ()
 		{
-			if (Segue.AddReviewViewControllerSegue.Equals (segue.Identifier)) {
-				AddReviewViewModel.SelectedLocation = ViewModel.SelectedLocation;
-			}
+			Name.Text = ViewModel.selectedLocation.name;
+			Address.Text = string.Format ("{0} {1}", ViewModel.selectedLocation.addressRoad, ViewModel.selectedLocation.addressRoadNumber);
+			City.Text = string.Format ("{0} {1}", ViewModel.selectedLocation.addressPostalCode, ViewModel.selectedLocation.addressCity);
+
+			Category.Text = ViewModel.selectedLocation.categories.LocalisedCategoriesToString ();
+
+			PorkImage.Image = UIImage.FromBundle (Images.Pig + ViewModel.selectedLocation.pork);
+			PorkLabel.TextColor = ViewModel.selectedLocation.pork ? UIColor.Red : UIColor.Green;
+			AlcoholImage.Image = UIImage.FromBundle (Images.Alcohol + ViewModel.selectedLocation.alcohol);
+			AlcoholLabel.TextColor = ViewModel.selectedLocation.alcohol ? UIColor.Red : UIColor.Green;
+			HalalImage.Image = UIImage.FromBundle (Images.NonHalal + ViewModel.selectedLocation.nonHalal);
+			HalalLabel.TextColor = ViewModel.selectedLocation.nonHalal ? UIColor.Red : UIColor.Green;
+
+			Km.Text = ViewModel.selectedLocation.distance.ToString (Constants.NumberFormat, CultureInfo.CurrentCulture);
+
+			double rating = ViewModel.AverageReviewScore ();
+			Star1.Image = rating >= 1 ? UIImage.FromBundle (Images.StarSelected) : UIImage.FromBundle (Images.Star);
+			Star2.Image = rating >= 2 ? UIImage.FromBundle (Images.StarSelected) : UIImage.FromBundle (Images.Star);
+			Star3.Image = rating >= 3 ? UIImage.FromBundle (Images.StarSelected) : UIImage.FromBundle (Images.Star);
+			Star4.Image = rating >= 4 ? UIImage.FromBundle (Images.StarSelected) : UIImage.FromBundle (Images.Star);
+			Star5.Image = rating >= 5 ? UIImage.FromBundle (Images.StarSelected) : UIImage.FromBundle (Images.Star);
 		}
 
+		private void SetupEventListeners ()
+		{
+			ViewModel.RefreshedPicturesCompletedEvent += (sender, e) => InvokeOnMainThread (delegate {
+				TableView.ReloadSections (new NSIndexSet (2), UITableViewRowAnimation.Fade);
+			});
 
+			ViewModel.RefreshedReviewCompletedEvent += (sender, e) => InvokeOnMainThread (delegate {
+				TableView.ReloadSections (new NSIndexSet (4), UITableViewRowAnimation.Fade);
+			});
+
+			ViewModel.locationChangedEvent += (sender, e) => {
+				Km.Text = ViewModel.selectedLocation.distance.ToString (Constants.NumberFormat, CultureInfo.CurrentCulture);
+			};
+
+			Report.TouchUpInside += (sender, e) => {
+				PresentViewController (ViewModel.reportIncorrectInformation (), true, null);
+			};
+
+			addPicture.TouchUpInside += (sender, e) => {
+			
+				UIActionSheet actionSheet = new UIActionSheet (Localization.GetLocalizedValue (Feedback.AddPicture), null, Localization.GetLocalizedValue (Feedback.Regreet), null, Localization.GetLocalizedValue (Feedback.UseCamera), Localization.GetLocalizedValue (Feedback.UseCameraRoll));
+				actionSheet.Clicked += async delegate(object a, UIButtonEventArgs b) {
+					switch (b.ButtonIndex) {
+					case 0:
+						await ViewModel.TakePicture (ViewModel.selectedLocation);
+						break;
+					case 1:
+						await ViewModel.GetPictureFromDevice (ViewModel.selectedLocation);
+						break;
+					case 2:
+						break;
+					}
+				};
+				actionSheet.ShowInView (this.View);
+			};
+		}
+
+		public override void PrepareForSegue (UIStoryboardSegue segue, NSObject sender)
+		{
+			base.PrepareForSegue (segue, sender);
+			if (Segue.AddReviewViewControllerSegue.Equals (segue.Identifier)) {
+				AddReviewViewModel.selectedLocation = ViewModel.selectedLocation;
+			}
+		}
 
 		/*
 
@@ -246,7 +247,7 @@ namespace HalalGuide.iOS.ViewController.Table
 		public override int RowsInSection (UITableView tableview, int section)
 		{
 			if (section == 4) {
-				return ViewModel.Reviews.Count;
+				return 0;//ViewModel.reviews.Count;
 			} else {
 				return	base.RowsInSection (tableview, section);
 			}
@@ -256,19 +257,19 @@ namespace HalalGuide.iOS.ViewController.Table
 		{
 
 			if (indexPath.Section != 4) {
-				return base.GetCell (tableView, indexPath);
+				UITableViewCell cell = base.GetCell (tableView, indexPath);
+				return cell.AddSeperatorToCell ();
 			} else {
 				var cell = tableView.DequeueReusableCell (ReviewCell.Identifier);
 				if (cell == null) {
 					cell = new ReviewCell (UITableViewCellStyle.Default, ReviewCell.Identifier);
 				}
-				Review r = ViewModel.Reviews [indexPath.Row];
-
+				Review r = ViewModel.reviews [indexPath.Row];
+		
 				((ReviewCell)cell).Configure (r);
-
-				return cell;
+		
+				return cell.AddSeperatorToCell ();
 			}
-
 		}
 
 		public  override void RowSelected (UITableView tableView, NSIndexPath indexPath)
@@ -282,15 +283,6 @@ namespace HalalGuide.iOS.ViewController.Table
 				return base.GetHeightForRow (tableView, indexPath);
 			} else {
 				return 88;
-			}
-		}
-
-		public override int IndentationLevel (MonoTouch.UIKit.UITableView tableView, MonoTouch.Foundation.NSIndexPath indexPath)
-		{
-			if (indexPath.Section != 4) {
-				return base.IndentationLevel (tableView, indexPath);
-			} else {
-				return 0;
 			}
 		}
 

@@ -13,6 +13,7 @@ using HalalGuide.Util;
 using HalalGuide.iOS.Util;
 using HalalGuide.iOS.Tables.Cells;
 using HalalGuide.Services;
+using System.Drawing;
 
 namespace HalalGuide.iOS.ViewController.Table
 {
@@ -21,6 +22,8 @@ namespace HalalGuide.iOS.ViewController.Table
 		public AddNewDiningTableViewController (IntPtr handle) : base (handle)
 		{
 		}
+
+		private UILabel count;
 
 		private readonly AddDiningViewModel ViewModel = ServiceContainer.Resolve<AddDiningViewModel> ();
 		private readonly AddReviewViewModel AddReviewViewModel = ServiceContainer.Resolve<AddReviewViewModel> ();
@@ -55,8 +58,7 @@ namespace HalalGuide.iOS.ViewController.Table
 			AlcoholSwitch.ValueChanged += (sender, e) => AlcoholValueChanged ((UISwitch)sender);
 			HalalSwitch.ValueChanged += (sender, e) => HalalValueChanged ((UISwitch)sender);
 
-			Choose.TouchUpInside += (sender, e) => ChooseCategories ((UIButton)sender);
-			Reset.TouchUpInside += (sender, e) => ResetCategories ((UIButton)sender);
+
 
 			PickImage.TouchUpInside += (sender, e) => SelectImage ((UIButton)sender);
 
@@ -138,7 +140,7 @@ namespace HalalGuide.iOS.ViewController.Table
 				return;
 			}
 
-			InvokeOnMainThread (ActivityIndicator.StartAnimating);
+			//InvokeOnMainThread (ActivityIndicator.StartAnimating);
 
 			CreateEntityResult result = await ViewModel.CreateNewLocation (
 				                            Name.Text, 
@@ -153,7 +155,7 @@ namespace HalalGuide.iOS.ViewController.Table
 				                            HalalSwitch.On,
 				                            CategoriesChoosen, PickImage.Title (UIControlState.Normal) == null ? Image.Image.AsJPEG ().ToArray () : null);
 
-			ActivityIndicator.StopAnimating ();
+			//ActivityIndicator.StopAnimating ();
 
 			if (result == CreateEntityResult.OK) {
 				new UIAlertView (Localization.GetLocalizedValue (Feedback.Succes), 
@@ -191,9 +193,10 @@ namespace HalalGuide.iOS.ViewController.Table
 
 		public override void PrepareForSegue (UIStoryboardSegue segue, NSObject sender)
 		{
+			base.PrepareForSegue (segue, sender);
 			if (Segue.AddReviewViewControllerSegue.Equals (segue.Identifier)) {
 
-				AddReviewViewModel.SelectedLocation = ViewModel.SelectedLocation;
+				AddReviewViewModel.selectedLocation = ViewModel.selectedLocation;
 			}
 		}
 
@@ -289,7 +292,7 @@ namespace HalalGuide.iOS.ViewController.Table
 				TableView.BeginUpdates ();
 				for (int i = 0; i < DiningCategoryExtensions.Categories ().Count; i++) {
 					VisibleCategories.RemoveAt (0);
-					TableView.DeleteRows (new []{ NSIndexPath.FromRowSection (i, 2) }, UITableViewRowAnimation.Fade);
+					TableView.DeleteRows (new []{ NSIndexPath.FromRowSection (i, 1) }, UITableViewRowAnimation.Fade);
 				}
 				TableView.EndUpdates ();
 
@@ -297,7 +300,7 @@ namespace HalalGuide.iOS.ViewController.Table
 				TableView.BeginUpdates ();
 				for (int i = 0; i < DiningCategoryExtensions.Categories ().Count; i++) {
 					VisibleCategories.Add (DiningCategoryExtensions.CategoryAtIndex (i));
-					TableView.InsertRows (new []{ NSIndexPath.FromRowSection (i, 2) }, UITableViewRowAnimation.Fade);
+					TableView.InsertRows (new []{ NSIndexPath.FromRowSection (i, 1) }, UITableViewRowAnimation.Fade);
 				}
 				TableView.EndUpdates ();
 
@@ -311,23 +314,61 @@ namespace HalalGuide.iOS.ViewController.Table
 		{
 			ResignKeyboard ();
 
-			Count.Text = "0";
+			count.Text = "0";
 			CategoriesChoosen.Clear ();
 			TableView.ReloadSections (new NSIndexSet (2), UITableViewRowAnimation.Fade);
 		}
 
 		public override int RowsInSection (UITableView tableView, int section)
 		{
-			if (section == 2) {
+			if (section == 1) {
 				return VisibleCategories.Count;
 			} else {
 				return base.RowsInSection (tableView, section);
 			} 
 		}
 
+		public override float GetHeightForHeader (UITableView tableView, int section)
+		{
+			if (section == 1) {
+				return 44;
+			} else {
+				return base.GetHeightForHeader (tableView, section);
+			} 
+		}
+
+		public override UIView GetViewForHeader (UITableView tableView, int section)
+		{
+			if (section == 1) {
+				UIView header = new UIView (new RectangleF (0, 0, 320, 44)){ BackgroundColor = UIColor.White };
+
+				UILabel categories = new UILabel (new RectangleF (20, 11, 85, 21)){ Text = Localization.GetLocalizedValue ("categories") };
+				header.Add (categories);
+
+				count = new UILabel (new RectangleF (133, 11, 29, 21)){ Text = "0" };
+				header.Add (count);
+
+				UIButton reset = new UIButton (UIButtonType.System){ Frame = new RectangleF (150, 7, 60, 30) };
+				reset.SetTitle (Localization.GetLocalizedValue ("reset"), UIControlState.Normal);
+				header.Add (reset);
+
+				UIButton choose = new UIButton (UIButtonType.System){ Frame = new RectangleF (240, 7, 60, 30) };
+				choose.SetTitle (Localization.GetLocalizedValue ("choose"), UIControlState.Normal);
+				header.Add (choose);
+
+				choose.TouchUpInside += (sender, e) => ChooseCategories ((UIButton)sender);
+				reset.TouchUpInside += (sender, e) => ResetCategories ((UIButton)sender);
+
+				return header;
+			} else {
+				return base.GetViewForHeader (tableView, section);
+			} 
+
+		}
+
 		public  override UITableViewCell GetCell (UITableView tableView, NSIndexPath indexPath)
 		{
-			if (indexPath.Section == 2) {
+			if (indexPath.Section == 1) {
 
 				var cell = tableView.DequeueReusableCell (CategoryCell.Identifier);
 
@@ -342,14 +383,15 @@ namespace HalalGuide.iOS.ViewController.Table
 
 				return cell;
 			} else {
-				return base.GetCell (tableView, indexPath);
+				UITableViewCell cell = base.GetCell (tableView, indexPath);
+				return cell.AddSeperatorToCell ();
 			}
 		}
 
 
 		public override bool ShouldHighlightRow (UITableView tableView, NSIndexPath rowIndexPath)
 		{
-			if (rowIndexPath.Section == 2) {
+			if (rowIndexPath.Section == 1) {
 				return true;
 			} else {
 				return false;
@@ -362,7 +404,7 @@ namespace HalalGuide.iOS.ViewController.Table
 			var cell = tableView.CellAt (indexPath);
 			tableView.DeselectRow (indexPath, false);
 
-			if (indexPath.Section != 2) {
+			if (indexPath.Section != 1) {
 				return;
 			}
 
@@ -376,13 +418,13 @@ namespace HalalGuide.iOS.ViewController.Table
 				cell.Accessory = UITableViewCellAccessory.Checkmark;
 			}
 
-			Count.Text = CategoriesChoosen.Count.ToString ();
+			count.Text = CategoriesChoosen.Count.ToString ();
 		}
 
 
 		public override float GetHeightForRow (MonoTouch.UIKit.UITableView tableView, MonoTouch.Foundation.NSIndexPath indexPath)
 		{
-			if (indexPath.Section == 2) {
+			if (indexPath.Section == 1) {
 				return 44;
 			} else {
 				return base.GetHeightForRow (tableView, indexPath);
@@ -391,7 +433,7 @@ namespace HalalGuide.iOS.ViewController.Table
 
 		public override int IndentationLevel (MonoTouch.UIKit.UITableView tableView, MonoTouch.Foundation.NSIndexPath indexPath)
 		{
-			if (indexPath.Section == 2) {
+			if (indexPath.Section == 1) {
 				return 0;
 			} else {
 				return base.IndentationLevel (tableView, indexPath);

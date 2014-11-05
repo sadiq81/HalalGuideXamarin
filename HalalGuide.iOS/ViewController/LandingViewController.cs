@@ -7,6 +7,7 @@ using HalalGuide.iOS.Util;
 using HalalGuide.iOS.Tables.Cells;
 using HalalGuide.Services;
 using MonoTouch.AVFoundation;
+using System.Runtime.InteropServices;
 
 namespace HalalGuide.iOS.ViewController
 {
@@ -32,7 +33,11 @@ namespace HalalGuide.iOS.ViewController
 
 			SetupEventListeners ();
 
+			ViewModel.RefreshCache ();
+
 			await ViewModel.RefreshLocations ();
+
+			await ViewModel.RefreshLocationPictures ();
 		}
 
 		#region Setup
@@ -53,11 +58,11 @@ namespace HalalGuide.iOS.ViewController
 		private void SetupEventListeners ()
 		{
 
-			ViewModel.RefreshedLocations += (sender, e) => InvokeOnMainThread (() => {
+			ViewModel.refreshedLocations += (sender, e) => InvokeOnMainThread (() => {
 				TableViewController.TableView.ReloadData ();
 			});
 
-			ViewModel.LocationChangedEvent += (sender, e) => InvokeOnMainThread (() => {
+			ViewModel.locationChangedEvent += (sender, e) => InvokeOnMainThread (() => {
 				ViewModel.CalculateDistances ();
 				TableViewController.TableView.ReloadSections (new NSIndexSet (0), UITableViewRowAnimation.None);
 			});
@@ -70,7 +75,7 @@ namespace HalalGuide.iOS.ViewController
 		{
 			if (Segue.SingleDiningViewControllerSegue.Equals (segue.Identifier)) {
 				NSIndexPath indexPath = LatestUpdatedTableView.IndexPathForCell ((UITableViewCell)sender);
-				SingleDiningViewModel.SelectedLocation = ViewModel.GetLocationAtRow (indexPath.Item);
+				SingleDiningViewModel.selectedLocation = ViewModel.GetLocationAtRow (indexPath.Item);
 			}
 		}
 

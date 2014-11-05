@@ -168,6 +168,15 @@
     <Reference Include="SQLite.Net">
       <HintPath>..\packages\SQLite.Net-PCL.2.4.1\lib\portable-win8+net45+wp8+wpa81+MonoAndroid1+MonoTouch1\SQLite.Net.dll</HintPath>
     </Reference>
+    <Reference Include="AlertView">
+      <HintPath>..\Components\mbalertview-1.3.0.1\lib\ios\AlertView.dll</HintPath>
+    </Reference>
+    <Reference Include="BTProgressHUD">
+      <HintPath>..\Components\btprogresshud-1.13\lib\ios\BTProgressHUD.dll</HintPath>
+    </Reference>
+    <Reference Include="SDWebImage">
+      <HintPath>..\Components\sdwebimage-3.7.1.1\lib\ios\SDWebImage.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <BundleResource Include="Resources\Default-568h%402x.png" />
@@ -191,10 +200,6 @@
     <BundleResource Include="Resources\Dining.png" />
     <BundleResource Include="Resources\Mosque.png" />
     <BundleResource Include="Resources\Shop.png" />
-    <BundleResource Include="Resources\Add.png" />
-    <BundleResource Include="Resources\Add%402x.png" />
-    <BundleResource Include="Resources\Filter.png" />
-    <BundleResource Include="Resources\Filter%402x.png" />
     <BundleResource Include="Resources\Star.png" />
     <BundleResource Include="Resources\Star%402x.png" />
     <BundleResource Include="Resources\StarSelected.png" />
@@ -203,6 +208,13 @@
     <BundleResource Include="Resources\NonHalalTrue.png" />
     <BundleResource Include="Resources\PigFalse.png" />
     <BundleResource Include="Resources\Camera.png" />
+    <BundleResource Include="Resources\Dining%402x.png" />
+    <BundleResource Include="Resources\ENumber%402x.png" />
+    <BundleResource Include="Resources\ENumber%403x.png" />
+    <BundleResource Include="Resources\Indstillinger%402x.png" />
+    <BundleResource Include="Resources\Indstillinger%403x.png" />
+    <BundleResource Include="Resources\Mosque%402x.png" />
+    <BundleResource Include="Resources\Shop%402x.png" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Entitlements.plist" />
@@ -294,6 +306,7 @@
     <Compile Include="Tables\Cells\BaseTableViewCell.cs" />
     <Compile Include="Carousel\SingleDiningImageDataSource.cs" />
     <Compile Include="Carousel\SingleDiningImageDelegate.cs" />
+    <Compile Include="Util\UITableViewCellExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="MainStoryboard.storyboard" />
@@ -333,6 +346,14 @@
     </XamarinComponentReference>
     <XamarinComponentReference Include="sqlite-net">
       <Version>1.0.8.1</Version>
+      <Visible>False</Visible>
+    </XamarinComponentReference>
+    <XamarinComponentReference Include="btprogresshud">
+      <Version>1.13</Version>
+      <Visible>False</Visible>
+    </XamarinComponentReference>
+    <XamarinComponentReference Include="sdwebimage">
+      <Version>3.7.1.1</Version>
       <Visible>False</Visible>
     </XamarinComponentReference>
   </ItemGroup>

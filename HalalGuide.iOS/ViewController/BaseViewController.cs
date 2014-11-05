@@ -5,15 +5,16 @@ using HalalGuide.iOS.Util;
 using HalalGuide.Util;
 using System.Drawing;
 using HalalGuide.Services;
+using HalalGuide.Domain.Enums;
 using MonoTouch.AudioToolbox;
+using BigTed;
+using System;
 
 namespace HalalGuide.iOS.ViewController
 {
 	public class BaseViewController : UIViewController
 	{
 		protected LoginViewModel LoginViewModel = ServiceContainer.Resolve<LoginViewModel> ();
-
-		private UIViewController LoginViewController { get; set; }
 
 		public BaseViewController (System.IntPtr handle) : base (handle)
 		{
@@ -29,6 +30,46 @@ namespace HalalGuide.iOS.ViewController
 
 			View.TranslateLabelsAndPlaceholders ();
 			TranslateNavigationItem ();
+
+			LoginViewModel.busy += (object sender, ProgressResult e) => {
+
+				BeginInvokeOnMainThread (delegate { 
+
+					switch (e.type) {
+					case ProgressType.Show:
+						{
+							BTProgressHUD.Show (null, -1,	ProgressHUD.MaskType.Gradient); 
+							break;
+						}
+					case ProgressType.ShowWithText:
+						{
+							BTProgressHUD.Show (e.message, -1,	ProgressHUD.MaskType.Gradient); 
+							break;
+						}
+					case ProgressType.ShowSuccessWithStatus:
+						{
+							BTProgressHUD.ShowSuccessWithStatus (e.message);
+							break;
+						}
+					case ProgressType.ShowErrorWithStatus:
+						{
+							BTProgressHUD.ShowErrorWithStatus (e.message); 
+							break;
+						}
+					case ProgressType.ShowToast:
+						{
+							BTProgressHUD.ShowToast (e.message, ProgressHUD.ToastPosition.Center); 
+							break;
+						}
+					case ProgressType.Dismiss:
+						{
+							BTProgressHUD.Dismiss ();
+							break;
+						}
+					}
+				}); 
+			};
+
 		}
 
 		public void TranslateNavigationItem ()
@@ -62,13 +103,13 @@ namespace HalalGuide.iOS.ViewController
 				if (LoginViewModel.IsAuthenticated ()) {
 					return true;
 				} else {
-					LoginViewModel.LoginCompletedEvent += (model, e) => LoginViewController.DismissViewController (true, delegate {
+					LoginViewModel.LoginCompletedEvent += (model, e) => {
 						if (e.Value) {
 							PerformSegue (segueIdentifier, sender);
 						} else {
 							new UIAlertView ("Fejl", "Du blev ikke logget ind, prøv igen senere", null, "Ok", null).Show ();
 						}
-					});
+					};
 					LoginViewModel.Authenticate (this);
 					return false;
 				}

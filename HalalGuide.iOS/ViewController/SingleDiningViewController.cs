@@ -20,7 +20,7 @@ namespace HalalGuide.iOS.ViewController
 		public override void ViewDidLoad ()
 		{
 			base.ViewDidLoad ();
-			NavigationItem.Title = SingleDiningViewModel.SelectedLocation.name;
+			NavigationItem.Title = SingleDiningViewModel.selectedLocation.name;
 			View.TranslateLabelsAndPlaceholders ();
 			TranslateNavigationItem ();
 		}

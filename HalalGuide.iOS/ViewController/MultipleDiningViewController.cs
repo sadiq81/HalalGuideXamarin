@@ -56,7 +56,7 @@ namespace HalalGuide.iOS.ViewController
 
 			if (Segue.SingleDiningViewControllerSegue.Equals (segue.Identifier)) {
 				NSIndexPath indexPath = DiningTableView.IndexPathForCell ((UITableViewCell)sender);
-				singleDiningViewModel.SelectedLocation = viewModel.GetLocationAtRow (indexPath.Item);
+				singleDiningViewModel.selectedLocation = viewModel.GetLocationAtRow (indexPath.Item);
 			}
 		}
 
@@ -87,7 +87,7 @@ namespace HalalGuide.iOS.ViewController
 		private void SetupEventListeners ()
 		{
 
-			viewModel.RefreshedLocations += (sender, e) => InvokeOnMainThread (() => {
+			viewModel.refreshedLocations += (sender, e) => InvokeOnMainThread (() => {
 				DiningTableView.SetContentOffset (new PointF (0, searchBar.Frame.Size.Height), false);
 				tableViewController.TableView.ReloadData ();
 			});

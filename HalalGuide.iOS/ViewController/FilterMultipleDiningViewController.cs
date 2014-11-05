@@ -4,6 +4,7 @@ using System;
 using MonoTouch.Foundation;
 using HalalGuide.iOS.ViewController;
 using HalalGuide.iOS.Util;
+using MonoTouch.UIKit;
 
 namespace HalalGuide.iOS.ViewController
 {
@@ -14,7 +15,7 @@ namespace HalalGuide.iOS.ViewController
 		{
 		}
 
-		partial void Done (NSObject sender)
+		partial void Done (UIBarButtonItem sender)
 		{
 			DismissViewController (true, null);
 		}

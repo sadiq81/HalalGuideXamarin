@@ -56,7 +56,7 @@ namespace HalalGuide.iOS.ViewController
 
 			InvokeOnMainThread (ActivityIndicator.StartAnimating);
 
-			await ViewModel.CreateNewReview (ViewModel.SelectedLocation, Rating, Review.Text);
+			await ViewModel.CreateNewReview (ViewModel.selectedLocation, Rating, Review.Text);
 
 			ActivityIndicator.StopAnimating ();
 

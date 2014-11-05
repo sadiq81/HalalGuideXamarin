@@ -1,10 +1,13 @@
 // WARNING
 //
-// This file has been generated automatically by Xamarin Studio to store outlets and
-// actions made in the UI designer. If it is removed, they will be lost.
-// Manual changes to this file may not be handled correctly.
+// This file has been generated automatically by Xamarin Studio from the outlets and
+// actions declared in your storyboard file.
+// Manual changes to this file will not be maintained.
 //
+using System;
 using MonoTouch.Foundation;
+using MonoTouch.UIKit;
+using System.CodeDom.Compiler;
 
 namespace HalalGuide.iOS.ViewController
 {
@@ -12,7 +15,8 @@ namespace HalalGuide.iOS.ViewController
 	partial class FilterMultipleDiningViewController
 	{
 		[Action ("Done:")]
-		partial void Done (MonoTouch.Foundation.NSObject sender);
+		[GeneratedCode ("iOS Designer", "1.0")]
+		partial void Done (UIBarButtonItem sender);
 
 		void ReleaseDesignerOutlets ()
 		{

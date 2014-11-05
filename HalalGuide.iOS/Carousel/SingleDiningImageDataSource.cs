@@ -5,12 +5,14 @@ using MonoTouch.UIKit;
 using System.Drawing;
 using HalalGuide.Services;
 using MonoTouch.CoreText;
+using SDWebImage;
+using MonoTouch.Foundation;
 
 namespace HalalGuide.iOS.Carousel
 {
 	public class SingleDiningImageDataSource : CarouselViewDataSource
 	{
-		private readonly SingleDiningViewModel ViewModel = ServiceContainer.Resolve<SingleDiningViewModel> ();
+		private readonly SingleDiningViewModel viewModel = ServiceContainer.Resolve<SingleDiningViewModel> ();
 
 		public SingleDiningImageDataSource ()
 		{
@@ -18,20 +20,27 @@ namespace HalalGuide.iOS.Carousel
 
 		public override uint NumberOfItems (CarouselView carousel)
 		{
-			return (uint)ViewModel.Pictures.Count;
+			return (uint)viewModel.pictures.Count;
 		}
 
 		public override UIView ViewForItem (CarouselView carousel, uint index, UIView reusingView)
 		{
+			UIImageView imageView = null;
+
 			if (reusingView == null) {
-				var imgView = new UIImageView (new RectangleF (10, 10, 90, 90)) {
-					Image = UIImage.FromBundle ("Camera.png"),
-					ContentMode = UIViewContentMode.ScaleAspectFit
+				reusingView = imageView = new UIImageView (new RectangleF (10, 10, 100, 100)) {
+					ContentMode = UIViewContentMode.ScaleAspectFill,
+					ClipsToBounds = true
 				};
-				reusingView = imgView;
 			} else {
-				//TODO Use SDWEB image to set image
+				imageView = (UIImageView)reusingView;
 			}
+
+			imageView.SetImage (
+				url: new NSUrl (viewModel.pictures [(int)index].imageUri), 
+				placeholder: UIImage.FromBundle ("Camera.png")
+			);
+
 			return reusingView;
 		}
 

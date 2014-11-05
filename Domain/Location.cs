@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using MonoTouch.AddressBook;
 using Newtonsoft.Json.Converters;
 using HalalGuide.Util.Converter;
+using Xamarin.Media;
 
 namespace HalalGuide.Domain
 {

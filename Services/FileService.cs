@@ -58,11 +58,11 @@ namespace HalalGuide.Services
 			return path;
 		}
 
-		public  string GetPathForReview (Review review)
+		public static string GetTempPath ()
 		{
 			string path;
 			#if __IOS__
-			path = Path.Combine (Environment.GetFolderPath (Environment.SpecialFolder.MyDocuments), "..", "Library/Caches/" + review.locationId + "/" + review.id);
+			path = Path.Combine (Environment.GetFolderPath (Environment.SpecialFolder.MyDocuments), "..", "/tmp/");
 			#elif __ANDROID__
 			path= "";
 			#else

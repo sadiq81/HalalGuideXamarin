@@ -12,6 +12,7 @@ using System.Threading;
 using Newtonsoft.Json.Serialization;
 using HalalGuide.iOS.Tables.Cells;
 using System.Threading.Tasks;
+using System.Security.Policy;
 
 namespace HalalGuide.ViewModels
 {
@@ -47,7 +48,22 @@ namespace HalalGuide.ViewModels
 		public override void RefreshCache ()
 		{
 			List<Location> list = locationService.LocationsByQuery (GetQuery ());
+			if (CategoryFilter.Count > 0) {
+				List<Location> categoryFiltered = new List<Location> ();
+				foreach (Location loc in list) {
+					if (loc.categories.Intersect (CategoryFilter).Any ()) {
+						categoryFiltered.Add (loc);
+					}
+				}
+				list = categoryFiltered;
+			}
 			Cache = CalculateDistances (list).OrderBy (loc => loc.distance).ToList ();
+		}
+
+		public void FilteredLocations ()
+		{
+			RefreshCache ();
+			filteredLocations (this, EventArgs.Empty);
 		}
 
 		public bool SearchTextChanged (string searchText)
@@ -73,43 +89,43 @@ namespace HalalGuide.ViewModels
 			                                             loc.creationStatus == CreationStatus.Approved &&
 			                                             loc.deleted == false;
 
+
 			if (CategoryFilter != null && CategoryFilter.Count > 0) {
-				predicate = predicate.AndAlso (loc => loc.categories.Intersect (CategoryFilter).Any ());
+
+
+
+				//predicate = predicate.AndAlso<Location> (loc => loc.categoriesForDatabase.);
 			}
 
 			if (Position != null && DistanceFilter < Constants.MaxDistanceLimit) {
 
 				CalcUtil.BoundingBox box = CalcUtil.GetBoundingBox (Position, DistanceFilter);
 
-				predicate = predicate.AndAlso (loc => loc.latitude <= box.MaxPoint.Latitude);
-				predicate = predicate.AndAlso (loc => loc.latitude >= box.MinPoint.Latitude);
-				predicate = predicate.AndAlso (loc => loc.longtitude <= box.MaxPoint.Longitude);
-				predicate = predicate.AndAlso (loc => loc.longtitude >= box.MinPoint.Longitude);
+				predicate = predicate.AndAlso<Location> (loc => loc.latitude <= box.MaxPoint.Latitude);
+				predicate = predicate.AndAlso<Location> (loc => loc.latitude >= box.MinPoint.Latitude);
+				predicate = predicate.AndAlso<Location> (loc => loc.longtitude <= box.MaxPoint.Longitude);
+				predicate = predicate.AndAlso<Location> (loc => loc.longtitude >= box.MinPoint.Longitude);
 			}
 
 			if (PorkFilter == false) {
-				predicate = predicate.AndAlso (loc => loc.pork == PorkFilter);
+				predicate = predicate.AndAlso<Location> (loc => loc.pork == PorkFilter);
 			}
 
 			if (AlcoholFilter == false) {
-				predicate = predicate.AndAlso (loc => loc.alcohol == AlcoholFilter);
+				predicate = predicate.AndAlso<Location> (loc => loc.alcohol == AlcoholFilter);
 			}
 
 			if (HalalFilter == false) {
-				predicate = predicate.AndAlso (loc => loc.nonHalal == HalalFilter);
+				predicate = predicate.AndAlso<Location> (loc => loc.nonHalal == HalalFilter);
 			}
-
-
 
 			if (SearchText.Length > 0) {
 
-				predicate = predicate.AndAlso (loc => loc.name.Contains (SearchText) ||
+				predicate = predicate.AndAlso<Location> (loc => loc.name.Contains (SearchText) ||
 				loc.addressRoad.Contains (SearchText) ||
 				loc.addressRoadNumber.Contains (SearchText) ||
 				loc.addressPostalCode.Contains (SearchText) ||
-				loc.addressCity.Contains (SearchText) ||
-				loc.categoriesForDatabase.Contains (SearchText)
-				);
+				loc.addressCity.Contains (SearchText));
 			}
 
 			return predicate;

@@ -13,6 +13,9 @@ namespace HalalGuide.iOS.ViewController.Table
 	partial class SingleDiningTableViewController
 	{
 		[Outlet]
+		MonoTouch.UIKit.UIButton addPicture { get; set; }
+
+		[Outlet]
 		MonoTouch.UIKit.UILabel Address { get; set; }
 
 		[Outlet]
@@ -131,6 +134,11 @@ namespace HalalGuide.iOS.ViewController.Table
 			if (Report != null) {
 				Report.Dispose ();
 				Report = null;
+			}
+
+			if (addPicture != null) {
+				addPicture.Dispose ();
+				addPicture = null;
 			}
 
 			if (Star1 != null) {

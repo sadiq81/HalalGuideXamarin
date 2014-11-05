@@ -5,7 +5,7 @@
 // Manual changes to this file may not be handled correctly.
 //
 using MonoTouch.Foundation;
-
+using System.CodeDom.Compiler;
 
 namespace HalalGuide.iOS.ViewController.Table
 {
@@ -13,22 +13,13 @@ namespace HalalGuide.iOS.ViewController.Table
 	partial class AddNewDiningTableViewController
 	{
 		[Outlet]
-		MonoTouch.UIKit.UIActivityIndicatorView ActivityIndicator { get; set; }
-
-		[Outlet]
 		MonoTouch.UIKit.UIImageView AlcoholImage { get; set; }
 
 		[Outlet]
 		MonoTouch.UIKit.UISwitch AlcoholSwitch { get; set; }
 
 		[Outlet]
-		MonoTouch.UIKit.UIButton Choose { get; set; }
-
-		[Outlet]
 		MonoTouch.UIKit.UITextField City { get; set; }
-
-		[Outlet]
-		MonoTouch.UIKit.UILabel Count { get; set; }
 
 		[Outlet]
 		MonoTouch.UIKit.UIImageView HalalImage { get; set; }
@@ -58,9 +49,6 @@ namespace HalalGuide.iOS.ViewController.Table
 		MonoTouch.UIKit.UITextField PostalCode { get; set; }
 
 		[Outlet]
-		MonoTouch.UIKit.UIButton Reset { get; set; }
-
-		[Outlet]
 		HalalGuide.iOS.Textfield.AutoCompleteUITextField Road { get; set; }
 
 		[Outlet]
@@ -71,11 +59,6 @@ namespace HalalGuide.iOS.ViewController.Table
 
 		void ReleaseDesignerOutlets ()
 		{
-			if (ActivityIndicator != null) {
-				ActivityIndicator.Dispose ();
-				ActivityIndicator = null;
-			}
-
 			if (AlcoholImage != null) {
 				AlcoholImage.Dispose ();
 				AlcoholImage = null;
@@ -86,19 +69,9 @@ namespace HalalGuide.iOS.ViewController.Table
 				AlcoholSwitch = null;
 			}
 
-			if (Choose != null) {
-				Choose.Dispose ();
-				Choose = null;
-			}
-
 			if (City != null) {
 				City.Dispose ();
 				City = null;
-			}
-
-			if (Count != null) {
-				Count.Dispose ();
-				Count = null;
 			}
 
 			if (HalalImage != null) {
@@ -144,11 +117,6 @@ namespace HalalGuide.iOS.ViewController.Table
 			if (PostalCode != null) {
 				PostalCode.Dispose ();
 				PostalCode = null;
-			}
-
-			if (Reset != null) {
-				Reset.Dispose ();
-				Reset = null;
 			}
 
 			if (Road != null) {

@@ -10,7 +10,7 @@ using HalalGuide.Util;
 
 namespace HalalGuide.DAO
 {
-	public abstract class GenericDAO<T>
+	public abstract class GenericDAO<T> where T : BaseEntity
 	{
 		protected DatabaseWrapper database { get { return ServiceContainer.Resolve<DatabaseWrapper> (); } }
 
@@ -38,21 +38,22 @@ namespace HalalGuide.DAO
 		public  async Task Delete (T entity)
 		{
 			await azure.GetTable<T> ().DeleteAsync (entity);
-			database.Delete<T> (entity);
 		}
 
 		public  async Task DeleteMultiple (List<T> entities)
 		{
 			foreach (T entity in entities) {
 				await azure.GetTable<T> ().DeleteAsync (entity);
-				database.Delete<T> (entity);
 			}
 		}
 
 		public  async Task SaveOrReplace (T entity)
 		{
-			await azure.GetTable<T> ().InsertAsync (entity);
-			database.InsertOrReplace (entity);
+			if (entity.id == null) {
+				await azure.GetTable<T> ().InsertAsync (entity);
+			} else {
+				await azure.GetTable<T> ().UpdateAsync (entity);
+			}
 		}
 
 		public  async Task SaveOrReplaceMultiple (List<T> entities)
@@ -60,14 +61,10 @@ namespace HalalGuide.DAO
 			foreach (T entity in entities) {
 				await azure.GetTable<T> ().InsertAsync (entity);
 			}
-			foreach (T entity in entities) {
-				database.InsertOrReplace (entity);
-			}
 		}
 
 		public  async Task<List<T>> Where (Expression<Func<T,bool>> predicate)
 		{
-
 			List<T> list = await azure.GetTable<T> ().WithParameters (new Dictionary<string,string> { 
 				{ "__includeDeleted", "true" }, 
 				{ "__systemProperties","deleted" }

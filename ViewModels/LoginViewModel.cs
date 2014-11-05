@@ -18,7 +18,7 @@ namespace HalalGuide.ViewModels
 		private MobileServiceClient client { get { return ServiceContainer.Resolve<MobileServiceClient> (); } }
 
 
-		public async Task Authenticate (UIViewController view)
+		public async void Authenticate (UIViewController view)
 		{
 			try {
 				MobileServiceUser user = await client.LoginAsync (view, MobileServiceAuthenticationProvider.Facebook);

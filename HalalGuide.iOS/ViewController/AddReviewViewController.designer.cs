@@ -1,10 +1,13 @@
 // WARNING
 //
-// This file has been generated automatically by Xamarin Studio to store outlets and
-// actions made in the UI designer. If it is removed, they will be lost.
-// Manual changes to this file may not be handled correctly.
+// This file has been generated automatically by Xamarin Studio from the outlets and
+// actions declared in your storyboard file.
+// Manual changes to this file will not be maintained.
 //
+using System;
 using MonoTouch.Foundation;
+using MonoTouch.UIKit;
+using System.CodeDom.Compiler;
 
 namespace HalalGuide.iOS.ViewController
 {
@@ -33,50 +36,19 @@ namespace HalalGuide.iOS.ViewController
 		MonoTouch.UIKit.UIButton Star5 { get; set; }
 
 		[Action ("Regreet:")]
-		partial void Regreet (MonoTouch.UIKit.UIBarButtonItem sender);
+		[GeneratedCode ("iOS Designer", "1.0")]
+		partial void Regreet (UIBarButtonItem sender);
 
 		[Action ("Save:")]
-		partial void Save (MonoTouch.UIKit.UIBarButtonItem sender);
+		[GeneratedCode ("iOS Designer", "1.0")]
+		partial void Save (UIBarButtonItem sender);
 
 		[Action ("StarPressed:")]
-		partial void StarPressed (MonoTouch.UIKit.UIButton sender);
+		[GeneratedCode ("iOS Designer", "1.0")]
+		partial void StarPressed (UIButton sender);
 
 		void ReleaseDesignerOutlets ()
 		{
-			if (ActivityIndicator != null) {
-				ActivityIndicator.Dispose ();
-				ActivityIndicator = null;
-			}
-
-			if (Review != null) {
-				Review.Dispose ();
-				Review = null;
-			}
-
-			if (Star1 != null) {
-				Star1.Dispose ();
-				Star1 = null;
-			}
-
-			if (Star2 != null) {
-				Star2.Dispose ();
-				Star2 = null;
-			}
-
-			if (Star3 != null) {
-				Star3.Dispose ();
-				Star3 = null;
-			}
-
-			if (Star4 != null) {
-				Star4.Dispose ();
-				Star4 = null;
-			}
-
-			if (Star5 != null) {
-				Star5.Dispose ();
-				Star5 = null;
-			}
 		}
 	}
 }

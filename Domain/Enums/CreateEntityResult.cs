@@ -4,11 +4,10 @@ namespace HalalGuide.Domain.Enums
 	public enum CreateEntityResult
 	{
 		OK = 0,
-		CouldNotCreateEntityInSimpleDB = 1,
-		CouldNotUploadReviewToS3 = 2,
-		CouldNotUploadImageToS3 = 3,
-		AddressDoesNotExist = 4,
-		Error = 5,
+		CouldNotCreateEntityInDatabase = 1,
+		CouldNotUploadFile = 2,
+		AddressDoesNotExist = 3,
+		Error = 4,
 
 	}
 }

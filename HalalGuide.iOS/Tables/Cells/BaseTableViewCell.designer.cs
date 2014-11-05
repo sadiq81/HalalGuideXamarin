@@ -9,14 +9,11 @@ using MonoTouch.Foundation;
 using MonoTouch.UIKit;
 using System.CodeDom.Compiler;
 
-namespace HalalGuide.iOS.ViewController
+namespace HalalGuide.iOS.Tables.Cells
 {
-	[Register ("MultipleDiningViewController")]
-	partial class MultipleDiningViewController
+	[Register ("BaseTableViewCell")]
+	partial class BaseTableViewCell
 	{
-		[Outlet]
-		MonoTouch.UIKit.UITableView DiningTableView { get; set; }
-
 		void ReleaseDesignerOutlets ()
 		{
 		}

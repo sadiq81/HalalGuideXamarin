@@ -18,13 +18,12 @@ namespace HalalGuide.iOS.ViewController
 		{
 		}
 
-
-		partial void Regret (NSObject sender)
+		partial void Regret (UIBarButtonItem sender)
 		{
 			DismissViewController (true, null);
 		}
 
-		async partial void Save (NSObject sender)
+		async partial void Save (UIBarButtonItem sender)
 		{
 			await childViewController.Save ((MonoTouch.UIKit.UIBarButtonItem)sender);
 		}

@@ -7,14 +7,20 @@ using System.Collections.Generic;
 using HalalGuide.Domain;
 using HalalGuide.Domain.Enums;
 using Microsoft.WindowsAzure.MobileServices;
+using Xamarin.Media;
+using MonoTouch.CoreVideo;
 
 namespace HalalGuide.ViewModels
 {
 	public abstract  class BaseViewModel
 	{
-		public event EventHandler LocationChangedEvent = delegate { };
+		public event EventHandler locationChangedEvent = delegate { };
 
-		public event EventHandler RefreshedLocations = delegate { };
+		public event EventHandler refreshedLocations = delegate { };
+
+		public event EventHandler refreshedLocationPictures = delegate { };
+
+		public static event EventHandler<ProgressResult> busy = delegate{};
 
 		protected Geolocator geoService { get { return ServiceContainer.Resolve<Geolocator> (); } }
 
@@ -24,17 +30,21 @@ namespace HalalGuide.ViewModels
 
 		protected LocationService locationService { get { return ServiceContainer.Resolve<LocationService> (); } }
 
+		protected ImageService imageService { get { return ServiceContainer.Resolve<ImageService> (); } }
+
 		protected ReviewService reviewService { get { return ServiceContainer.Resolve<ReviewService> (); } }
 
 		protected FacebookService facebookService { get { return ServiceContainer.Resolve<FacebookService> (); } }
-
-		protected UploadService uploadService { get { return ServiceContainer.Resolve<UploadService> (); } }
 
 		protected DatabaseWrapper databaseService { get { return ServiceContainer.Resolve<DatabaseWrapper> (); } }
 
 		protected MobileServiceClient azureService { get { return ServiceContainer.Resolve<MobileServiceClient> (); } }
 
-		public Location SelectedLocation{ get; set; }
+		protected MediaPicker mediaPicker { get { return ServiceContainer.Resolve<MediaPicker> (); } }
+
+		public Location selectedLocation{ get; set; }
+
+
 
 		//------------------------------------------------------------------------
 
@@ -48,15 +58,23 @@ namespace HalalGuide.ViewModels
 
 			geoService.PositionChanged += (object sender, PositionEventArgs e) => {
 				Position = e.Position;
-				if (SelectedLocation != null) {
-					SelectedLocation.distance = CalcUtil.GetDistanceKM (Position, new Position () {
-						Latitude = SelectedLocation.latitude,
-						Longitude = SelectedLocation.longtitude
+				if (selectedLocation != null) {
+					selectedLocation.distance = CalcUtil.GetDistanceKM (Position, new Position () {
+						Latitude = selectedLocation.latitude,
+						Longitude = selectedLocation.longtitude
 					});
 				}
-				LocationChangedEvent (this, e);
+				locationChangedEvent (this, e);
 			};
 		}
+
+		static void OnBusy (ProgressResult e)
+		{
+			var handler = busy;
+			if (handler != null)
+				handler (null, e);
+		}
+
 
 		protected List<Location>  CalculateDistances (List<Location> locations, bool sortByDistance = false)
 		{
@@ -81,12 +99,17 @@ namespace HalalGuide.ViewModels
 		{
 			await locationService.RetrieveLatestLocations ();
 			RefreshCache ();
-			RefreshedLocations (this, EventArgs.Empty);
+			refreshedLocations (this, EventArgs.Empty);
+		}
+
+		public async Task RefreshLocationPictures ()
+		{
+			await imageService.RetrieveLatestLocationPictures ();
+			refreshedLocationPictures (this, EventArgs.Empty);
 		}
 
 		public virtual void RefreshCache ()
 		{
-
 		}
 
 		public async Task<string> GetFirstImageUriForLocation (Location location)
@@ -98,6 +121,41 @@ namespace HalalGuide.ViewModels
 		{
 			return keychainService.IsAuthenticated ();
 		}
+
+		public async Task<MediaFile> TakePicture (Location locationForPicture)
+		{
+			MediaFile image = null;
+			await mediaPicker.TakePhotoAsync (new StoreCameraMediaOptions {
+				Name = Guid.NewGuid () + ".jpeg",
+				Directory = FileService.GetTempPath ()
+			}).ContinueWith (t => {
+				if (t.IsCanceled || t.IsFaulted) {
+				} else {
+					image = t.Result;
+				}
+			});
+			return image;
+		}
+
+		public async Task<MediaFile> GetPictureFromDevice (Location locationForPicture)
+		{
+			MediaFile image = null; 
+			await mediaPicker.PickPhotoAsync ().ContinueWith (async t => {
+				if (t.IsCanceled || t.IsFaulted) {
+				} else {
+					image = t.Result;
+					if (locationForPicture != null) {
+						OnBusy (ProgressResult.GetInstance ("Uploader billede", ProgressType.ShowWithText));
+						await imageService.UploadImageForLocation (locationForPicture, image);
+						OnBusy (ProgressResult.GetInstance (null, ProgressType.Dismiss));
+					}
+				}
+			});
+			return image;
+		}
+
+
+
 
 		public async Task CreateDummyData ()
 		{

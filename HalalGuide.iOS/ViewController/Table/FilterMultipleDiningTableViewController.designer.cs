@@ -1,11 +1,13 @@
 // WARNING
 //
-// This file has been generated automatically by Xamarin Studio to store outlets and
-// actions made in the UI designer. If it is removed, they will be lost.
-// Manual changes to this file may not be handled correctly.
+// This file has been generated automatically by Xamarin Studio from the outlets and
+// actions declared in your storyboard file.
+// Manual changes to this file will not be maintained.
 //
+using System;
 using MonoTouch.Foundation;
-
+using MonoTouch.UIKit;
+using System.CodeDom.Compiler;
 
 namespace HalalGuide.iOS.ViewController.Table
 {
@@ -38,45 +40,6 @@ namespace HalalGuide.iOS.ViewController.Table
 
 		void ReleaseDesignerOutlets ()
 		{
-			if (DistanceLabel != null) {
-				DistanceLabel.Dispose ();
-				DistanceLabel = null;
-			}
-
-			if (DistanceSlider != null) {
-				DistanceSlider.Dispose ();
-				DistanceSlider = null;
-			}
-
-			if (PorkSwitch != null) {
-				PorkSwitch.Dispose ();
-				PorkSwitch = null;
-			}
-
-			if (AlcoholSwitch != null) {
-				AlcoholSwitch.Dispose ();
-				AlcoholSwitch = null;
-			}
-
-			if (HalalSwitch != null) {
-				HalalSwitch.Dispose ();
-				HalalSwitch = null;
-			}
-
-			if (Choose != null) {
-				Choose.Dispose ();
-				Choose = null;
-			}
-
-			if (Reset != null) {
-				Reset.Dispose ();
-				Reset = null;
-			}
-
-			if (Count != null) {
-				Count.Dispose ();
-				Count = null;
-			}
 		}
 	}
 }

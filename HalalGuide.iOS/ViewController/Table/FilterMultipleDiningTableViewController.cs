@@ -8,6 +8,7 @@ using HalalGuide.ViewModels;
 using HalalGuide.Domain.Enums;
 using System.Collections.Generic;
 using HalalGuide.Util;
+using HalalGuide.iOS.Util;
 using HalalGuide.iOS.Tables.Cells;
 using HalalGuide.Services;
 
@@ -35,15 +36,10 @@ namespace HalalGuide.iOS.ViewController.Table
 			base.ViewDidLoad ();
 
 			SetupUIValues ();
+
 			SetupEventHandlers ();
 
 		}
-
-		public override void ViewDidAppear (bool animated)
-		{
-			base.ViewDidAppear (animated);
-		}
-
 
 		#region Setup
 
@@ -102,9 +98,7 @@ namespace HalalGuide.iOS.ViewController.Table
 
 			MultipleDiningViewModel.CategoryFilter = CategoriesChoosen;
 
-
-			//MultipleDiningViewModel.RefreshCache ();
-			//MultipleDiningViewModel.OnFilteredLocations (EventArgs.Empty);
+			MultipleDiningViewModel.FilteredLocations ();
 		}
 
 
@@ -169,9 +163,9 @@ namespace HalalGuide.iOS.ViewController.Table
 				bool selected = CategoriesChoosen.Contains (DiningCategoryExtensions.CategoryAtIndex (indexPath.Row));
 				cell.Accessory = selected ? UITableViewCellAccessory.Checkmark : UITableViewCellAccessory.None;
 
-				return cell;
+				return cell.AddSeperatorToCell ();
 			} else {
-				return base.GetCell (tableView, indexPath);
+				return base.GetCell (tableView, indexPath).AddSeperatorToCell ();
 			}
 		}
 

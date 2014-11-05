@@ -36,8 +36,6 @@ namespace HalalGuide.Services
 
 			DateTime updatedLast = DateTime.ParseExact (lastUpdatedString, Constants.DateFormat, CultureInfo.InvariantCulture);
 
-			Console.WriteLine (updatedLast);
-
 			await locationDAO.Where (loc => loc.updatedAt > updatedLast);
 		
 			preferences.StoreString (Constants.LocationLastUpdated, updatedTime);
@@ -55,11 +53,13 @@ namespace HalalGuide.Services
 			return locations;
 		}
 
-
 		public List<Location> GetLastTenLocations ()
 		{
-			return database.Table<Location> ().Where (l => l.creationStatus == CreationStatus.Approved && l.deleted == false).OrderByDescending (l => l.updatedAt).Take (10).ToList ();
+			List<Location> locations = database.Table<Location> ().Where (l => l.creationStatus == CreationStatus.Approved && l.deleted == false).OrderByDescending (l => l.updatedAt).Take (10).ToList ();
+			return locations;
 		}
+
+
 	}
 }
 

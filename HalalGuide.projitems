@@ -67,5 +67,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Domain\Enums\CreateEntityResult.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Domain\Enums\CreationStatus.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Util\Converter\DiningCategoryListJsonConverter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Domain\Enums\ProgressResult.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\ImageService.cs" />
   </ItemGroup>
 </Project>

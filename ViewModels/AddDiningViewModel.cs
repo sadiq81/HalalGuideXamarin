@@ -131,7 +131,7 @@ namespace HalalGuide.ViewModels
 			//TODO
 			//await uploadService.UploadFile (null,"test.jpg");
 
-			SelectedLocation = l;
+			selectedLocation = l;
 
 			return CreateEntityResult.OK;
 		}

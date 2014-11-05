@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System;
+using MonoTouch.MessageUI;
+using HalalGuide.Util;
 
 namespace HalalGuide.ViewModels
 {
@@ -11,23 +13,39 @@ namespace HalalGuide.ViewModels
 
 		public event EventHandler RefreshedPicturesCompletedEvent = delegate { };
 
-		public List<LocationPicture> Pictures { get; set; }
+		public List<LocationPicture> pictures { get; set; }
 
-		public List<Review> Reviews { get; set; }
+		public List<Review> reviews { get; set; }
 
 		public SingleDiningViewModel () : base ()
 		{
-			Pictures = new List<LocationPicture> ();
-			Reviews = new List<Review> ();
+		}
+
+		public override void RefreshCache ()
+		{
+			pictures = imageService.RetrieveAllPicturesForLocation (selectedLocation);
 		}
 
 		public double AverageReviewScore ()
 		{
-			if (Reviews != null && Reviews.Count > 0) {
-				return Reviews.Average (r => r.rating);
+			if (reviews != null && reviews.Count > 0) {
+				return reviews.Average (r => r.rating);
 			} else {
 				return 0;
 			}
+		}
+
+		public MFMailComposeViewController reportIncorrectInformation ()
+		{
+			MFMailComposeViewController mailController = new MFMailComposeViewController ();
+			mailController.SetToRecipients (new string[]{ "tommy@eazyit.dk" });
+			mailController.SetSubject (Localization.GetLocalizedValue (Feedback.Error) + " - " + ": " + selectedLocation.id);
+			mailController.SetMessageBody (Localization.GetLocalizedValue (Feedback.ErrorTemplate), false);
+
+			mailController.Finished += (  s, args) => {
+				args.Controller.DismissViewController (true, null);
+			};
+			return mailController;
 		}
 	}
 }
