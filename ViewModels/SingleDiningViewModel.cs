@@ -4,14 +4,13 @@ using System.Linq;
 using System;
 using MonoTouch.MessageUI;
 using HalalGuide.Util;
+using System.Threading.Tasks;
 
 namespace HalalGuide.ViewModels
 {
 	public sealed class SingleDiningViewModel : BaseViewModel
 	{
-		public event EventHandler RefreshedReviewCompletedEvent = delegate { };
-
-		public event EventHandler RefreshedPicturesCompletedEvent = delegate { };
+		public event EventHandler refreshedSelectedLocationPictures = delegate { };
 
 		public List<LocationPicture> pictures { get; set; }
 
@@ -33,6 +32,13 @@ namespace HalalGuide.ViewModels
 			} else {
 				return 0;
 			}
+		}
+
+		public async override Task RefreshLocationPictures ()
+		{
+			await imageService.RetrieveLatestLocationPicturesForLocation (selectedLocation);
+			RefreshCache ();
+			refreshedSelectedLocationPictures (this, EventArgs.Empty);
 		}
 
 		public MFMailComposeViewController reportIncorrectInformation ()

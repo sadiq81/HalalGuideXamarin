@@ -20,6 +20,8 @@ namespace HalalGuide.ViewModels
 
 		public event EventHandler refreshedLocationPictures = delegate { };
 
+		public event EventHandler refreshedReviews = delegate { };
+
 		public static event EventHandler<ProgressResult> busy = delegate{};
 
 		protected Geolocator geoService { get { return ServiceContainer.Resolve<Geolocator> (); } }
@@ -95,14 +97,14 @@ namespace HalalGuide.ViewModels
 			return locations;
 		}
 
-		public async Task RefreshLocations ()
+		public virtual async Task RefreshLocations ()
 		{
 			await locationService.RetrieveLatestLocations ();
 			RefreshCache ();
 			refreshedLocations (this, EventArgs.Empty);
 		}
 
-		public async Task RefreshLocationPictures ()
+		public virtual async Task RefreshLocationPictures ()
 		{
 			await imageService.RetrieveLatestLocationPictures ();
 			refreshedLocationPictures (this, EventArgs.Empty);

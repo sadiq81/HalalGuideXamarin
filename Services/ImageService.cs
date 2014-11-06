@@ -57,6 +57,16 @@ namespace HalalGuide.Services
 			preferences.StoreString (Constants.LocationPictureLastUpdated, updatedTime);
 		}
 
+		public async Task RetrieveLatestLocationPicturesForLocation (Location selectedLocation)
+		{
+			string lastUpdatedString = preferences.GetString (Constants.LocationPictureLastUpdated);
+
+			DateTime updatedLast = DateTime.ParseExact (lastUpdatedString, Constants.DateFormat, CultureInfo.InvariantCulture);
+
+			await locationPictureDAO.Where (pic => pic.updatedAt > updatedLast && pic.locationId == selectedLocation.id);
+
+		}
+
 		public List<LocationPicture> RetrieveAllPicturesForLocation (Location location)
 		{
 			List<LocationPicture> pictures = database.Table<LocationPicture> ().Where (pic => pic.deleted == false && pic.locationId == location.id).ToList ();

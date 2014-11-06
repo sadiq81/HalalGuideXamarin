@@ -19,7 +19,7 @@ namespace HalalGuide.iOS.ViewController.Table
 {
 	public partial class SingleDiningTableViewController : UITableViewController
 	{
-		private readonly SingleDiningViewModel ViewModel = ServiceContainer.Resolve<SingleDiningViewModel> ();
+		private readonly SingleDiningViewModel viewModel = ServiceContainer.Resolve<SingleDiningViewModel> ();
 		private readonly AddReviewViewModel AddReviewViewModel = ServiceContainer.Resolve<AddReviewViewModel> ();
 		private UIImageView Expand;
 		private CarouselView carousel;
@@ -30,7 +30,7 @@ namespace HalalGuide.iOS.ViewController.Table
 
 		public override void  ViewDidLoad ()
 		{
-			ViewModel.RefreshCache ();
+			viewModel.RefreshCache ();
 
 			SetupTableView ();
 			SetupUIValues ();
@@ -41,6 +41,13 @@ namespace HalalGuide.iOS.ViewController.Table
 
 		private void SetupTableView ()
 		{
+			RefreshControl = new UIRefreshControl ();
+			RefreshControl.ValueChanged += async (sender, e) => {
+				RefreshControl.BeginRefreshing ();
+				await viewModel.RefreshLocationPictures ();
+				RefreshControl.EndRefreshing ();
+
+			};
 			TableView.TableFooterView = new UIView ();
 		}
 
@@ -57,22 +64,22 @@ namespace HalalGuide.iOS.ViewController.Table
 
 		private void SetupUIValues ()
 		{
-			Name.Text = ViewModel.selectedLocation.name;
-			Address.Text = string.Format ("{0} {1}", ViewModel.selectedLocation.addressRoad, ViewModel.selectedLocation.addressRoadNumber);
-			City.Text = string.Format ("{0} {1}", ViewModel.selectedLocation.addressPostalCode, ViewModel.selectedLocation.addressCity);
+			Name.Text = viewModel.selectedLocation.name;
+			Address.Text = string.Format ("{0} {1}", viewModel.selectedLocation.addressRoad, viewModel.selectedLocation.addressRoadNumber);
+			City.Text = string.Format ("{0} {1}", viewModel.selectedLocation.addressPostalCode, viewModel.selectedLocation.addressCity);
 
-			Category.Text = ViewModel.selectedLocation.categories.LocalisedCategoriesToString ();
+			Category.Text = viewModel.selectedLocation.categories.LocalisedCategoriesToString ();
 
-			PorkImage.Image = UIImage.FromBundle (Images.Pig + ViewModel.selectedLocation.pork);
-			PorkLabel.TextColor = ViewModel.selectedLocation.pork ? UIColor.Red : UIColor.Green;
-			AlcoholImage.Image = UIImage.FromBundle (Images.Alcohol + ViewModel.selectedLocation.alcohol);
-			AlcoholLabel.TextColor = ViewModel.selectedLocation.alcohol ? UIColor.Red : UIColor.Green;
-			HalalImage.Image = UIImage.FromBundle (Images.NonHalal + ViewModel.selectedLocation.nonHalal);
-			HalalLabel.TextColor = ViewModel.selectedLocation.nonHalal ? UIColor.Red : UIColor.Green;
+			PorkImage.Image = UIImage.FromBundle (Images.Pig + viewModel.selectedLocation.pork);
+			PorkLabel.TextColor = viewModel.selectedLocation.pork ? UIColor.Red : UIColor.Green;
+			AlcoholImage.Image = UIImage.FromBundle (Images.Alcohol + viewModel.selectedLocation.alcohol);
+			AlcoholLabel.TextColor = viewModel.selectedLocation.alcohol ? UIColor.Red : UIColor.Green;
+			HalalImage.Image = UIImage.FromBundle (Images.NonHalal + viewModel.selectedLocation.nonHalal);
+			HalalLabel.TextColor = viewModel.selectedLocation.nonHalal ? UIColor.Red : UIColor.Green;
 
-			Km.Text = ViewModel.selectedLocation.distance.ToString (Constants.NumberFormat, CultureInfo.CurrentCulture);
+			Km.Text = viewModel.selectedLocation.distance.ToString (Constants.NumberFormat, CultureInfo.CurrentCulture);
 
-			double rating = ViewModel.AverageReviewScore ();
+			double rating = viewModel.AverageReviewScore ();
 			Star1.Image = rating >= 1 ? UIImage.FromBundle (Images.StarSelected) : UIImage.FromBundle (Images.Star);
 			Star2.Image = rating >= 2 ? UIImage.FromBundle (Images.StarSelected) : UIImage.FromBundle (Images.Star);
 			Star3.Image = rating >= 3 ? UIImage.FromBundle (Images.StarSelected) : UIImage.FromBundle (Images.Star);
@@ -82,20 +89,24 @@ namespace HalalGuide.iOS.ViewController.Table
 
 		private void SetupEventListeners ()
 		{
-			ViewModel.RefreshedPicturesCompletedEvent += (sender, e) => InvokeOnMainThread (delegate {
-				TableView.ReloadSections (new NSIndexSet (2), UITableViewRowAnimation.Fade);
+			viewModel.refreshedSelectedLocationPictures += ( sender, e) => InvokeOnMainThread (delegate {
+				carousel.ReloadData ();
 			});
 
-			ViewModel.RefreshedReviewCompletedEvent += (sender, e) => InvokeOnMainThread (delegate {
+			viewModel.refreshedLocationPictures += (sender, e) => InvokeOnMainThread (delegate {
+				carousel.ReloadData ();
+			});
+
+			viewModel.refreshedReviews += (sender, e) => InvokeOnMainThread (delegate {
 				TableView.ReloadSections (new NSIndexSet (4), UITableViewRowAnimation.Fade);
 			});
 
-			ViewModel.locationChangedEvent += (sender, e) => {
-				Km.Text = ViewModel.selectedLocation.distance.ToString (Constants.NumberFormat, CultureInfo.CurrentCulture);
+			viewModel.locationChangedEvent += (sender, e) => {
+				Km.Text = viewModel.selectedLocation.distance.ToString (Constants.NumberFormat, CultureInfo.CurrentCulture);
 			};
 
 			Report.TouchUpInside += (sender, e) => {
-				PresentViewController (ViewModel.reportIncorrectInformation (), true, null);
+				PresentViewController (viewModel.reportIncorrectInformation (), true, null);
 			};
 
 			addPicture.TouchUpInside += (sender, e) => {
@@ -104,10 +115,10 @@ namespace HalalGuide.iOS.ViewController.Table
 				actionSheet.Clicked += async delegate(object a, UIButtonEventArgs b) {
 					switch (b.ButtonIndex) {
 					case 0:
-						await ViewModel.TakePicture (ViewModel.selectedLocation);
+						await viewModel.TakePicture (viewModel.selectedLocation);
 						break;
 					case 1:
-						await ViewModel.GetPictureFromDevice (ViewModel.selectedLocation);
+						await viewModel.GetPictureFromDevice (viewModel.selectedLocation);
 						break;
 					case 2:
 						break;
@@ -121,126 +132,9 @@ namespace HalalGuide.iOS.ViewController.Table
 		{
 			base.PrepareForSegue (segue, sender);
 			if (Segue.AddReviewViewControllerSegue.Equals (segue.Identifier)) {
-				AddReviewViewModel.selectedLocation = ViewModel.selectedLocation;
+				AddReviewViewModel.selectedLocation = viewModel.selectedLocation;
 			}
 		}
-
-		/*
-
-		 #region CollectionView
-		[Export ("collectionView:cellForItemAtIndexPath:")]
-		public  UICollectionViewCell GetCell (UICollectionView collectionView, NSIndexPath indexPath)
-		{
-			var cell = (LocationPictureImageCell)collectionView.DequeueReusableCell (LocationPictureImageCell.Indentifier, indexPath);
-
-			if (indexPath.Row == 0) {
-				cell.Image = UIImage.FromBundle (Images.Camera);
-
-				UITapGestureRecognizer tap = new UITapGestureRecognizer (() => {
-
-					XUbertesters.LogInfo ("SingleDiningViewController: PickImage-Start");
-					if (ViewModel.IsCameraAvailable () || UIDevice.CurrentDevice.Model.Contains ("Simulator")) {
-
-						UIActionSheet actionSheet = new UIActionSheet (Localization.GetLocalizedValue (Feedback.AddPicture), null, Localization.GetLocalizedValue (Feedback.Regreet), null, Localization.GetLocalizedValue (Feedback.UseCamera), Localization.GetLocalizedValue (Feedback.UseCameraRoll));
-						actionSheet.Clicked += async delegate(object a, UIButtonEventArgs b) {
-
-							MediaFile file = null;
-							switch (b.ButtonIndex) {
-							case 0:
-								file = await ViewModel.TakePicture ("../tmp/", "temp.jpg");
-								break;
-							case 1:
-								file = await ViewModel.GetPictureFromDevice ();
-								break;
-							case 2:
-								break;
-							}
-
-							if (file != null) {
-								CreateEntityResult result = await ViewModel.AddLocationPicture (StreamUtil.ReadToEnd (file.GetStream ()));
-
-								if (result == CreateEntityResult.OK) {
-									new UIAlertView (Localization.GetLocalizedValue (Feedback.Ok), Localization.GetLocalizedValue (Feedback.ImageSendToReview), null, Localization.GetLocalizedValue (Feedback.Close)).Show ();
-									InvokeOnMainThread (() => {
-										ViewModel.RefreshDataForLocation ();
-									});
-								} else {
-									new UIAlertView (Localization.GetLocalizedValue (Feedback.Error), Localization.GetLocalizedValue (result.ToString ()), null, Localization.GetLocalizedValue (Feedback.Close)).Show ();
-								}
-
-							}
-						};
-						actionSheet.ShowInView (View);
-
-					} else {
-						XUbertesters.LogWarn ("SingleDiningViewController: noCameraFound");
-						UIAlertView noCameraFound = new UIAlertView (Localization.GetLocalizedValue (Feedback.Error), Localization.GetLocalizedValue (Feedback.CameraNotAvaileble), null, Localization.GetLocalizedValue (Feedback.Close));
-						noCameraFound.Show ();
-					}
-					XUbertesters.LogInfo ("SingleDiningViewController: PickImage-End");
-				});
-
-				cell.AddGestureRecognizer (tap);
-
-				return cell;
-			} else {
-
-				if (cell.LocationPicture == null) {
-
-					UITapGestureRecognizer tap = new UITapGestureRecognizer (() => {
-						Expand = new UIImageView (cell.ImageView.Image);
-						Expand.ContentMode = UIViewContentMode.ScaleAspectFit;
-						Expand.BackgroundColor = UIColor.White.ColorWithAlpha(0.7f);
-						Expand.Frame = View.ConvertRectFromView (cell.ImageView.Frame, cell.ImageView.Superview);
-						Expand.UserInteractionEnabled = true;
-						Expand.ClipsToBounds = true;
-
-						UIView.Transition (View, 0.5, UIViewAnimationOptions.AllowAnimatedContent, () => {
-							View.AddSubview (Expand);
-							Expand.Frame = View.Bounds;
-						}, () => {
-							UITapGestureRecognizer tapInner = new UITapGestureRecognizer (() => {
-								UIView.Animate (
-									0.5, 
-									() => {
-										Expand.Alpha = 0;
-									}, 
-									Expand.RemoveFromSuperview);
-								;
-							});
-							tapInner.WeakDelegate = this;
-							Expand.AddGestureRecognizer (tapInner);
-						});
-					});
-					cell.AddGestureRecognizer (tap);
-				}
-				LocationPicture lp = ViewModel.GetLocationPictureAtRow (indexPath.Row - 1);
-				cell.Configure (lp);
-
-			}
-			return cell;
-		}
-
-		[Export ("collectionView:numberOfItemsInSection:")]
-		public  int GetItemsCount (UICollectionView collectionView, int section)
-		{
-			return ViewModel.PicturesItems () + 1;
-		}
-
-		[Export ("numberOfSectionsInCollectionView:")]
-		public virtual int NumberOfSections (UICollectionView collectionView)
-		{
-			return 1;
-		}
-
-		[Export ("collectionView:shouldHighlightItemAtIndexPath:")]
-		public virtual bool ShouldHighlightItem (UICollectionView collectionView, NSIndexPath indexPath)
-		{
-			return false;
-		}
-
-		#endregion
-		*/
 
 		#region TableView
 
@@ -264,7 +158,7 @@ namespace HalalGuide.iOS.ViewController.Table
 				if (cell == null) {
 					cell = new ReviewCell (UITableViewCellStyle.Default, ReviewCell.Identifier);
 				}
-				Review r = ViewModel.reviews [indexPath.Row];
+				Review r = viewModel.reviews [indexPath.Row];
 		
 				((ReviewCell)cell).Configure (r);
 		
