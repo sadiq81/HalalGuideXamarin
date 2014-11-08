@@ -3,6 +3,7 @@ using Xamarin.Auth;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.WindowsAzure.MobileServices;
+using Xamarin;
 
 namespace HalalGuide.Services
 {
@@ -34,6 +35,12 @@ namespace HalalGuide.Services
 					user.MobileServiceAuthenticationToken
 				}
 			});
+//			Insights.Identify(user.UserId);
+//			var traits = new Dictionary<string, string>() {
+//				{Insights.Traits.Email, "gordon.strachen@celtic.com"},
+//				{Insights.Traits.Name, "Gordon Strachen"}
+//			};
+//			Insights.Identify("YourUsersUniqueId", traits);
 			store.Save (account, KserviceId);
 		}
 

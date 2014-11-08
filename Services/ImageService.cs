@@ -67,12 +67,22 @@ namespace HalalGuide.Services
 
 		}
 
+
 		public List<LocationPicture> RetrieveAllPicturesForLocation (Location location)
 		{
 			List<LocationPicture> pictures = database.Table<LocationPicture> ().Where (pic => pic.deleted == false && pic.locationId == location.id).ToList ();
 			return pictures;
 		}
 
+		public string RetrieveFirstPictureForLocation (Location location)
+		{
+			List<LocationPicture> pictures = database.Table<LocationPicture> ().Where (pic => pic.deleted == false && pic.locationId == location.id).Take (1).ToList ();
+			if (pictures != null && pictures.Count > 0) {
+				return pictures [0].imageUri;
+			} else {
+				return null;
+			}
+		}
 	}
 }
 

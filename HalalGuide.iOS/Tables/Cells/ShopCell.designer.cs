@@ -11,11 +11,9 @@ using System.CodeDom.Compiler;
 
 namespace HalalGuide.iOS.Tables.Cells
 {
-	[Register ("ShopCell")]
+
 	partial class ShopCell
 	{
-		void ReleaseDesignerOutlets ()
-		{
-		}
+
 	}
 }

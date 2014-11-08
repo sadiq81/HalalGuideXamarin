@@ -19,7 +19,7 @@ namespace HalalGuide.iOS.Carousel
 
 		public override void DidSelectItem (CarouselView carousel, int index)
 		{
-			Console.WriteLine ("Selected: " + ++index);
+
 		}
 	}
 }

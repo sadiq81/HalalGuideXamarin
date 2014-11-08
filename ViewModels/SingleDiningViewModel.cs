@@ -10,7 +10,7 @@ namespace HalalGuide.ViewModels
 {
 	public sealed class SingleDiningViewModel : BaseViewModel
 	{
-		public event EventHandler refreshedSelectedLocationPictures = delegate { };
+		public event EventHandler refreshedLocationData = delegate { };
 
 		public List<LocationPicture> pictures { get; set; }
 
@@ -23,6 +23,7 @@ namespace HalalGuide.ViewModels
 		public override void RefreshCache ()
 		{
 			pictures = imageService.RetrieveAllPicturesForLocation (selectedLocation);
+			reviews = reviewService.RetrieveAllReviewsForLocation (selectedLocation);
 		}
 
 		public double AverageReviewScore ()
@@ -34,25 +35,36 @@ namespace HalalGuide.ViewModels
 			}
 		}
 
-		public async override Task RefreshLocationPictures ()
+		public async override Task RefreshLocationData ()
 		{
+			OnNetwork (true);
 			await imageService.RetrieveLatestLocationPicturesForLocation (selectedLocation);
+			await reviewService.RetrieveLatestReviewsForLocation (selectedLocation);
+			OnNetwork (false);
 			RefreshCache ();
-			refreshedSelectedLocationPictures (this, EventArgs.Empty);
+			refreshedLocationData (this, EventArgs.Empty);
 		}
 
+		#if __IOS__
 		public MFMailComposeViewController reportIncorrectInformation ()
 		{
 			MFMailComposeViewController mailController = new MFMailComposeViewController ();
 			mailController.SetToRecipients (new string[]{ "tommy@eazyit.dk" });
 			mailController.SetSubject (Localization.GetLocalizedValue (Feedback.Error) + " - " + ": " + selectedLocation.id);
 			mailController.SetMessageBody (Localization.GetLocalizedValue (Feedback.ErrorTemplate), false);
-
 			mailController.Finished += (  s, args) => {
 				args.Controller.DismissViewController (true, null);
 			};
 			return mailController;
 		}
+		#elif __ANDROID__
+		
+
+
+#else
+		#endif
+
+
 	}
 }
 

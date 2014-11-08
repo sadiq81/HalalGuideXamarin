@@ -10,10 +10,11 @@ using HalalGuide.ViewModels;
 using HalalGuide.iOS.Util;
 using HalalGuide.iOS.Tables.Cells;
 using HalalGuide.Services;
+using HalalGuide.iOS.ViewController.Base;
 
 namespace HalalGuide.iOS.ViewController
 {
-	public partial class MultipleDiningViewController : KeyboardSupportedUIViewController, IUISearchBarDelegate
+	public partial class MultipleDiningViewController : BaseViewController, IUISearchBarDelegate
 	{
 		private const string cellIdentifier = "Dining";
 		private const string searchCellIdentifier = "SearchCell";

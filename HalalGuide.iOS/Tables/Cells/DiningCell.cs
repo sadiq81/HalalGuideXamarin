@@ -3,10 +3,12 @@ using System;
 using MonoTouch.UIKit;
 using HalalGuide.Domain;
 using HalalGuide.Util;
+using MonoTouch.Foundation;
 
 namespace HalalGuide.iOS.Tables.Cells
 {
-	public partial  class DiningCell : LocationCell
+	[Register ("DiningCell")]
+	public  class DiningCell : LocationCell
 	{
 		public DiningCell (IntPtr handle) : base (handle)
 		{
@@ -33,7 +35,6 @@ namespace HalalGuide.iOS.Tables.Cells
 
 			UILabel thirdLabel = (UILabel)ViewWithTag (HalalLabelTag);
 			thirdLabel.TextColor = l.nonHalal ? UIColor.Red : UIColor.Green;
-
 
 		}
 	}

@@ -7,6 +7,8 @@ using HalalGuide.ViewModels;
 using System.Globalization;
 using HalalGuide.iOS.Util;
 using HalalGuide.Services;
+using SDWebImage;
+using MonoTouch.Foundation;
 
 namespace HalalGuide.iOS.Tables.Cells
 {
@@ -31,29 +33,25 @@ namespace HalalGuide.iOS.Tables.Cells
 		protected static readonly int LaguageImageTag = 102;
 		protected static readonly int LanguageLabelTag = 204;
 
-		protected Location location;
-
 		public SingleDiningViewModel ViewModel = ServiceContainer.Resolve<SingleDiningViewModel> ();
 
 		public LocationCell (IntPtr handle) : base (handle)
 		{
 		}
 
-		public override void LayoutSubviews ()
-		{
-			base.LayoutSubviews ();
-			this.TranslateLabelsAndPlaceholders ();
-		}
-
 		public virtual void ConfigureLocation (Location l)
 		{
-			location = l;
-
 			UIImageView category = (UIImageView)ViewWithTag (CategoryImageTag);
-			category.Image = UIImage.FromBundle (l.locationType.ToString ());
 
-
-			//TODO USE SDWEB image to load image
+			string uri = ViewModel.GetFirstImageUriForLocation (l);
+			if (uri != null) {
+				category.SetImage (
+					url: new NSUrl (uri), 
+					placeholder: UIImage.FromBundle (l.locationType.ToString ())
+				);
+			} else {
+				category.Image = UIImage.FromBundle (l.locationType.ToString ());
+			}
 
 			UILabel name = (UILabel)ViewWithTag (NameLabelTag);
 			name.Text = l.name;

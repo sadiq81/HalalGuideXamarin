@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "HalalGuide.Core", "HalalGuide.Core.shproj", "{3EDC9736-C8CA-4EF1-9E99-BF9C72E1A544}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HalalGuide.iOS", "HalalGuide.iOS\HalalGuide.iOS.csproj", "{F1C43724-632D-4943-8941-9CAA43A6ED00}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HalalGuideiOS", "HalalGuide.iOS\HalalGuideiOS.csproj", "{F1C43724-632D-4943-8941-9CAA43A6ED00}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HalalGuide.Droid", "HalalGuide.Droid\HalalGuide.Droid.csproj", "{673B1636-6AC3-479F-BB4A-9F1AEA5C38AD}"
 EndProject
@@ -58,7 +58,7 @@ Global
 		{F1C43724-632D-4943-8941-9CAA43A6ED00}.Ubertester|iPhone.Build.0 = Ad-Hoc|iPhone
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
-		StartupItem = HalalGuide.iOS\HalalGuide.iOS.csproj
+		StartupItem = HalalGuide.iOS\HalalGuideiOS.csproj
 		Policies = $0
 		$0.DotNetNamingPolicy = $1
 		$1.DirectoryNamespaceAssociation = PrefixedHierarchical

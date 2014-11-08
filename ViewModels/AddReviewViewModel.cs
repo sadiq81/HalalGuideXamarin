@@ -20,7 +20,9 @@ namespace HalalGuide.ViewModels
 				review = reviewText,
 				creationStatus = CreationStatus.Approved
 			};
+			OnNetwork (true);
 			await reviewService.SaveReview (review);
+			OnNetwork (false);
 		}
 	}
 }

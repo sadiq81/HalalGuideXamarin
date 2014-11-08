@@ -6,12 +6,12 @@ using HalalGuide.Domain;
 using HalalGuide.iOS.Util;
 using HalalGuide.iOS.Tables.Cells;
 using HalalGuide.Services;
-using MonoTouch.AVFoundation;
-using System.Runtime.InteropServices;
+using HalalGuide.iOS.ViewController.Base;
+
 
 namespace HalalGuide.iOS.ViewController
 {
-	public partial class LandingViewController : KeyboardSupportedUIViewController
+	public partial class LandingViewController : BaseViewController
 	{
 		public LandingViewController (IntPtr handle) : base (handle)
 		{
@@ -35,9 +35,11 @@ namespace HalalGuide.iOS.ViewController
 
 			ViewModel.RefreshCache ();
 
+			//Refresh app data
 			await ViewModel.RefreshLocations ();
+			await ViewModel.RefreshLocationData ();
+			await ViewModel.RefreshReviews ();
 
-			await ViewModel.RefreshLocationPictures ();
 		}
 
 		#region Setup
@@ -59,6 +61,10 @@ namespace HalalGuide.iOS.ViewController
 		{
 
 			ViewModel.refreshedLocations += (sender, e) => InvokeOnMainThread (() => {
+				TableViewController.TableView.ReloadData ();
+			});
+
+			ViewModel.refreshedLocationPictures += (sender, e) => InvokeOnMainThread (() => {
 				TableViewController.TableView.ReloadData ();
 			});
 

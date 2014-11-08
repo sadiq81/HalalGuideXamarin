@@ -2,11 +2,12 @@
 
 using System;
 using MonoTouch.UIKit;
-using HalalGuide.iOS.Util;
+using MonoTouch.Foundation;
 
 namespace HalalGuide.iOS.Tables.Cells
 {
-	public partial class CategoryCell : BaseTableViewCell
+	[Register ("CategoryCell")]
+	public class CategoryCell : BaseTableViewCell
 	{
 		public static string Identifier = "CategoryCell";
 
@@ -18,7 +19,5 @@ namespace HalalGuide.iOS.Tables.Cells
 		{
 
 		}
-
-
 	}
 }

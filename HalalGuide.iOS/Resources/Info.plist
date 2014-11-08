@@ -11,14 +11,14 @@
 	<key>CFBundleVersion</key>
 	<string>14</string>
 	<key>MinimumOSVersion</key>
-	<string>7.1</string>
+	<string>8.1</string>
 	<key>UIMainStoryboardFile</key>
 	<string>MainStoryboard</string>
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
 	</array>
-	<key>ubertesters_project_id</key>
-	<string>e8feaf3c-1e3c-11e4-a2cd-22000ac44c54</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Brugt til at beregne distancer til lokationer</string>
 </dict>
 </plist>

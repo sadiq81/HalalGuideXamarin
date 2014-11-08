@@ -4,7 +4,7 @@ using System;
 
 using MonoTouch.Foundation;
 using MonoTouch.UIKit;
-using HalalGuide.iOS.ViewController;
+using HalalGuide.iOS.ViewController.Base;
 using HalalGuide.ViewModels;
 using HalalGuide.Util;
 using HalalGuide.Domain.Enums;
@@ -12,7 +12,7 @@ using HalalGuide.Services;
 
 namespace HalalGuide.iOS.ViewController
 {
-	public partial class AddReviewViewController : KeyboardSupportedUIViewController
+	public partial class AddReviewViewController : BaseViewController
 	{
 		private readonly AddReviewViewModel ViewModel = ServiceContainer.Resolve<AddReviewViewModel> ();
 		private readonly int STAR_TAG_START = 101;

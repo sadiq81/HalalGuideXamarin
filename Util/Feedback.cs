@@ -16,7 +16,7 @@ namespace HalalGuide.Util
 		public static readonly string Suggestion_Waiting_Approval = "suggestion_waiting_approval";
 		public static readonly string AddReview = "add_review";
 		public static readonly string AddPicture = "add_picture";
-		public static readonly string Regreet = "regreet";
+		public static readonly string Regreet = "regret";
 		public static readonly string UseCamera = "use_camera";
 		public static readonly string UseCameraRoll = "use_camera_roll";
 		public static readonly string CameraNotAvaileble = "camera_not_availeble";

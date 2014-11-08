@@ -7,6 +7,7 @@ using HalalGuide.Util;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Globalization;
 
 namespace HalalGuide.Services
 {
@@ -18,7 +19,7 @@ namespace HalalGuide.Services
 
 		private ReviewDAO reviewDAO { get { return ServiceContainer.Resolve<ReviewDAO> (); } }
 
-		private  FileService fileService { get { return ServiceContainer.Resolve<FileService> (); } }
+		private KeyChainService keychain { get { return ServiceContainer.Resolve<KeyChainService> (); } }
 
 		public ReviewService ()
 		{
@@ -29,9 +30,32 @@ namespace HalalGuide.Services
 			await reviewDAO.SaveOrReplace (review);
 		}
 
-		public async Task<List<Review>> GetReviewsForLocation (Location selectedLocation)
+		public async Task RetrieveLatestReviews ()
 		{
-			return await reviewDAO.Where (review => review.locationId == selectedLocation.id);
+			string updatedTime = DateTime.UtcNow.ToString (Constants.DateFormat, CultureInfo.InvariantCulture);
+
+			string lastUpdatedString = preferences.GetString (Constants.LocationReviewLastUpdated);
+
+			DateTime updatedLast = DateTime.ParseExact (lastUpdatedString, Constants.DateFormat, CultureInfo.InvariantCulture);
+
+			await reviewDAO.Where (rev => rev.updatedAt > updatedLast);
+
+			preferences.StoreString (Constants.LocationReviewLastUpdated, updatedTime);
+		}
+
+		public async Task<List<Review>> RetrieveLatestReviewsForLocation (Location selectedLocation)
+		{
+			string lastUpdatedString = preferences.GetString (Constants.LocationReviewLastUpdated);
+
+			DateTime updatedLast = DateTime.ParseExact (lastUpdatedString, Constants.DateFormat, CultureInfo.InvariantCulture);
+
+			return await reviewDAO.Where (rev => rev.locationId == selectedLocation.id && rev.updatedAt > updatedLast);
+		}
+
+		public List<Review> RetrieveAllReviewsForLocation (Location selectedLocation)
+		{
+			List<Review> reviews = database.Table<Review> ().Where (rev => rev.deleted == false && rev.locationId == selectedLocation.id).ToList ();
+			return reviews;
 		}
 	}
 }

@@ -19,12 +19,12 @@ namespace HalalGuide.iOS.Tables.Cells
 		}
 
 
-		public BaseTableViewCell (MonoTouch.Foundation.NSCoder coder) : base (coder)
+		public BaseTableViewCell (NSCoder coder) : base (coder)
 		{
 		}
 
 
-		public BaseTableViewCell (MonoTouch.Foundation.NSObjectFlag t) : base (t)
+		public BaseTableViewCell (NSObjectFlag t) : base (t)
 		{
 		}
 
@@ -39,7 +39,7 @@ namespace HalalGuide.iOS.Tables.Cells
 		}
 
 
-		public BaseTableViewCell (UITableViewCellStyle style, MonoTouch.Foundation.NSString reuseIdentifier) : base (style, reuseIdentifier)
+		public BaseTableViewCell (UITableViewCellStyle style, NSString reuseIdentifier) : base (style, reuseIdentifier)
 		{
 		}
 
@@ -47,6 +47,10 @@ namespace HalalGuide.iOS.Tables.Cells
 		{
 			base.LayoutSubviews ();
 			this.TranslateLabelsAndPlaceholders ();
+		}
+
+		void ReleaseDesignerOutlets ()
+		{
 		}
 	}
 }

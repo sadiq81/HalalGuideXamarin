@@ -13,7 +13,7 @@ namespace HalalGuide.Util
 
 		public static readonly string LocationLastUpdated = "LocationLastUpdated";
 
-		public static readonly string ReviewLastUpdated = "ReviewLastUpdated";
+		public static readonly string LocationReviewLastUpdated = "LocationReviewLastUpdated";
 
 		public static readonly string LocationPictureLastUpdated = "LocationPictureLastUpdated";
 

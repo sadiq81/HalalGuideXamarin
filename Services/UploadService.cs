@@ -14,9 +14,10 @@ namespace HalalGuide.Services
 
 		private MobileServiceClient client { get { return ServiceContainer.Resolve<MobileServiceClient> (); } }
 
-		private async Task<ImageSASResponse> GetImageUri(string filename) {
+		private async Task<ImageSASResponse> GetImageUri (string filename)
+		{
 
-			Dictionary<string, string> apiParameters = new Dictionary<string, string>  ();
+			Dictionary<string, string> apiParameters = new Dictionary<string, string> ();
 
 			apiParameters.Add ("resourceName", filename);
 
@@ -24,16 +25,18 @@ namespace HalalGuide.Services
 			return imageSas.ToObject<ImageSASResponse> ();
 		}
 
-		public async Task<string> UploadFile(Stream data, string fileName){
+		public async Task<string> UploadFile (Stream data, string fileName)
+		{
 
-			using (HttpClient client = new HttpClient()){
+			using (HttpClient httpClient = new HttpClient ()) {
 
 				var imageUri = await GetImageUri (fileName);
 				var content = new StreamContent (data);
 				content.Headers.Add ("Content-Type", "image/jpeg");
-				content.Headers.Add("x-ms-blob-type", "BlockBlob"); 
+				content.Headers.Add ("x-ms-blob-type", "BlockBlob"); 
 
-				var response = await client.PutAsync (new Uri (imageUri.ImageUri + '?' + imageUri.SASQueryString), content);
+				await httpClient.PutAsync (new Uri (imageUri.ImageUri + '?' + imageUri.SASQueryString), content);
+
 				return imageUri.ImageUri;
 			}
 		}
@@ -41,10 +44,10 @@ namespace HalalGuide.Services
 
 	public class ImageSASResponse
 	{
-		[JsonProperty(PropertyName = "sasQueryString")]
+		[JsonProperty (PropertyName = "sasQueryString")]
 		public string SASQueryString { get; set; }
 
-		[JsonProperty(PropertyName = "imageUri")]
+		[JsonProperty (PropertyName = "imageUri")]
 		public string ImageUri { get; set; }
 	}
 }

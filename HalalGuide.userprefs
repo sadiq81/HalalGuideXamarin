@@ -1,15 +1,31 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.IPhone.IPhoneSimulatorTarget.IPhone5.7.1" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Components/Alliance.Carousel-1.2/samples/MonoTouchCarouselSample/MonoTouchCarouselSample/SimpleSampleViewController.cs">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|iPhone" PreferredExecutionTarget="MonoDevelop.IPhone.IPhoneDeviceTarget.Tommy Sadiqs iPhone" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="HalalGuide.iOS/Main.cs">
     <Files>
-      <File FileName="Services/ImageService.cs" Line="1" Column="1" />
-      <File FileName="ViewModels/SingleDiningViewModel.cs" Line="1" Column="1" />
+      <File FileName="ViewModels/AddDiningViewModel.cs" Line="19" Column="19" />
+      <File FileName="ViewModels/BaseViewModel.cs" Line="3" Column="3" />
+      <File FileName="ViewModels/AddReviewViewModel.cs" Line="20" Column="20" />
       <File FileName="ViewModels/LandingViewModel.cs" Line="1" Column="1" />
-      <File FileName="HalalGuide.iOS/ViewController/Table/SingleDiningTableViewController.cs" Line="1" Column="1" />
-      <File FileName="HalalGuide.iOS/Carousel/SingleDiningImageDataSource.cs" Line="1" Column="1" />
-      <File FileName="Components/Alliance.Carousel-1.2/samples/MonoTouchCarouselSample/MonoTouchCarouselSample/Main.cs" Line="1" Column="1" />
-      <File FileName="Components/Alliance.Carousel-1.2/samples/MonoTouchCarouselSample/MonoTouchCarouselSample/SimpleSampleViewController.cs" Line="1" Column="1" />
+      <File FileName="ViewModels/LoginViewModel.cs" Line="37" Column="37" />
+      <File FileName="ViewModels/MultipleDiningViewModel.cs" Line="1" Column="1" />
+      <File FileName="ViewModels/SingleDiningViewModel.cs" Line="46" Column="46" />
+      <File FileName="Services/ReviewService.cs" Line="1" Column="1" />
+      <File FileName="HalalGuide.iOS/Entitlements.plist" />
+      <File FileName="HalalGuide.iOS/Main.cs" Line="1" Column="1" />
     </Files>
+    <Pads>
+      <Pad Id="ProjectPad">
+        <State expanded="True">
+          <Node name="HalalGuide.iOS" expanded="True" selected="True">
+            <Node name="ComponentReferenceFolder" expanded="True" />
+            <Node name="Util" expanded="True" />
+            <Node name="ViewController" expanded="True">
+              <Node name="Base" expanded="True" />
+            </Node>
+          </Node>
+        </State>
+      </Pad>
+    </Pads>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore>
@@ -31,15 +47,16 @@
       <Breakpoint file="/Users/Privat/HalalGuide/ViewModels/SingleDiningViewModel.cs" line="90" column="1" />
       <Breakpoint file="/Users/Privat/HalalGuide/ViewModels/SingleDiningViewModel.cs" line="86" column="1" />
       <Breakpoint file="/Users/Privat/HalalGuide/HalalGuide.iOS/ViewController/Table/SingleDiningTableViewController.cs" line="46" column="32" />
-      <Breakpoint file="/Users/privat/Projekter/HalalGuide/HalalGuide.iOS/ViewController/Table/SingleDiningTableViewController.cs" line="42" column="20" />
+      <Breakpoint file="/Users/privat/Projekter/HalalGuide/ViewModels/LoginViewModel.cs" line="33" column="1" />
+      <Breakpoint file="/Users/privat/Projekter/HalalGuide/HalalGuide.iOS/ViewController/BaseViewController.cs" line="107" column="1" />
     </BreakpointStore>
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />
   <DisabledProjects>
     <String>HalalGuide.Droid/HalalGuide.Droid.csproj</String>
   </DisabledProjects>
-  <MonoDevelop.Ide.ItemProperties.HalalGuide.iOS>
+  <MonoDevelop.Ide.ItemProperties.HalalGuideiOS>
     <IPhoneTestFlightSettings_27CDebug ApiToken="4dc604a74af8d2cce2e0a5973a82b8a0_MTUwNzkxMTIwMTMtMTItMTEgMTM6NDQ6NDYuMTQ3NTcw" TeamToken="b0e3aec642863a0401541c94581faf4f_MzQzOTY3MjAxNC0wMi0yNCAxMjowMDo0MS43ODI0Nzc" ReleaseNotes="Init" NotifyTeamMembers="False" ReplaceBinaries="False" DistributionLists="" UploadDSYMs="False" />
     <MonoDevelop.MacDev.AppleDevelopmentTeam DeveloperId="R49NYV2375" TeamId="2Z296RX4K9" />
-  </MonoDevelop.Ide.ItemProperties.HalalGuide.iOS>
+  </MonoDevelop.Ide.ItemProperties.HalalGuideiOS>
 </Properties>

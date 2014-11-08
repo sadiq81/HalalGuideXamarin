@@ -24,6 +24,8 @@ namespace HalalGuide.ViewModels
 
 		public static event EventHandler<ProgressResult> busy = delegate{};
 
+		public static event EventHandler<bool> network = delegate{};
+
 		protected Geolocator geoService { get { return ServiceContainer.Resolve<Geolocator> (); } }
 
 		protected KeyChainService keychainService { get { return ServiceContainer.Resolve<KeyChainService> (); } }
@@ -46,8 +48,6 @@ namespace HalalGuide.ViewModels
 
 		public Location selectedLocation{ get; set; }
 
-
-
 		//------------------------------------------------------------------------
 
 		protected static Position Position { get; set; }
@@ -68,15 +68,23 @@ namespace HalalGuide.ViewModels
 				}
 				locationChangedEvent (this, e);
 			};
+
+
 		}
 
-		static void OnBusy (ProgressResult e)
+		protected static void OnBusy (ProgressResult e)
 		{
 			var handler = busy;
 			if (handler != null)
 				handler (null, e);
 		}
 
+		protected static void OnNetwork (bool e)
+		{
+			var handler = network;
+			if (handler != null)
+				handler (null, e);
+		}
 
 		protected List<Location>  CalculateDistances (List<Location> locations, bool sortByDistance = false)
 		{
@@ -99,24 +107,36 @@ namespace HalalGuide.ViewModels
 
 		public virtual async Task RefreshLocations ()
 		{
+			OnNetwork (true);
 			await locationService.RetrieveLatestLocations ();
+			OnNetwork (false);
 			RefreshCache ();
 			refreshedLocations (this, EventArgs.Empty);
 		}
 
-		public virtual async Task RefreshLocationPictures ()
+		public virtual async Task RefreshLocationData ()
 		{
+			OnNetwork (true);
 			await imageService.RetrieveLatestLocationPictures ();
+			OnNetwork (false);
 			refreshedLocationPictures (this, EventArgs.Empty);
+		}
+
+		public virtual async Task RefreshReviews ()
+		{
+			OnNetwork (true);
+			await reviewService.RetrieveLatestReviews ();
+			OnNetwork (false);
+			refreshedReviews (this, EventArgs.Empty);
 		}
 
 		public virtual void RefreshCache ()
 		{
 		}
 
-		public async Task<string> GetFirstImageUriForLocation (Location location)
+		public string GetFirstImageUriForLocation (Location location)
 		{
-			return "";
+			return imageService.RetrieveFirstPictureForLocation (location);
 		}
 
 		public bool IsAuthenticated ()
@@ -159,7 +179,7 @@ namespace HalalGuide.ViewModels
 
 
 
-		public async Task CreateDummyData ()
+		public async Task CreateLocationDummyData ()
 		{
 
 
@@ -292,6 +312,16 @@ namespace HalalGuide.ViewModels
 
 			await locationService.SaveLocation (l6);
 
+		}
+
+		public async Task CreateReviewDummyData ()
+		{
+			Review r1 = new Review ("0392EC4C-5707-4E34-9B0C-723138A74AA4", 4, "Skidegodt", "", CreationStatus.Approved);
+			await reviewService.SaveReview (r1);
+
+			Review r2 = new Review ("0392EC4C-5707-4E34-9B0C-723138A74AA4", 5, "Rigtigt lort", "", CreationStatus.Approved);
+			await reviewService.SaveReview (r2);
+			Console.WriteLine ("Store reviews");
 		}
 	}
 }

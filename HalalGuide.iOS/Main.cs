@@ -9,6 +9,7 @@ using HalalGuide.Util;
 using System.IO;
 using Xamarin.Auth;
 using Microsoft.WindowsAzure.MobileServices;
+using Xamarin;
 
 namespace HalalGuide.iOS
 {
@@ -16,6 +17,8 @@ namespace HalalGuide.iOS
 	{
 		static void Main (string[] args)
 		{
+
+			Insights.Initialize ("0d28d9180fc6ec91afaa709ee9fe8b68fe46cb86");
 
 			ServiceContainer.Register<MobileServiceClient> (() => new MobileServiceClient ("https://halalguide.azure-mobile.net/", "DzyawLMKsdmtXTcJTyIJjCQipurkgR22"));
 			CurrentPlatform.Init ();
@@ -50,24 +53,21 @@ namespace HalalGuide.iOS
 			DatabaseWrapper database = ServiceContainer.Resolve<DatabaseWrapper> ();
 			PreferencesService preferences = ServiceContainer.Resolve<PreferencesService> ();
 
-			database.CreateTable<HalalGuide.Domain.Location> ();
-			database.CreateTable<HalalGuide.Domain.LocationPicture> ();
-			database.CreateTable<HalalGuide.Domain.Review> ();
-
 			if (preferences.GetString (Constants.HasBeenLaunched) != null) {
 
 				//TODO Start downloading new items from database;
 			} else {
 
+				database.CreateTable<HalalGuide.Domain.Location> ();
+				database.CreateTable<HalalGuide.Domain.LocationPicture> ();
+				database.CreateTable<HalalGuide.Domain.Review> ();
+
 				preferences.StoreString (Constants.HasBeenLaunched, "true");
 				preferences.StoreString (Constants.LocationLastUpdated, DateTime.MinValue.ToString (Constants.DateFormat));
 				preferences.StoreString (Constants.LocationPictureLastUpdated, DateTime.MinValue.ToString (Constants.DateFormat));
-				preferences.StoreString (Constants.ReviewLastUpdated, DateTime.MinValue.ToString (Constants.DateFormat));
+				preferences.StoreString (Constants.LocationReviewLastUpdated, DateTime.MinValue.ToString (Constants.DateFormat));
 
-				/*
-				_SQLiteConnection.CreateTable<HalalGuide.Domain.Review> ();
-				_SQLiteConnection.CreateTable<HalalGuide.Domain.FacebookUser> ();
-				*/
+
 			}
 				
 			UIApplication.Main (args, null, "AppDelegate");

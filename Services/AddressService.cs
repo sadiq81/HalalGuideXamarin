@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using HalalGuide.Domain.Dawa;
 using System.Net.Http;
 using System.Linq;
+using Xamarin;
 
 namespace HalalGuide.Services
 {
@@ -33,6 +34,9 @@ namespace HalalGuide.Services
 					} else {
 					}
 				} catch (TaskCanceledException ex) {
+					Insights.Report (ex, new Dictionary <string, string> { 
+						{ "GetNameOfPostDistrict", "Cancelled" }
+					});
 					return null;
 				}
 			}
@@ -59,6 +63,9 @@ namespace HalalGuide.Services
 					} else {
 					}
 				} catch (TaskCanceledException ex) {
+					Insights.Report (ex, new Dictionary <string, string> { 
+						{ "DoesAddressExits", "Cancelled" }
+					});
 					return null;
 				}
 			}
@@ -89,6 +96,9 @@ namespace HalalGuide.Services
 					} else {
 					}
 				} catch (TaskCanceledException ex) {
+					Insights.Report (ex, new Dictionary <string, string> { 
+						{ "AddressNearPosition", "Cancelled" }
+					});
 					return null;
 				}
 			}

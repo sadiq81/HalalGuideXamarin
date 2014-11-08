@@ -53,7 +53,9 @@ namespace HalalGuide.ViewModels
 		public async Task<string> GetCityNameFromPostalCode (string postalcode)
 		{
 			if (postalcode != null && postalcode.Length == 4 && Regex.IsMatch (postalcode, @"^[0-9]+$")) {
+				OnNetwork (true);
 				var name = await addressService.GetNameOfPostDistrict (postalcode);
+				OnNetwork (false);
 				return name;
 			} else {
 				return null;
@@ -62,7 +64,10 @@ namespace HalalGuide.ViewModels
 
 		public async Task<Adgangsadresse> DoesAddressExists (string roadName, string roadNumber, string postalCode)
 		{
-			return await addressService.DoesAddressExits (roadName, roadNumber, postalCode);
+			OnNetwork (true);
+			Adgangsadresse address = await addressService.DoesAddressExits (roadName, roadNumber, postalCode);
+			OnNetwork (false);
+			return address;
 		}
 
 		//TODO Make sure position is known before calling this function
@@ -70,7 +75,9 @@ namespace HalalGuide.ViewModels
 		{
 			Dictionary<string, Address> temp = new Dictionary<string, Address> ();
 
+			OnNetwork (true);
 			List<Adgangsadresse> adresses = await addressService.AddressNearPosition (Position, 150);
+			OnNetwork (false);
 
 			if (adresses != null) {
 			
@@ -125,9 +132,9 @@ namespace HalalGuide.ViewModels
 				             pork,
 				             0,
 				             CreationStatus.Approved);
-
+			OnNetwork (true);
 			await locationService.SaveLocation (l);
-
+			OnNetwork (false);
 			//TODO
 			//await uploadService.UploadFile (null,"test.jpg");
 

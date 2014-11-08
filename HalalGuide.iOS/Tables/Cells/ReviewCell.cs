@@ -8,12 +8,24 @@ using System.Threading.Tasks;
 using HalalGuide.Util;
 using HalalGuide.ViewModels;
 using HalalGuide.Services;
+using MonoTouch.Foundation;
 
 namespace HalalGuide.iOS.Tables.Cells
 {
-	public partial class ReviewCell : BaseTableViewCell
+	[Register ("ReviewCell")]
+	public  class ReviewCell : BaseTableViewCell
 	{
 		public static string Identifier = "ReviewCell";
+
+		protected static readonly int ProfileImageTag = 100;
+		protected static readonly int Star1ImageTag = 101;
+		protected static readonly int Star2ImageTag = 102;
+		protected static readonly int Star3ImageTag = 103;
+		protected static readonly int Star4ImageTag = 104;
+		protected static readonly int Star5ImageTag = 105;
+
+		protected static readonly int SubmitterLabelTag = 201;
+		protected static readonly int ReviewLabelTag = 202;
 
 		public SingleDiningViewModel ViewModel = ServiceContainer.Resolve<SingleDiningViewModel> ();
 
@@ -23,25 +35,6 @@ namespace HalalGuide.iOS.Tables.Cells
 
 		public ReviewCell (UITableViewCellStyle style, string reuseIdentifier) : base (style, reuseIdentifier)
 		{
-			ProfilePicture = new UIImageView (new RectangleF (20, 12, 25, 25));
-
-			Star1Image = new UIImageView (new RectangleF (192, 12, 20, 20));
-			Star2Image = new UIImageView (new RectangleF (214, 12, 20, 20));
-			Star3Image = new UIImageView (new RectangleF (236, 12, 20, 20));
-			Star4Image = new UIImageView (new RectangleF (258, 12, 20, 20));
-			Star5Image = new UIImageView (new RectangleF (280, 12, 20, 20));
-			AddSubviews (ProfilePicture, Star1Image, Star2Image, Star3Image, Star4Image, Star5Image);
-
-			Submitter = new UILabel (new RectangleF (53, 12, 131, 25)) {
-				Font = UIFont.SystemFontOfSize (10)
-			};
-			Review = new UILabel (new RectangleF (20, 40, 280, 42)) {
-				Lines = 2,
-				Font = UIFont.SystemFontOfSize (13)
-
-			};
-			AddSubviews (Submitter, Review);
-
 		}
 
 		public void Configure (Review review)
@@ -49,16 +42,26 @@ namespace HalalGuide.iOS.Tables.Cells
 			//TODO use SDWeb image to get image
 			//TODO name of submitter
 
-			Star1Image.Image = review.rating >= 1 ? UIImage.FromBundle (Images.StarSelected) : UIImage.FromBundle (Images.Star);
-			Star2Image.Image = review.rating >= 2 ? UIImage.FromBundle (Images.StarSelected) : UIImage.FromBundle (Images.Star);
-			Star3Image.Image = review.rating >= 3 ? UIImage.FromBundle (Images.StarSelected) : UIImage.FromBundle (Images.Star);
-			Star4Image.Image = review.rating >= 4 ? UIImage.FromBundle (Images.StarSelected) : UIImage.FromBundle (Images.Star);
-			Star5Image.Image = review.rating >= 5 ? UIImage.FromBundle (Images.StarSelected) : UIImage.FromBundle (Images.Star);
+			UIImageView profilePicture = (UIImageView)ContentView.ViewWithTag (ProfileImageTag);
 
-			Review.Text = review.review;
-			;
+			UIImageView star1Image = (UIImageView)ContentView.ViewWithTag (ProfileImageTag);
+			star1Image.Image = review.rating >= 1 ? UIImage.FromBundle (Images.StarSelected) : UIImage.FromBundle (Images.Star);
+
+			UIImageView star2Image = (UIImageView)ContentView.ViewWithTag (ProfileImageTag);
+			star2Image.Image = review.rating >= 2 ? UIImage.FromBundle (Images.StarSelected) : UIImage.FromBundle (Images.Star);
+
+			UIImageView star3Image = (UIImageView)ContentView.ViewWithTag (ProfileImageTag);
+			star3Image.Image = review.rating >= 3 ? UIImage.FromBundle (Images.StarSelected) : UIImage.FromBundle (Images.Star);
+
+			UIImageView star4Image = (UIImageView)ContentView.ViewWithTag (ProfileImageTag);
+			star4Image.Image = review.rating >= 4 ? UIImage.FromBundle (Images.StarSelected) : UIImage.FromBundle (Images.Star);
+
+			UIImageView star5Image = (UIImageView)ContentView.ViewWithTag (ProfileImageTag);
+			star5Image.Image = review.rating >= 5 ? UIImage.FromBundle (Images.StarSelected) : UIImage.FromBundle (Images.Star);
+
+			UILabel reviewLabel = (UILabel)ContentView.ViewWithTag (ProfileImageTag);
+			reviewLabel.Text = review.review;
 		
 		}
-		
 	}
 }

@@ -5,10 +5,12 @@ using System;
 using MonoTouch.UIKit;
 using HalalGuide.Util;
 using HalalGuide.Domain;
+using MonoTouch.Foundation;
 
 namespace HalalGuide.iOS.Tables.Cells
 {
-	public partial class MosqueCell : LocationCell
+	[Register ("MosqueCell")]
+	public class MosqueCell : LocationCell
 	{
 		public MosqueCell (IntPtr handle) : base (handle)
 		{
@@ -24,5 +26,6 @@ namespace HalalGuide.iOS.Tables.Cells
 			firstLabel.Text = l.language.ToString ().ToLower ().FirstToUpper ();
 
 		}
+
 	}
 }
