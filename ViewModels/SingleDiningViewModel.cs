@@ -44,27 +44,6 @@ namespace HalalGuide.ViewModels
 			RefreshCache ();
 			refreshedLocationData (this, EventArgs.Empty);
 		}
-
-		#if __IOS__
-		public MFMailComposeViewController reportIncorrectInformation ()
-		{
-			MFMailComposeViewController mailController = new MFMailComposeViewController ();
-			mailController.SetToRecipients (new string[]{ "tommy@eazyit.dk" });
-			mailController.SetSubject (Localization.GetLocalizedValue (Feedback.Error) + " - " + ": " + selectedLocation.id);
-			mailController.SetMessageBody (Localization.GetLocalizedValue (Feedback.ErrorTemplate), false);
-			mailController.Finished += (  s, args) => {
-				args.Controller.DismissViewController (true, null);
-			};
-			return mailController;
-		}
-		#elif __ANDROID__
-		
-
-
-#else
-		#endif
-
-
 	}
 }
 

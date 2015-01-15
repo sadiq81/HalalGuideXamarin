@@ -23,7 +23,7 @@
         <!--HalalGuide-->
         <scene sceneID="ufC-wZ-h7g">
             <objects>
-                <viewController autoresizesArchivedViewToFullSize="NO" automaticallyAdjustsScrollViewInsets="NO" id="vXZ-lx-hvc" customClass="FrontPageViewController" sceneMemberID="viewController">
+                <viewController autoresizesArchivedViewToFullSize="NO" automaticallyAdjustsScrollViewInsets="NO" id="vXZ-lx-hvc" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="kh9-bI-dsS">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="416"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -245,7 +245,7 @@
                                             <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                         </state>
                                         <connections>
-                                            <segue destination="csa-vg-Cr6" kind="push" identifier="MultipleDiningViewControllerSegue" id="uQl-EL-src"/>
+                                            <segue destination="csa-vg-Cr6" kind="push" identifier="ViewDiningLocations" id="uQl-EL-src"/>
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" verticalCompressionResistancePriority="749" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="c0D-aY-jUa">
@@ -314,42 +314,24 @@
                         <outlet property="Eat" destination="vfK-HZ-r4n" id="3hx-wp-KI7"/>
                         <outlet property="Enumber" destination="bTb-qg-eLp" id="Jpv-6V-3jo"/>
                         <outlet property="LatestUpdated" destination="cC3-N0-wbw" id="ORY-ee-Kud"/>
-                        <outlet property="LatestUpdatedTableView" destination="kyh-lx-pOc" id="YFn-75-lWo"/>
                         <outlet property="Mosque" destination="R3d-VV-UeN" id="fU8-So-xaw"/>
                         <outlet property="Settings" destination="N63-RU-xEd" id="bjJ-Ro-wdW"/>
                         <outlet property="Shopping" destination="7rX-Rb-gCn" id="qXa-fz-73m"/>
+                        <outlet property="latestUpdated" destination="kyh-lx-pOc" id="LUH-De-Mft"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="x5A-6p-PRh" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="398" y="141"/>
         </scene>
-        <!--Filter Dining View Controller-->
+        <!--View Controller-->
         <scene sceneID="uPH-HV-Hgd">
             <objects>
-                <viewController autoresizesArchivedViewToFullSize="NO" automaticallyAdjustsScrollViewInsets="NO" id="WIe-Rx-R0t" customClass="FilterDiningViewController" sceneMemberID="viewController">
+                <viewController autoresizesArchivedViewToFullSize="NO" automaticallyAdjustsScrollViewInsets="NO" id="WIe-Rx-R0t" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="ayr-oi-NWj">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
-                            <navigationBar contentMode="scaleToFill" translucent="NO" id="6ex-H9-XQI">
-                                <rect key="frame" x="0.0" y="20" width="320" height="44"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <items>
-                                    <navigationItem title="filter" id="yQo-bE-jKP">
-                                        <barButtonItem key="leftBarButtonItem" title="done" id="JAd-yn-co2">
-                                            <connections>
-                                                <action selector="Done:" destination="WIe-Rx-R0t" id="QCd-el-ck4"/>
-                                            </connections>
-                                        </barButtonItem>
-                                        <barButtonItem key="rightBarButtonItem" systemItem="add" id="NzK-im-gDZ">
-                                            <connections>
-                                                <segue destination="0jE-H3-xoT" kind="modal" identifier="CreateDining" id="Vok-wV-gGm"/>
-                                            </connections>
-                                        </barButtonItem>
-                                    </navigationItem>
-                                </items>
-                            </navigationBar>
                             <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" id="1gz-Y9-tEL">
                                 <rect key="frame" x="0.0" y="64" width="320" height="416"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -417,6 +399,9 @@
                                                 <state key="normal" title="choose">
                                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                                 </state>
+                                                <connections>
+                                                    <action selector="choose:" destination="WIe-Rx-R0t" eventType="touchUpInside" id="e36-dq-dpw"/>
+                                                </connections>
                                             </button>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="g8Q-Rx-WWA">
                                                 <rect key="frame" x="184" y="204" width="60" height="30"/>
@@ -424,15 +409,18 @@
                                                 <state key="normal" title="reset">
                                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                                 </state>
+                                                <connections>
+                                                    <action selector="reset:" destination="WIe-Rx-R0t" eventType="touchUpInside" id="fIw-mZ-lVi"/>
+                                                </connections>
                                             </button>
                                             <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="0" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="yiu-vs-eKu">
-                                                <rect key="frame" x="105" y="208" width="29" height="21"/>
+                                                <rect key="frame" x="105" y="204" width="29" height="30"/>
                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                 <nil key="highlightedColor"/>
                                             </label>
                                             <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="categories" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="fW0-FH-4qm">
-                                                <rect key="frame" x="8" y="208" width="85" height="21"/>
+                                                <rect key="frame" x="8" y="204" width="85" height="30"/>
                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                 <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
@@ -443,29 +431,55 @@
                                     </view>
                                 </subviews>
                             </scrollView>
+                            <navigationBar contentMode="scaleToFill" translucent="NO" id="6ex-H9-XQI">
+                                <rect key="frame" x="0.0" y="20" width="320" height="44"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <items>
+                                    <navigationItem title="filter" id="yQo-bE-jKP">
+                                        <barButtonItem key="leftBarButtonItem" title="done" id="JAd-yn-co2">
+                                            <connections>
+                                                <action selector="done:" destination="WIe-Rx-R0t" id="DI4-Uz-zhB"/>
+                                            </connections>
+                                        </barButtonItem>
+                                        <barButtonItem key="rightBarButtonItem" systemItem="add" id="NzK-im-gDZ">
+                                            <connections>
+                                                <segue destination="0jE-H3-xoT" kind="modal" identifier="CreateDining" id="Vok-wV-gGm"/>
+                                            </connections>
+                                        </barButtonItem>
+                                    </navigationItem>
+                                </items>
+                            </navigationBar>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                     </view>
                     <extendedEdge key="edgesForExtendedLayout"/>
+                    <connections>
+                        <outlet property="alcoholSwitch" destination="Ksj-tF-y8H" id="YNX-Ia-OKG"/>
+                        <outlet property="countLabel" destination="yiu-vs-eKu" id="a6M-zi-phO"/>
+                        <outlet property="distanceLabel" destination="2jP-Rf-YsY" id="rAE-iJ-R49"/>
+                        <outlet property="distanceSlider" destination="teS-CK-hQo" id="Svb-da-ZVd"/>
+                        <outlet property="halalSwitch" destination="Ncc-Bb-rT4" id="sFc-w3-dYv"/>
+                        <outlet property="porkSwitch" destination="coR-gl-2vc" id="e6u-fA-fWV"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="mk7-g9-dqm" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1944" y="-564"/>
         </scene>
-        <!--Create Dining View Controller-->
+        <!--View Controller-->
         <scene sceneID="NUC-ui-TRp">
             <objects>
-                <viewController autoresizesArchivedViewToFullSize="NO" automaticallyAdjustsScrollViewInsets="NO" id="0jE-H3-xoT" customClass="CreateDiningViewController" sceneMemberID="viewController">
+                <viewController autoresizesArchivedViewToFullSize="NO" automaticallyAdjustsScrollViewInsets="NO" id="0jE-H3-xoT" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="K8T-cP-Qkj">
-                        <rect key="frame" x="0.0" y="64" width="320" height="480"/>
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="416"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
                             <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" id="t0S-Uh-nNS">
-                                <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
+                                <rect key="frame" x="0.0" y="0.0" width="320" height="416"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" id="u1J-ev-oOX">
-                                        <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="320" height="416"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <subviews>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="CNa-W1-A3e">
@@ -475,6 +489,9 @@
                                                     <color key="titleColor" cocoaTouchSystemColor="darkTextColor"/>
                                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                                 </state>
+                                                <connections>
+                                                    <action selector="pickImage:" destination="0jE-H3-xoT" eventType="touchUpInside" id="B3V-eN-nFk"/>
+                                                </connections>
                                             </button>
                                             <imageView userInteractionEnabled="NO" tag="101" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Dining.png" id="gd3-rS-Qwi">
                                                 <rect key="frame" x="20" y="20" width="85" height="85"/>
@@ -583,6 +600,9 @@
                                                 <state key="normal" title="choose">
                                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                                 </state>
+                                                <connections>
+                                                    <action selector="choose:" destination="0jE-H3-xoT" eventType="touchUpInside" id="wnQ-cf-hWF"/>
+                                                </connections>
                                             </button>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="PNT-qC-nfQ">
                                                 <rect key="frame" x="180" y="364" width="60" height="30"/>
@@ -590,6 +610,9 @@
                                                 <state key="normal" title="reset">
                                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                                 </state>
+                                                <connections>
+                                                    <action selector="reset:" destination="0jE-H3-xoT" eventType="touchUpInside" id="idN-nj-rhi"/>
+                                                </connections>
                                             </button>
                                             <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="0" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="4bM-vG-OmW">
                                                 <rect key="frame" x="113" y="370" width="29" height="21"/>
@@ -613,22 +636,49 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                     </view>
                     <extendedEdge key="edgesForExtendedLayout"/>
-                    <navigationItem key="navigationItem" id="zaT-qT-3Db">
-                        <barButtonItem key="leftBarButtonItem" title="regret" id="eIp-oc-Kdh"/>
-                        <barButtonItem key="rightBarButtonItem" title="save" id="pHJ-xZ-Vbd"/>
+                    <navigationItem key="navigationItem" id="7jK-lD-fc5">
+                        <barButtonItem key="leftBarButtonItem" title="regret" id="vLR-s9-1lO">
+                            <connections>
+                                <action selector="regret:" destination="0jE-H3-xoT" id="LUf-ga-Gd5"/>
+                            </connections>
+                        </barButtonItem>
+                        <barButtonItem key="rightBarButtonItem" title="save" id="AP4-9j-sDE">
+                            <connections>
+                                <action selector="save:" destination="0jE-H3-xoT" id="NZn-M8-UfM"/>
+                            </connections>
+                        </barButtonItem>
                     </navigationItem>
                     <connections>
-                        <segue destination="lhS-xz-cRY" kind="push" identifier="CreateReview" id="nJm-Oa-9F1"/>
+                        <outlet property="alcoholImage" destination="EuS-SW-TlF" id="QqH-wn-9ag"/>
+                        <outlet property="alcoholLabel" destination="Pru-AS-cVN" id="1Tz-10-lSp"/>
+                        <outlet property="alcoholSwitch" destination="WpT-uO-Ouc" id="ruJ-tV-Ele"/>
+                        <outlet property="choose" destination="jie-eg-gP3" id="mJJ-5T-8lw"/>
+                        <outlet property="city" destination="oi0-lT-y03" id="LR3-4M-Dev"/>
+                        <outlet property="count" destination="4bM-vG-OmW" id="EkI-sM-WfV"/>
+                        <outlet property="halalImage" destination="bwt-Bx-bYO" id="dck-Wq-nb1"/>
+                        <outlet property="halalLabel" destination="OBM-8m-oGq" id="K91-IQ-K4E"/>
+                        <outlet property="halalSwitch" destination="Sx1-9H-Cxa" id="ran-3S-trA"/>
+                        <outlet property="homepage" destination="gv8-rn-3FZ" id="iPZ-VC-d6x"/>
+                        <outlet property="image" destination="gd3-rS-Qwi" id="0cd-ol-WVb"/>
+                        <outlet property="name" destination="Geq-xg-rWm" id="MfM-Nw-snL"/>
+                        <outlet property="porkImage" destination="HKD-yT-iOO" id="Rgh-OK-wEO"/>
+                        <outlet property="porkLabel" destination="i24-hv-rMU" id="wiI-di-vzg"/>
+                        <outlet property="porkSwitch" destination="h48-Lg-Rbo" id="KBM-4y-gTq"/>
+                        <outlet property="postalCode" destination="XT5-8u-dzd" id="eGj-Ho-nmU"/>
+                        <outlet property="road" destination="LGW-5Q-Byj" id="5T9-48-kYv"/>
+                        <outlet property="roadNumber" destination="j4D-lR-Smh" id="oOh-5V-VAm"/>
+                        <outlet property="telephone" destination="xif-cs-G6I" id="fJ3-vS-74h"/>
+                        <segue destination="lhS-xz-cRY" kind="push" identifier="CreateReview" id="ZG9-AD-yQ5"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="IVI-W0-BeG" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1944" y="139"/>
         </scene>
-        <!--Dining Detail View Controller-->
+        <!--View Controller-->
         <scene sceneID="yjk-UI-jUq">
             <objects>
-                <viewController autoresizesArchivedViewToFullSize="NO" automaticallyAdjustsScrollViewInsets="NO" id="Ckf-Qz-bhO" customClass="DiningDetailViewController" sceneMemberID="viewController">
+                <viewController autoresizesArchivedViewToFullSize="NO" automaticallyAdjustsScrollViewInsets="NO" id="Ckf-Qz-bhO" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="RHx-aP-mJ3">
                         <rect key="frame" x="0.0" y="64" width="320" height="416"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -661,18 +711,23 @@
                                                 <nil key="highlightedColor"/>
                                             </label>
                                             <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" id="E4c-uQ-bft">
+                                                <rect key="frame" x="16" y="62" width="20" height="20"/>
                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                             </imageView>
                                             <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" id="VIx-wN-Mo9">
+                                                <rect key="frame" x="38" y="62" width="20" height="20"/>
                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                             </imageView>
                                             <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" id="aeE-MR-B86">
+                                                <rect key="frame" x="60" y="62" width="20" height="20"/>
                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                             </imageView>
                                             <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" id="dbv-BO-QFf">
+                                                <rect key="frame" x="82" y="62" width="20" height="20"/>
                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                             </imageView>
                                             <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" id="ciw-ka-zFW">
+                                                <rect key="frame" x="104" y="62" width="20" height="20"/>
                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                             </imageView>
                                             <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Category" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="2YK-Ee-Y2I">
@@ -682,12 +737,12 @@
                                                 <nil key="highlightedColor"/>
                                             </label>
                                             <imageView userInteractionEnabled="NO" tag="104" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" id="0an-ly-X2Y">
+                                                <rect key="frame" x="191" y="51" width="31" height="31"/>
                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                            </imageView>
-                                            <imageView userInteractionEnabled="NO" tag="103" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" id="okn-Bw-IJz">
-                                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                <inset key="insetFor6xAndEarlier" minX="0.0" minY="0.0" maxX="0.0" maxY="6"/>
                                             </imageView>
                                             <imageView userInteractionEnabled="NO" tag="102" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" id="xtu-R2-TOF">
+                                                <rect key="frame" x="271" y="51" width="31" height="31"/>
                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                             </imageView>
                                             <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" tag="204" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="pork" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="8" id="goi-MO-a7H">
@@ -728,6 +783,9 @@
                                                 <state key="normal" title="report_incorrect">
                                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                                 </state>
+                                                <connections>
+                                                    <action selector="report:" destination="Ckf-Qz-bhO" eventType="touchUpInside" id="WVd-g7-Kz3"/>
+                                                </connections>
                                             </button>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="Pn9-kl-5is">
                                                 <rect key="frame" x="0.0" y="274" width="150" height="21"/>
@@ -745,6 +803,9 @@
                                                 <state key="normal" title="add_picture">
                                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                                 </state>
+                                                <connections>
+                                                    <action selector="addPicture:" destination="Ckf-Qz-bhO" eventType="touchUpInside" id="97q-P6-fR5"/>
+                                                </connections>
                                             </button>
                                             <view contentMode="scaleToFill" id="8ns-zk-oTr">
                                                 <rect key="frame" x="0.0" y="303" width="318" height="88"/>
@@ -794,6 +855,10 @@
                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                             </view>
+                                            <imageView userInteractionEnabled="NO" tag="103" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" id="okn-Bw-IJz">
+                                                <rect key="frame" x="232" y="51" width="31" height="31"/>
+                                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                            </imageView>
                                         </subviews>
                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                     </view>
@@ -803,6 +868,7 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                     </view>
                     <extendedEdge key="edgesForExtendedLayout"/>
+                    <toolbarItems/>
                     <navigationItem key="navigationItem" id="sMa-Gj-Nqh">
                         <barButtonItem key="rightBarButtonItem" systemItem="add" id="eFZ-PN-8Fp">
                             <connections>
@@ -811,17 +877,34 @@
                         </barButtonItem>
                     </navigationItem>
                     <connections>
-                        <segue destination="lhS-xz-cRY" kind="push" identifier="CreateReview" id="9at-ff-whS"/>
+                        <outlet property="address" destination="wiW-l9-wgU" id="skD-YG-Lf6"/>
+                        <outlet property="alcoholImage" destination="okn-Bw-IJz" id="mNH-UE-Wgh"/>
+                        <outlet property="alcoholLabel" destination="U4D-kF-53U" id="RCA-4h-7Gm"/>
+                        <outlet property="category" destination="2YK-Ee-Y2I" id="83o-ey-isR"/>
+                        <outlet property="city" destination="hhx-g2-AdV" id="jxa-vG-pNl"/>
+                        <outlet property="collectionView" destination="uga-4B-ZXX" id="NQL-K3-NT9"/>
+                        <outlet property="distance" destination="zqW-sX-bZT" id="XJ7-1p-UEa"/>
+                        <outlet property="halalImage" destination="xtu-R2-TOF" id="mtC-MI-GHM"/>
+                        <outlet property="halalLabel" destination="lxY-PQ-b43" id="1OI-ar-C3U"/>
+                        <outlet property="name" destination="gBW-Lg-sYF" id="xsU-io-Kbd"/>
+                        <outlet property="porkImage" destination="0an-ly-X2Y" id="EEY-kr-NRh"/>
+                        <outlet property="porkLabel" destination="goi-MO-a7H" id="fWb-bB-W4S"/>
+                        <outletCollection property="stars" destination="E4c-uQ-bft" id="H2M-CB-3RA"/>
+                        <outletCollection property="stars" destination="VIx-wN-Mo9" id="fhu-6v-38Q"/>
+                        <outletCollection property="stars" destination="aeE-MR-B86" id="lak-VQ-dOj"/>
+                        <outletCollection property="stars" destination="aeE-MR-B86" id="2EA-Yn-smH"/>
+                        <outletCollection property="stars" destination="dbv-BO-QFf" id="gOe-hC-8xI"/>
+                        <outletCollection property="stars" destination="ciw-ka-zFW" id="D6G-UA-1dM"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="QHc-Dl-dJa" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1103" y="793"/>
         </scene>
-        <!--Dining View Controller-->
+        <!--View Controller-->
         <scene sceneID="NqT-7N-PKa">
             <objects>
-                <viewController autoresizesArchivedViewToFullSize="NO" automaticallyAdjustsScrollViewInsets="NO" id="csa-vg-Cr6" customClass="DiningViewController" sceneMemberID="viewController">
+                <viewController autoresizesArchivedViewToFullSize="NO" automaticallyAdjustsScrollViewInsets="NO" id="csa-vg-Cr6" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="E2x-yG-nuC">
                         <rect key="frame" x="0.0" y="64" width="320" height="416"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -945,6 +1028,7 @@
                     </navigationItem>
                     <connections>
                         <outlet property="DiningTableView" destination="dHn-qf-Xtv" id="yDl-yU-6RB"/>
+                        <outlet property="diningTableView" destination="dHn-qf-Xtv" id="Wkt-GN-pIk"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="xoz-nS-WMs" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -959,10 +1043,10 @@
             </objects>
             <point key="canvasLocation" x="1103" y="141"/>
         </scene>
-        <!--Create Review View Controller-->
+        <!--View Controller-->
         <scene sceneID="0bw-g1-XoB">
             <objects>
-                <viewController storyboardIdentifier="AddReviewViewController" autoresizesArchivedViewToFullSize="NO" automaticallyAdjustsScrollViewInsets="NO" id="lhS-xz-cRY" customClass="CreateReviewViewController" sceneMemberID="viewController">
+                <viewController autoresizesArchivedViewToFullSize="NO" automaticallyAdjustsScrollViewInsets="NO" id="lhS-xz-cRY" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="TIV-jR-7Xb">
                         <rect key="frame" x="0.0" y="64" width="320" height="480"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -982,6 +1066,7 @@
                                 </state>
                                 <connections>
                                     <action selector="StarPressed:" destination="lhS-xz-cRY" eventType="touchUpInside" id="Pcm-X6-Yvp"/>
+                                    <action selector="starPressed:" destination="lhS-xz-cRY" eventType="touchUpInside" id="01g-2d-BI7"/>
                                 </connections>
                             </button>
                             <button opaque="NO" tag="102" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="KC7-r5-MEN">
@@ -1028,7 +1113,18 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                     </view>
                     <extendedEdge key="edgesForExtendedLayout"/>
-                    <navigationItem key="navigationItem" id="Bcl-OB-TSJ"/>
+                    <navigationItem key="navigationItem" id="Bcl-OB-TSJ">
+                        <barButtonItem key="leftBarButtonItem" title="regret" id="0Ej-4a-HKE">
+                            <connections>
+                                <action selector="regret:" destination="lhS-xz-cRY" id="zx4-bo-WwT"/>
+                            </connections>
+                        </barButtonItem>
+                        <barButtonItem key="rightBarButtonItem" title="save" id="hYj-cW-w5U">
+                            <connections>
+                                <action selector="save:" destination="lhS-xz-cRY" id="Gfb-eL-Q1J"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
                     <connections>
                         <outlet property="Review" destination="DG6-y0-3nf" id="xi7-FY-YmI"/>
                         <outlet property="Star1" destination="b3g-QG-nf6" id="XMq-Qw-Qvd"/>
@@ -1036,6 +1132,7 @@
                         <outlet property="Star3" destination="Gxs-G4-5Hq" id="nb6-fv-pR5"/>
                         <outlet property="Star4" destination="0H1-q4-Tfx" id="Htf-rO-Sp3"/>
                         <outlet property="Star5" destination="jTm-qK-4aj" id="TzX-Ra-bHR"/>
+                        <outlet property="review" destination="DG6-y0-3nf" id="96g-Gt-pry"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="RiQ-Si-pWd" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -1060,8 +1157,8 @@
         <simulatedScreenMetrics key="destination"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
-        <segue reference="nJm-Oa-9F1"/>
-        <segue reference="Vok-wV-gGm"/>
+        <segue reference="SaP-90-eBn"/>
         <segue reference="JOJ-Cs-Idh"/>
+        <segue reference="h3t-FV-Fvf"/>
     </inferredMetricsTieBreakers>
 </document>

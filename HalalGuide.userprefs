@@ -1,55 +1,20 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|iPhone" PreferredExecutionTarget="MonoDevelop.IPhone.IPhoneDeviceTarget.Tommy Sadiqs iPhone" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="HalalGuide.iOS/Main.cs">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Ad-Hoc|iPhone" PreferredExecutionTarget="MonoDevelop.IPhone.IPhoneDeviceTarget" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="HalalGuide.iOS/Language/da.json">
     <Files>
-      <File FileName="ViewModels/AddDiningViewModel.cs" Line="19" Column="19" />
-      <File FileName="ViewModels/BaseViewModel.cs" Line="3" Column="3" />
-      <File FileName="ViewModels/AddReviewViewModel.cs" Line="20" Column="20" />
-      <File FileName="ViewModels/LandingViewModel.cs" Line="1" Column="1" />
-      <File FileName="ViewModels/LoginViewModel.cs" Line="37" Column="37" />
-      <File FileName="ViewModels/MultipleDiningViewModel.cs" Line="1" Column="1" />
-      <File FileName="ViewModels/SingleDiningViewModel.cs" Line="46" Column="46" />
-      <File FileName="Services/ReviewService.cs" Line="1" Column="1" />
-      <File FileName="HalalGuide.iOS/Entitlements.plist" />
-      <File FileName="HalalGuide.iOS/Main.cs" Line="1" Column="1" />
+      <File FileName="Domain/Enums/DiningCategory.cs" Line="1" Column="1" />
+      <File FileName="ViewModels/AddDiningViewModel.cs" Line="1" Column="1" />
+      <File FileName="ViewModels/BaseViewModel.cs" Line="1" Column="1" />
+      <File FileName="Services/AddressService.cs" Line="1" Column="1" />
+      <File FileName="Domain/Dawa/Address.cs" Line="1" Column="1" />
+      <File FileName="HalalGuide.iOS/CreateDiningViewController.cs" Line="1" Column="1" />
+      <File FileName="HalalGuide.iOS/CreateReviewViewController.cs" Line="1" Column="1" />
+      <File FileName="HalalGuide.iOS/DiningDetailViewController.cs" Line="31" Column="31" />
+      <File FileName="HalalGuide.iOS/Language/da.json" Line="20" Column="20" />
     </Files>
-    <Pads>
-      <Pad Id="ProjectPad">
-        <State expanded="True">
-          <Node name="HalalGuide.iOS" expanded="True" selected="True">
-            <Node name="ComponentReferenceFolder" expanded="True" />
-            <Node name="Util" expanded="True" />
-            <Node name="ViewController" expanded="True">
-              <Node name="Base" expanded="True" />
-            </Node>
-          </Node>
-        </State>
-      </Pad>
-    </Pads>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
-    <BreakpointStore>
-      <Breakpoint file="/Users/Privat/AWSSimpleDBPersistence/SimpleDBPersistence/SimpleDB/Model/Parameters/SelectQuery.cs" line="55" column="1" />
-      <Breakpoint file="/Users/Privat/HalalGuide/Components/googlemapsios-1.8.1/samples/GoogleMapsAdvSample/GoogleMapsAdvSample/Samples/Map Demos/BasicMapViewController.cs" line="19" column="34" />
-      <Breakpoint file="/Users/Privat/AWSSimpleDBPersistence/SimpleDBPersistence/SimpleDB/Marshalling/Response/BaseUnMarshaller.cs" line="41" column="1" />
-      <Breakpoint file="/Users/Privat/S3Storage/Service/ServiceContainer.cs" line="26" column="1" />
-      <Breakpoint file="/Users/Privat/HalalGuide/HalalGuide.iOS/AppDelegate.cs" line="132" column="1" />
-      <Breakpoint file="/Users/Privat/HalalGuide/HalalGuide.iOS/TestViewController.cs" line="41" column="5" />
-      <Breakpoint file="/Users/Privat/HalalGuide/HalalGuide.iOS/Seque/DismissSeque.cs" line="14" column="1" />
-      <Breakpoint file="/Users/Privat/HalalGuide/HalalGuide.iOS/AppDelegate.cs" line="73" column="1" />
-      <Breakpoint file="/Users/Privat/HalalGuide/HalalGuide.iOS/Tables/Cells/CollectionViewCell.designer.cs" line="14" column="5" />
-      <Breakpoint file="/Users/Privat/HalalGuide/HalalGuide.iOS/Tables/Cells/CollectionViewCell.designer.cs" line="11" column="1" />
-      <Breakpoint file="/Users/Privat/HalalGuide/HalalGuide.iOS/ViewController/Table/KeyboardSupportedUIViewController.cs" line="53" column="1" />
-      <Breakpoint file="/Users/Privat/HalalGuide/HalalGuide.iOS/ViewController/Table/KeyboardSupportedUIViewController.cs" line="52" column="1" />
-      <Breakpoint file="/Users/Privat/HalalGuide/HalalGuide.iOS/ViewController/Table/SingleDiningTableViewController.cs" line="274" column="1" />
-      <Breakpoint file="/Users/Privat/HalalGuide/HalalGuide.iOS/ViewController/Table/KeyboardSupportedTableViewController.cs" line="182" column="1" />
-      <Breakpoint file="/Users/Privat/HalalGuide/ViewModels/SingleDiningViewModel.cs" line="95" column="1" />
-      <Breakpoint file="/Users/Privat/HalalGuide/ViewModels/SingleDiningViewModel.cs" line="90" column="1" />
-      <Breakpoint file="/Users/Privat/HalalGuide/ViewModels/SingleDiningViewModel.cs" line="86" column="1" />
-      <Breakpoint file="/Users/Privat/HalalGuide/HalalGuide.iOS/ViewController/Table/SingleDiningTableViewController.cs" line="46" column="32" />
-      <Breakpoint file="/Users/privat/Projekter/HalalGuide/ViewModels/LoginViewModel.cs" line="33" column="1" />
-      <Breakpoint file="/Users/privat/Projekter/HalalGuide/HalalGuide.iOS/ViewController/BaseViewController.cs" line="107" column="1" />
-    </BreakpointStore>
+    <BreakpointStore />
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />
   <DisabledProjects>

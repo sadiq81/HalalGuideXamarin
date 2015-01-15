@@ -4,13 +4,125 @@ using System;
 
 using MonoTouch.Foundation;
 using MonoTouch.UIKit;
+using HalalGuide.ViewModels;
+using HalalGuide.Services;
+using Alliance.Carousel;
+using HalalGuide.iOS.Carousel;
+using HalalGuide.Domain.Enums;
+using HalalGuide.Util;
+using System.Globalization;
+using MonoTouch.MessageUI;
 
 namespace HalalGuideiOS
 {
 	public partial class DiningDetailViewController : UIViewController
 	{
+		private readonly SingleDiningViewModel viewModel = ServiceContainer.Resolve<SingleDiningViewModel> ();
+		private readonly AddReviewViewModel addReviewViewModel = ServiceContainer.Resolve<AddReviewViewModel> ();
+		private CarouselView carousel;
+
 		public DiningDetailViewController (IntPtr handle) : base (handle)
 		{
+		}
+
+		public override void  ViewDidLoad ()
+		{
+			viewModel.RefreshCache ();
+
+			SetupUIValues ();
+			SetupCollectionView ();
+			SetupEventListeners ();
+
+		}
+
+		private void SetupCollectionView ()
+		{
+			carousel = new CarouselView (collectionView.Bounds);
+			carousel.DataSource = new SingleDiningImageDataSource ();
+			carousel.Delegate = new SingleDiningImageDelegate ();
+			carousel.CarouselType = CarouselType.CoverFlow2;
+			carousel.ConfigureView ();
+			collectionView.AddSubview (carousel);
+		}
+
+		private void SetupUIValues ()
+		{
+			name.Text = viewModel.selectedLocation.name;
+			address.Text = string.Format ("{0} {1}", viewModel.selectedLocation.addressRoad, viewModel.selectedLocation.addressRoadNumber);
+			city.Text = string.Format ("{0} {1}", viewModel.selectedLocation.addressPostalCode, viewModel.selectedLocation.addressCity);
+
+			category.Text = viewModel.selectedLocation.categories.LocalisedCategoriesToString ();
+
+			porkImage.Image = UIImage.FromBundle (Images.Pig + viewModel.selectedLocation.pork);
+			porkLabel.TextColor = viewModel.selectedLocation.pork ? UIColor.Red : UIColor.Green;
+			alcoholImage.Image = UIImage.FromBundle (Images.Alcohol + viewModel.selectedLocation.alcohol);
+			alcoholLabel.TextColor = viewModel.selectedLocation.alcohol ? UIColor.Red : UIColor.Green;
+			halalImage.Image = UIImage.FromBundle (Images.NonHalal + viewModel.selectedLocation.nonHalal);
+			halalLabel.TextColor = viewModel.selectedLocation.nonHalal ? UIColor.Red : UIColor.Green;
+
+			distance.Text = viewModel.selectedLocation.distance.ToString (Constants.NumberFormat, CultureInfo.CurrentCulture);
+
+			double rating = viewModel.AverageReviewScore ();
+			stars [0].Image = rating >= 1 ? UIImage.FromBundle (Images.StarSelected) : UIImage.FromBundle (Images.Star);
+			stars [1].Image = rating >= 2 ? UIImage.FromBundle (Images.StarSelected) : UIImage.FromBundle (Images.Star);
+			stars [2].Image = rating >= 3 ? UIImage.FromBundle (Images.StarSelected) : UIImage.FromBundle (Images.Star);
+			stars [3].Image = rating >= 4 ? UIImage.FromBundle (Images.StarSelected) : UIImage.FromBundle (Images.Star);
+			stars [4].Image = rating >= 5 ? UIImage.FromBundle (Images.StarSelected) : UIImage.FromBundle (Images.Star);
+		}
+
+		private void SetupEventListeners ()
+		{
+			viewModel.refreshedLocationData += ( sender, e) => InvokeOnMainThread (delegate {
+				carousel.ReloadData ();
+			});
+
+			viewModel.locationChangedEvent += (sender, e) => {
+				distance.Text = viewModel.selectedLocation.distance.ToString (Constants.NumberFormat, CultureInfo.CurrentCulture);
+			};
+		}
+
+		/*
+		partial void addPicture (NSObject sender)
+		{
+			UIActionSheet actionSheet = new UIActionSheet (
+				                            Localization.GetLocalizedValue (Feedback.AddPicture), 
+				                            null, 
+				                            Localization.GetLocalizedValue (Feedback.Regreet), 
+				                            null, 
+				                            Localization.GetLocalizedValue (Feedback.UseCamera), 
+				                            Localization.GetLocalizedValue (Feedback.UseCameraRoll));
+
+			actionSheet.Clicked += async delegate(object a, UIButtonEventArgs b) {
+				switch (b.ButtonIndex) {
+				case 0:
+					await viewModel.TakePicture (viewModel.selectedLocation);
+					break;
+				case 1:
+					await viewModel.GetPictureFromDevice (viewModel.selectedLocation);
+					break;
+				case 2:
+					break;
+				}
+			};
+			actionSheet.ShowInView (this.View);
+		}
+
+		partial void report (NSObject sender)
+		{
+			MFMailComposeViewController mailController = new MFMailComposeViewController ();
+			mailController.SetToRecipients (new string[]{ "tommy@eazyit.dk" });
+			mailController.SetSubject (Localization.GetLocalizedValue (Feedback.Error) + " - " + ": " + viewModel.selectedLocation.id);
+			mailController.SetMessageBody (Localization.GetLocalizedValue (Feedback.ErrorTemplate), false);
+			mailController.Finished += (  s, args) => args.Controller.DismissViewController (true, null);
+			PresentViewController (mailController, true, null);
+		}
+		*/
+		public override void PrepareForSegue (UIStoryboardSegue segue, NSObject sender)
+		{
+			base.PrepareForSegue (segue, sender);
+			if (segue.DestinationViewController is CreateReviewViewController) {
+				addReviewViewModel.selectedLocation = viewModel.selectedLocation;
+			}
 		}
 	}
 }

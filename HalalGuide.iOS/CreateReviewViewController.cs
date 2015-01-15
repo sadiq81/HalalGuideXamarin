@@ -4,13 +4,85 @@ using System;
 
 using MonoTouch.Foundation;
 using MonoTouch.UIKit;
+using HalalGuide.ViewModels;
+using HalalGuide.Services;
+using HalalGuide.Util;
 
 namespace HalalGuideiOS
 {
 	public partial class CreateReviewViewController : UIViewController
 	{
+		private readonly AddReviewViewModel viewModel = ServiceContainer.Resolve<AddReviewViewModel> ();
+		private int rating;
+
 		public CreateReviewViewController (IntPtr handle) : base (handle)
 		{
+		}
+
+		public override void ViewDidLoad ()
+		{
+			base.ViewDidLoad ();
+			SetupReviewTextField ();
+		}
+
+		#region Setup
+
+		private void SetupReviewTextField ()
+		{
+			review.Layer.BorderColor = UIColor.Gray.CGColor;
+			review.Layer.BorderWidth = 2;
+			review.Layer.CornerRadius = 5;
+			review.ClipsToBounds = true;
+		}
+
+		#endregion
+
+		#region Actions
+
+		/*
+		partial void regret (NSObject sender)
+		{
+			DismissViewController (true, null);
+		}
+
+		async partial  void save (NSObject sender)
+		{
+			
+			await viewModel.CreateNewReview (viewModel.selectedLocation, rating, review.Text);
+			//TODO
+
+					if (result == CreateEntityResult.OK) {
+						new UIAlertView (Localization.GetLocalizedValue (Feedback.Ok), Localization.GetLocalizedValue (Feedback.ReviewSendToReview), null, Localization.GetLocalizedValue (Feedback.Ok), null){ WeakDelegate = this }.Show ();
+					} else {
+						new UIAlertView (Localization.GetLocalizedValue (Feedback.Error), Localization.GetLocalizedValue (result.ToString ()), null, Localization.GetLocalizedValue (Feedback.Ok), null).Show ();
+
+		}
+
+		partial void starPressed (NSObject sender)
+		{
+			int tag = ((UIButton)sender).Tag;
+			rating = tag - 100;
+			for (int i = 101; i <= 105; i++) {
+				UIButton button = (UIButton)View.ViewWithTag (i);
+				if (button.Tag <= tag) {
+					button.SetImage (UIImage.FromBundle (Images.StarSelected), UIControlState.Normal);
+				} else {
+					button.SetImage (UIImage.FromBundle (Images.Star), UIControlState.Normal);
+				}
+			}
+		}
+		*/
+
+		#endregion
+
+		[Export ("alertView:clickedButtonAtIndex:")]
+		public virtual void Clicked (UIAlertView alertview, int buttonIndex)
+		{
+			if (PresentingViewController.PresentingViewController != null) {
+				PresentingViewController.PresentingViewController.DismissViewController (true, null);
+			} else {
+				PresentingViewController.DismissViewController (true, null);
+			}
 		}
 	}
 }

@@ -20,11 +20,6 @@ namespace HalalGuide.iOS
 
 		public override bool FinishedLaunching (UIApplication application, NSDictionary launchOptions)
 		{
-			AppDomain.CurrentDomain.UnhandledException += (object sender, UnhandledExceptionEventArgs e) => {
-
-				int i = 0;
-
-			};
 			return true;
 		}
 		

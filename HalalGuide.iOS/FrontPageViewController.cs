@@ -4,13 +4,103 @@ using System;
 
 using MonoTouch.Foundation;
 using MonoTouch.UIKit;
+using HalalGuide.ViewModels;
+using HalalGuide.Services;
+using HalalGuide.iOS.Util;
+using HalalGuide.Domain;
+using HalalGuide.iOS.Tables.Cells;
 
 namespace HalalGuideiOS
 {
 	public partial class FrontPageViewController : UIViewController
 	{
+		public LandingViewModel viewModel = ServiceContainer.Resolve<LandingViewModel> ();
+		public SingleDiningViewModel singleDiningViewModel = ServiceContainer.Resolve<SingleDiningViewModel> ();
+
 		public FrontPageViewController (IntPtr handle) : base (handle)
 		{
+		}
+
+		public async override void ViewDidLoad ()
+		{
+			base.ViewDidLoad ();
+
+			NavigationController.NavigationBar.Translucent = false;
+
+			SetupTableView ();
+
+			SetupEventListeners ();
+
+			viewModel.RefreshCache ();
+
+			//Refresh app data
+			await viewModel.Refre	shLocations ();
+			await viewModel.RefreshLocationData ();
+			await viewModel.RefreshReviews ();
+		}
+
+		private void SetupTableView ()
+		{
+			UITableViewController controller = new UITableViewController ();
+			UIRefreshControl refreshControl = new UIRefreshControl ();
+			controller.TableView = latestUpdated;
+
+			controller.RefreshControl = refreshControl;
+			refreshControl.ValueChanged += async (sender, e) => {
+				refreshControl.BeginRefreshing ();
+				await viewModel.RefreshLocations ();
+				refreshControl.EndRefreshing ();
+			};
+		}
+
+		private void SetupEventListeners ()
+		{
+
+			viewModel.refreshedLocations += (sender, e) => InvokeOnMainThread (() => {
+				latestUpdated.ReloadData ();
+			});
+
+			viewModel.refreshedLocationPictures += (sender, e) => InvokeOnMainThread (() => {
+				latestUpdated.ReloadData ();
+			});
+
+			viewModel.locationChangedEvent += (sender, e) => InvokeOnMainThread (() => {
+				viewModel.CalculateDistances ();
+				latestUpdated.ReloadSections (new NSIndexSet (0), UITableViewRowAnimation.None);
+			});
+		}
+
+		public override void PrepareForSegue (UIStoryboardSegue segue, NSObject sender)
+		{
+			base.PrepareForSegue (segue, sender);
+			if (segue.DestinationViewController is DiningDetailViewController) {
+				NSIndexPath indexPath = latestUpdated.IndexPathForCell ((UITableViewCell)sender);
+				singleDiningViewModel.selectedLocation = viewModel.GetLocationAtRow (indexPath.Item);
+			}
+		}
+
+		[Export ("tableView:numberOfRowsInSection:")]
+		public  int RowsInSection (UITableView tableview, int section)
+		{
+			return viewModel.Rows ();
+		}
+
+		[Export ("tableView:cellForRowAtIndexPath:")]
+		public  UITableViewCell GetCell (UITableView tableView, NSIndexPath indexPath)
+		{
+			Location l = viewModel.GetLocationAtRow (indexPath.Item);
+
+			UITableViewCell cell = tableView.DequeueReusableCell (l.locationType.ToString ());
+
+			((ILocationCell)cell).ConfigureLocation (l);
+
+			return cell;
+		}
+
+		[Export ("tableView:didSelectRowAtIndexPath:")]
+		public  void RowSelected (UITableView tableView, NSIndexPath indexPath)
+		{
+			tableView.DeselectRow (indexPath, true); // normal iOS behaviour is to remove the blue highlight
 		}
 	}
 }

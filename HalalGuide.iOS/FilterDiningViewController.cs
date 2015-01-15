@@ -4,13 +4,92 @@ using System;
 
 using MonoTouch.Foundation;
 using MonoTouch.UIKit;
+using HalalGuide.ViewModels;
+using HalalGuide.Services;
+using System.Collections.Generic;
+using HalalGuideiOS.Views;
+using HalalGuide.Domain.Enums;
+using HalalGuide.Util;
 
 namespace HalalGuideiOS
 {
 	public partial class FilterDiningViewController : UIViewController
 	{
+		private MultipleDiningViewModel diningViewModel = ServiceContainer.Resolve<MultipleDiningViewModel> ();
+
+		private List<DiningCategory> categoriesChoosen { get; set; }
+
 		public FilterDiningViewController (IntPtr handle) : base (handle)
 		{
 		}
+
+		public  override void ViewDidLoad ()
+		{
+			base.ViewDidLoad ();
+
+			SetupUIValues ();
+
+			SetupEventHandlers ();
+
+		}
+
+
+		public override void ViewDidDisappear (bool animated)
+		{
+			base.ViewDidDisappear (animated);
+
+			diningViewModel.DistanceFilter = distanceSlider.Value;
+
+			diningViewModel.PorkFilter = porkSwitch.On;
+			diningViewModel.AlcoholFilter = alcoholSwitch.On;
+			diningViewModel.HalalFilter = halalSwitch.On;
+
+			diningViewModel.CategoryFilter = categoriesChoosen;
+
+			diningViewModel.FilteredLocations ();
+		}
+
+		private void SetupUIValues ()
+		{
+			distanceSlider.Value = (float)diningViewModel.DistanceFilter;
+
+			if (diningViewModel.DistanceFilter < Constants.MaxDistanceLimit) {
+				distanceLabel.Text = diningViewModel.DistanceFilter + " km";
+			} else {
+				distanceLabel.Text = Localization.GetLocalizedValue (Feedback.Unlimited);
+			}
+
+			porkSwitch.On = diningViewModel.PorkFilter;
+			alcoholSwitch.On = diningViewModel.AlcoholFilter;
+			halalSwitch.On = diningViewModel.HalalFilter;
+
+			categoriesChoosen = diningViewModel.CategoryFilter;
+
+			countLabel.Text = categoriesChoosen.Count.ToString ();
+		}
+
+		private void SetupEventHandlers ()
+		{
+			distanceSlider.ValueChanged += (sender, e) => {
+
+				distanceSlider.Value = (float)Math.Round (distanceSlider.Value, MidpointRounding.AwayFromZero);
+				if (distanceSlider.Value < Constants.MaxDistanceLimit) {
+					distanceLabel.Text = distanceSlider.Value + " km";
+				} else {
+					distanceLabel.Text = Localization.GetLocalizedValue (Feedback.Unlimited);
+				}
+			};
+		}
+		/*
+		partial void done (NSObject sender)
+		{
+			DismissViewController (true, null);
+		}
+
+		partial void choose (NSObject sender)
+		{
+
+		}
+		*/
 	}
 }

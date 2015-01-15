@@ -4,13 +4,167 @@ using System;
 
 using MonoTouch.Foundation;
 using MonoTouch.UIKit;
+using HalalGuide.ViewModels;
+using HalalGuide.Services;
+using System.Drawing;
+using HalalGuide.Domain;
+using HalalGuide.iOS.Tables.Cells;
 
 namespace HalalGuideiOS
 {
 	public partial class DiningViewController : UIViewController
 	{
+		private const string cellIdentifier = "Dining";
+
+		public MultipleDiningViewModel viewModel = ServiceContainer.Resolve<MultipleDiningViewModel> ();
+		public SingleDiningViewModel singleDiningViewModel = ServiceContainer.Resolve<SingleDiningViewModel> ();
+
+		private UISearchBar searchBar;
+
 		public DiningViewController (IntPtr handle) : base (handle)
 		{
 		}
+
+		public override void ViewDidLoad ()
+		{
+			base.ViewDidLoad ();
+
+			SetupTableView ();
+
+			SetupSearchBar ();
+
+			SetupEventListeners ();
+
+			viewModel.RefreshCache ();
+		}
+
+		public override void ViewDidAppear (bool animated)
+		{
+			base.ViewDidAppear (animated);
+			diningTableView.SetContentOffset (new PointF (0, searchBar.Frame.Size.Height), true);
+		}
+
+		public override void PrepareForSegue (UIStoryboardSegue segue, NSObject sender)
+		{
+			base.PrepareForSegue (segue, sender);
+			if (segue.DestinationViewController is DiningDetailViewController) {
+				NSIndexPath indexPath = diningTableView.IndexPathForCell ((UITableViewCell)sender);
+				singleDiningViewModel.selectedLocation = viewModel.GetLocationAtRow (indexPath.Item);
+			}
+		}
+
+		#region Setup
+
+		private void SetupTableView ()
+		{
+
+			diningTableView.TableFooterView = new UIView ();
+
+			UITableViewController controller = new UITableViewController ();
+			UIRefreshControl refresh = new UIRefreshControl ();
+
+			controller.TableView = diningTableView;
+			controller.RefreshControl = refresh;
+			refresh.ValueChanged += async (sender, e) => {
+				refresh.BeginRefreshing ();
+				await viewModel.RefreshLocations ();
+				refresh.EndRefreshing ();
+
+				UIView.Animate (
+					0.2,
+					() => {
+						diningTableView.SetContentOffset (new PointF (0, searchBar.Frame.Size.Height), true);
+					}
+				);
+			};
+		}
+
+		private void SetupEventListeners ()
+		{
+
+			viewModel.refreshedLocations += (sender, e) => InvokeOnMainThread (() => {
+				diningTableView.SetContentOffset (new PointF (0, searchBar.Frame.Size.Height), false);
+				diningTableView.ReloadData ();
+			});
+
+			viewModel.filteredLocations += (sender, e) => InvokeOnMainThread (() => {
+				diningTableView.ReloadData ();
+			});
+
+		}
+
+		#endregion
+
+		#region SearchBar
+
+		private void SetupSearchBar ()
+		{
+			diningTableView.TableHeaderView = searchBar = new UISearchBar (new RectangleF (0, 0, diningTableView.Frame.Width, 44)) {
+				BackgroundColor = UIColor.Clear
+			};
+
+			searchBar.ShowsCancelButton = true;
+			searchBar.WeakDelegate = this;
+
+		}
+
+		[Export ("searchBar:textDidChange:")]
+		public void TextChanged (UISearchBar searchBar, string searchText)
+		{
+			bool cacheChanged = viewModel.SearchTextChanged (searchText);
+			if (cacheChanged) {
+				diningTableView.ReloadData ();
+			}
+		}
+
+
+		[Export ("searchBarSearchButtonClicked:")]
+		public  void SearchButtonClicked (UISearchBar searchBar)
+		{
+			bool cacheChanged = viewModel.SearchTextChanged (searchBar.Text);
+			if (cacheChanged) {
+				diningTableView.ReloadData ();
+			}
+			searchBar.ResignFirstResponder ();
+		}
+
+		[Export ("searchBarCancelButtonClicked:")]
+		public void CancelButtonClicked (UISearchBar searchBar)
+		{
+			searchBar.ResignFirstResponder ();
+			searchBar.Text = ("");
+			viewModel.SearchTextChanged ("");
+			diningTableView.ReloadData ();
+			diningTableView.SetContentOffset (new PointF (0, searchBar.Frame.Size.Height), true);
+		}
+
+		#endregion
+
+		#region TableView
+
+		[Export ("tableView:numberOfRowsInSection:")]
+		public  int RowsInSection (UITableView tableview, int section)
+		{
+			return viewModel.Rows ();
+		}
+
+		[Export ("tableView:cellForRowAtIndexPath:")]
+		public  UITableViewCell GetCell (UITableView tableView, NSIndexPath indexPath)
+		{
+
+			UITableViewCell cell = tableView.DequeueReusableCell (cellIdentifier);
+			Location l = viewModel.GetLocationAtRow (indexPath.Item);
+			((DiningCell)cell).ConfigureLocation (l);
+			return cell;
+		}
+
+		[Export ("tableView:didSelectRowAtIndexPath:")]
+		public  void RowSelected (UITableView tableView, NSIndexPath indexPath)
+		{
+			tableView.DeselectRow (indexPath, true); // normal iOS behaviour is to remove the blue highlight
+		}
+
+		#endregion
+
 	}
 }

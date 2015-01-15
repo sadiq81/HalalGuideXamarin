@@ -4,13 +4,236 @@ using System;
 
 using MonoTouch.Foundation;
 using MonoTouch.UIKit;
+using HalalGuide.ViewModels;
+using HalalGuide.Services;
+using System.Threading.Tasks;
+using System.Collections.Generic;
+using HalalGuide.Domain.Enums;
+using HalalGuide.Util;
+using Xamarin.Media;
 
 namespace HalalGuideiOS
 {
 	public partial class CreateDiningViewController : UIViewController
 	{
+		private readonly AddDiningViewModel viewModel = ServiceContainer.Resolve<AddDiningViewModel> ();
+		private readonly AddReviewViewModel addReviewViewModel = ServiceContainer.Resolve<AddReviewViewModel> ();
+		List<DiningCategory> categoriesChoosen;
+
 		public CreateDiningViewController (IntPtr handle) : base (handle)
 		{
+		}
+
+		public async  override void ViewDidLoad ()
+		{
+			SetupEventListeners ();
+			categoriesChoosen = new List<DiningCategory> ();
+			await SetupUIElements ();
+		}
+
+		private void  SetupEventListeners ()
+		{
+			road.EditingDidEnd += async (sender, e) => {
+				roadNumber.AutoCompleteValues = viewModel.StreetNumbers (road.Text);
+				postalCode.Text = viewModel.PostalCode (road.Text) ?? postalCode.Text;
+				city.Text = await viewModel.GetCityNameFromPostalCode (postalCode.Text) ?? city.Text;
+			};
+			postalCode.EditingDidEnd += async (sender, e) => {
+				string cityName = await viewModel.GetCityNameFromPostalCode (postalCode.Text);
+				city.Text = cityName ?? city.Text;
+			};
+
+			porkSwitch.ValueChanged += (object sender, EventArgs e) => {
+				porkImage.Image = UIImage.FromBundle (Images.Pig + ((UISwitch)sender).On);
+			};
+			alcoholSwitch.ValueChanged += (object sender, EventArgs e) => {
+				alcoholImage.Image = UIImage.FromBundle (Images.Alcohol + ((UISwitch)sender).On);
+			};
+			halalSwitch.ValueChanged += (object sender, EventArgs e) => {
+				halalImage.Image = UIImage.FromBundle (Images.NonHalal + ((UISwitch)sender).On);
+			};
+
+		}
+
+		private async Task SetupUIElements ()
+		{
+			await viewModel.LoadAddressNearPosition ();
+
+			road.AutoCompleteValues = viewModel.StreetNames ();
+		}
+
+		/*
+		partial void regret (NSObject sender)
+		{
+			DismissViewController (true, null);
+		}
+
+		async partial void save (NSObject sender)
+		{
+			if (String.IsNullOrEmpty (name.Text)) {
+				;
+				new UIAlertView (Localization.GetLocalizedValue (Feedback.Error), Localization.GetLocalizedValue (Feedback.NameEmpty), null, Localization.GetLocalizedValue (Feedback.Ok)).Show ();
+				return;
+			}
+
+			if (String.IsNullOrEmpty (road.Text)) {
+				new UIAlertView (Localization.GetLocalizedValue (Feedback.Error), Localization.GetLocalizedValue (Feedback.RoadEmpty), null, Localization.GetLocalizedValue (Feedback.Ok)).Show ();
+				return;
+			}
+
+			if (String.IsNullOrEmpty (roadNumber.Text)) {
+				new UIAlertView (Localization.GetLocalizedValue (Feedback.Error), Localization.GetLocalizedValue (Feedback.RoadNumberEmpty), null, Localization.GetLocalizedValue (Feedback.Ok)).Show ();
+				return;
+			}
+
+			if (String.IsNullOrEmpty (postalCode.Text)) {
+				new UIAlertView (Localization.GetLocalizedValue (Feedback.Error), Localization.GetLocalizedValue (Feedback.PostalCodeEmpty), null, Localization.GetLocalizedValue (Feedback.Ok)).Show ();
+				return;
+			}
+
+			if (String.IsNullOrEmpty (city.Text)) {
+				new UIAlertView (Localization.GetLocalizedValue (Feedback.Error), Localization.GetLocalizedValue (Feedback.CityEmpty), null, Localization.GetLocalizedValue (Feedback.Ok)).Show ();
+				return;
+			}
+
+			CreateEntityResult result = await viewModel.CreateNewLocation (
+				                            name.Text, 
+				                            road.Text, 
+				                            roadNumber.Text, 
+				                            postalCode.Text, 
+				                            city.Text, 
+				                            telephone.Text, 
+				                            homepage.Text, 
+				                            porkSwitch.On, 
+				                            alcoholSwitch.On, 
+				                            halalSwitch.On,
+				                            categoriesChoosen, PickImage.Title (UIControlState.Normal) == null ? Image.Image.AsJPEG ().ToArray () :null);
+
+			if (result == CreateEntityResult.OK) {
+				new UIAlertView (Localization.GetLocalizedValue (Feedback.Succes), 
+					Localization.GetLocalizedValue (Feedback.Suggestion_Waiting_Approval), 
+					null, 
+					Localization.GetLocalizedValue (Feedback.Ok), 
+					new string[]{ Localization.GetLocalizedValue (Feedback.AddReview) }){ WeakDelegate = this }.Show ();
+
+			} else {
+				new UIAlertView (Localization.GetLocalizedValue (Feedback.Error), 
+					Localization.GetLocalizedValue (result.ToString ()), 
+					null, 
+					Localization.GetLocalizedValue (Feedback.Ok), 
+					null).Show ();
+			}
+
+		}
+
+
+		partial void choose (NSObject sender)
+		{
+			throw new System.NotImplementedException ();
+		}
+
+		partial void pickImage (NSObject sender)
+		{
+			if (viewModel.IsCameraAvailable () || UIDevice.CurrentDevice.Model.Contains ("Simulator")) {
+
+				UIActionSheet actionSheet = new UIActionSheet (Localization.GetLocalizedValue (Feedback.AddPicture), 
+					                            null,  
+					                            Localization.GetLocalizedValue (Feedback.Regreet), 
+					                            null, 
+					                            Localization.GetLocalizedValue (Feedback.UseCamera), 
+					                            Localization.GetLocalizedValue (Feedback.UseCameraRoll));
+				actionSheet.Clicked += async delegate(object a, UIButtonEventArgs b) {
+					switch (b.ButtonIndex) {
+					case 0:
+						{
+							MediaFile file = await viewModel.TakePicture ("../tmp", "temp.jpg");
+							if (file != null)
+								InvokeOnMainThread (() => {
+									image.Image = UIImage.LoadFromData (NSData.FromFile (file.Path));
+								});
+							break;
+						}
+					case 1:
+						{
+							MediaFile file = await viewModel.GetPictureFromDevice ();
+							if (file != null)
+								InvokeOnMainThread (() => {
+									image.Image = UIImage.LoadFromData (NSData.FromFile (file.Path));
+								});
+							break;
+						}
+					case 2:
+						{
+							break;
+						}
+
+					}
+				};
+				actionSheet.ShowInView (View);
+
+			} else {
+				new UIAlertView (Localization.GetLocalizedValue (Feedback.Error), 
+					Localization.GetLocalizedValue (Feedback.CameraNotAvaileble), 
+					null, 
+					Localization.GetLocalizedValue (Feedback.Close)).Show ();
+			}
+		}
+
+		partial void reset (NSObject sender)
+		{
+			count.Text = "0";
+			categoriesChoosen.Clear ();
+		}
+		*/
+
+		[Export ("alertView:clickedButtonAtIndex:")]
+		public virtual void Clicked (UIAlertView alertview, int buttonIndex)
+		{
+			switch (buttonIndex) {
+			case 0:
+				{
+					DismissViewController (true, null);
+					break;
+				}
+			case 1:
+				{
+					PerformSegue ("CreateReview", this);
+					break;
+				}
+			}
+		}
+
+
+		[Export ("textFieldShouldReturn:")]
+		public  bool ShouldReturn (UITextField textField)
+		{
+			if (textField == name) {
+				road.BecomeFirstResponder ();
+				return false;
+			} else if (textField == road) {
+				roadNumber.BecomeFirstResponder ();
+				return false;
+			} else if (textField == roadNumber) {
+				postalCode.BecomeFirstResponder ();
+				return false;
+			} else if (textField == postalCode) {
+				city.BecomeFirstResponder ();
+				return false;
+			} else if (textField == telephone) {
+				homepage.BecomeFirstResponder ();
+				return false;
+			} else {
+				return true;
+			}
+		}
+
+		public override void PrepareForSegue (UIStoryboardSegue segue, NSObject sender)
+		{
+			base.PrepareForSegue (segue, sender);
+
+			if (segue.DestinationViewController is CreateReviewViewController) {
+				addReviewViewModel.selectedLocation = viewModel.selectedLocation;
+			}
 		}
 	}
 }
